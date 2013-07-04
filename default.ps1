@@ -59,22 +59,6 @@ task CopyAsimovDeployWinAgentUpdater {
 	CreateZipFile("AsimovDeploy.WinAgentUpdater")
 }
 
-task CopyAsimovDeployNodeFront {
-	cd "src\AsimovDeploy.NodeFront"
-	& npm install
-	& node .\node_modules\grunt-cli\bin\grunt release
-
-	Copy-Item "$base_dir\src\AsimovDeploy.NodeFront" "$build_dir\packages" -Recurse -Force -include $include
-
-	$nodeFrontConfig = "$build_dir\packages\AsimovDeploy.NodeFront\app\config.js"
-
-	(Get-Content $nodeFrontConfig) |
-		Foreach-Object { $_ -replace "{version}", $script:version } |
-		Set-Content $nodeFrontConfig -Encoding UTF8
-
-	CreateZipFile("AsimovDeploy.NodeFront")
-}
-
 task CreateDistributionPackage {
 	New-Item $build_dir\packages\AsimovDeploy -Type directory -ErrorAction SilentlyContinue | Out-Null
 	Copy-Item "$build_dir\packages\*.zip" "$build_dir\packages\AsimovDeploy" -Force -ErrorAction SilentlyContinue
@@ -124,7 +108,6 @@ task DoRelease -depends Compile, `
 	CreateOutputDirectories, `
 	CopyAsimovDeployWinAgentUpdater, `
 	CopyAsimovDeployWinAgent, `
-	CopyAsimovDeployNodeFront, `
 	CreateDistributionPackage, `
 	CopyToDropFolder {
 	Write-Host "Done building AsimovDeploy"
