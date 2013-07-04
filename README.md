@@ -1,7 +1,7 @@
 Asimov Deploy WinAgent
 ================
 
-Asimov Deploy consists of two major components the [Deploy Web UI](https://github.com/asimov-deploy) and deploy agents. This repository contains the windows deploy agent.
+Asimov Deploy consists of two major components the [asimov deploy web ui](https://github.com/asimov-deploy) and deploy agents. This repository contains the windows deploy agent.
 
 ## Windows deploy agent features
 * HTTP API
