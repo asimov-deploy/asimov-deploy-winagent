@@ -54,7 +54,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
                 Redirect(p.StandardOutput, str => context.Log.Info(str));
                 Redirect(p.StandardError, str => context.Log.Info(str));
 
-                p.WaitForExit((int)TimeSpan.FromMinutes(20).TotalMilliseconds);
+                p.WaitForExit((int)TimeSpan.FromMinutes(40).TotalMilliseconds);
 
                 if (p.ExitCode != 0)
                     throw new DeployException("Powershell script did not complete successfully");
