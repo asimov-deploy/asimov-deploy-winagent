@@ -18,33 +18,36 @@ using System.Collections.Generic;
 using System.Linq;
 using Ionic.Zip;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources {
+namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
+{
+    public abstract class PackageSource
+    {
+        public string Name { get; set; }
 
-	public abstract class PackageSource {
+        public abstract IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo);
+        public abstract AsimovVersion GetVersion(string versionId, PackageInfo packageInfo);
+        public abstract string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder);
 
-		public string Name { get; set; }
+        protected void Extract(string localFile, string tempFolder, string internalZipPath)
+        {
+            using (var zipFile = ZipFile.Read(localFile))
+            {
+                if (string.IsNullOrEmpty(internalZipPath))
+                {
+                    zipFile.ExtractAll(tempFolder);
+                }
+                else
+                {
+                    var selection = (from e in zipFile.Entries
+                                     where (e.FileName).StartsWith(internalZipPath)
+                                     select e);
 
-		public abstract IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo);
-		public abstract AsimovVersion GetVersion(string versionId, PackageInfo packageInfo);
-		public abstract string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder);
-
-		protected void Extract(string localFile, string tempFolder, string internalZipPath) {
-			using (var zipFile = ZipFile.Read(localFile)) {
-				if (string.IsNullOrEmpty(internalZipPath)) {
-					zipFile.ExtractAll(tempFolder);
-				}
-				else {
-					var selection = (from e in zipFile.Entries
-					                 where (e.FileName).StartsWith(internalZipPath)
-					                 select e);
-
-					foreach (var e in selection) {
-						e.Extract(tempFolder);
-					}
-				}
-			}
-		}
-
-	}
-
+                    foreach (var e in selection)
+                    {
+                        e.Extract(tempFolder);
+                    }
+                }
+            }
+        }
+    }
 }

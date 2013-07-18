@@ -14,13 +14,11 @@
 * limitations under the License.
 ******************************************************************************/
 
-namespace AsimovDeploy.WinAgent.Web.Commands {
-
-	public class UnitActionCommand {
-
-		public string unitName { get; set; }
-		public string actionName { get; set; }
-
-	}
-
+namespace AsimovDeploy.WinAgent.Web.Commands
+{
+    public class UnitActionCommand
+    {
+        public string unitName { get; set; }
+        public string actionName { get;set; }
+    }
 }

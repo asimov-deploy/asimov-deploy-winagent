@@ -12,129 +12,149 @@ using Ionic.Zip;
 using Newtonsoft.Json;
 using log4net;
 
-namespace AsimovDeploy.WinAgentUpdater {
+namespace AsimovDeploy.WinAgentUpdater
+{
+    public class Updater
+    {
+        private Timer _timer;
 
-	public class Updater {
+        private static ILog _log = LogManager.GetLogger(typeof(Updater));
+        private string _watchFolder;
+        private int _port;
+        private string _installDir;
+        private const int interval = 30000;
+        
+        public void Start()
+        {
+            _watchFolder = ConfigurationManager.AppSettings["Asimov.WatchFolder"];
+            _port = Int32.Parse(ConfigurationManager.AppSettings["Asimov.WebPort"]);
+            _installDir = ConfigurationManager.AppSettings["Asimov.InstallDir"];
 
-		private Timer _timer;
+            _timer = new Timer(TimerTick, null, 0, interval);
+        }
 
-		private static ILog _log = LogManager.GetLogger(typeof (Updater));
-		private string _watchFolder;
-		private int _port;
-		private string _installDir;
-		private const int interval = 30000;
+        public void Stop()
+        {
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
+        }
 
-		public void Start() {
-			_watchFolder = ConfigurationManager.AppSettings["Asimov.WatchFolder"];
-			_port = Int32.Parse(ConfigurationManager.AppSettings["Asimov.WebPort"]);
-			_installDir = ConfigurationManager.AppSettings["Asimov.InstallDir"];
+        private void TimerTick(object state)
+        {
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
 
-			_timer = new Timer(TimerTick, null, 0, interval);
-		}
+            _log.Info("Looking for new version");
 
-		public void Stop() {
-			_timer.Change(Timeout.Infinite, Timeout.Infinite);
-		}
+            try
+            {
+                var updateInfo = new UpdateInfoCollector(_watchFolder, _port).Collect();
 
-		private void TimerTick(object state) {
-			_timer.Change(Timeout.Infinite, Timeout.Infinite);
+                _log.InfoFormat(updateInfo.ToString());
 
-			_log.Info("Looking for new version");
+                using (var service = new ServiceController("AsimovDeploy.WinAgent"))
+                {
+                    if (!updateInfo.NeedsAnyUpdate())
+                        return;
 
-			try {
-				var updateInfo = new UpdateInfoCollector(_watchFolder, _port).Collect();
+                    StopService(service);
+                    
+                    if (updateInfo.NewBuildFound())
+                    {
+                        UpdateWinAgentWithNewBuild(updateInfo.LastBuild);
+                        if (updateInfo.HasLastConfig)
+                        {
+                            UpdateWinAgentConfig(updateInfo.LastConfig);
+                        }
+                    }
 
-				_log.InfoFormat(updateInfo.ToString());
+                    if (updateInfo.NewConfigFound())
+                    {
+                        UpdateWinAgentConfig(updateInfo.LastConfig);
+                    }
 
-				using (var service = new ServiceController("AsimovDeploy.WinAgent")) {
-					if (!updateInfo.NeedsAnyUpdate()) {
-						return;
-					}
+                    StartService(service);
+                }
 
-					StopService(service);
+            }
+            catch(Exception ex)
+            {
+                _log.Error("Failed to check for upgrade", ex);
+            }
+            finally
+            {
+                _timer.Change(interval, interval);
+            }
+        }
 
-					if (updateInfo.NewBuildFound()) {
-						UpdateWinAgentWithNewBuild(updateInfo.LastBuild);
-						if (updateInfo.HasLastConfig) {
-							UpdateWinAgentConfig(updateInfo.LastConfig);
-						}
-					}
+        private void UpdateWinAgentConfig(AsimovConfigUpdate lastConfig)
+        {
+            _log.Info("Updating config to version " + lastConfig.Version);
 
-					if (updateInfo.NewConfigFound()) {
-						UpdateWinAgentConfig(updateInfo.LastConfig);
-					}
+            var configDir = Path.Combine(_installDir, "ConfigFiles");
 
-					StartService(service);
-				}
-			}
-			catch (Exception ex) {
-				_log.Error("Failed to check for upgrade", ex);
-			}
-			finally {
-				_timer.Change(interval, interval);
-			}
-		}
+            CleanFolder(configDir);
+            CopyNewBuildToInstallDir(configDir, lastConfig.FilePath);
+        }
 
-		private void UpdateWinAgentConfig(AsimovConfigUpdate lastConfig) {
-			_log.Info("Updating config to version " + lastConfig.Version);
+        private void UpdateWinAgentWithNewBuild(AsimovVersion lastBuild)
+        {
+            _log.InfoFormat("Installing new build {0}", lastBuild.Version);
+            
+            CleanFolder(_installDir);
 
-			var configDir = Path.Combine(_installDir, "ConfigFiles");
+            CopyNewBuildToInstallDir(_installDir, lastBuild.FilePath);
+        }
 
-			CleanFolder(configDir);
-			CopyNewBuildToInstallDir(configDir, lastConfig.FilePath);
-		}
+        private static void StopService(ServiceController serviceController)
+        {
+            if (serviceController.Status == ServiceControllerStatus.Running)
+            {
+                _log.Info("Stopping AsimovDeploy...");
+                serviceController.Stop();
+                serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                _log.Info("AsimovDeploy stopped");
+            }
+            else
+            {
+                _log.Info("AsimovDeploy Service was not running, trying to update and start it");
+            }
+        }
 
-		private void UpdateWinAgentWithNewBuild(AsimovVersion lastBuild) {
-			_log.InfoFormat("Installing new build {0}", lastBuild.Version);
+        private void StartService(ServiceController serviceController)
+        {
+            _log.Info("Starting service...");
+            serviceController.Start();
+            serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(1));
+            
+            _log.Info("Service  started");
+        }
 
-			CleanFolder(_installDir);
+        private void CopyNewBuildToInstallDir(string installDir, string filePath)
+        {
+            using (var zipFile = ZipFile.Read(filePath))
+            {
+               zipFile.ExtractAll(installDir);
+            }
+        }
 
-			CopyNewBuildToInstallDir(_installDir, lastBuild.FilePath);
-		}
+        private void CleanFolder(string destinationFolder)
+        {
+            if (destinationFolder.Contains("Asimov") == false)
+            {
+                throw new Exception("Asimov install dir does not contain asimov, will abort upgrade");
+            }
 
-		private static void StopService(ServiceController serviceController) {
-			if (serviceController.Status == ServiceControllerStatus.Running) {
-				_log.Info("Stopping AsimovDeploy...");
-				serviceController.Stop();
-				serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
-				_log.Info("AsimovDeploy stopped");
-			}
-			else {
-				_log.Info("AsimovDeploy Service was not running, trying to update and start it");
-			}
-		}
+            var dir = new DirectoryInfo(destinationFolder);
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                if (!file.Extension.Contains("log"))
+                    file.Delete();
+            }
 
-		private void StartService(ServiceController serviceController) {
-			_log.Info("Starting service...");
-			serviceController.Start();
-			serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(1));
+            foreach (DirectoryInfo subDirectory in dir.GetDirectories()) subDirectory.Delete(true);
+        }
 
-			_log.Info("Service  started");
-		}
+       
+    }
 
-		private void CopyNewBuildToInstallDir(string installDir, string filePath) {
-			using (var zipFile = ZipFile.Read(filePath)) {
-				zipFile.ExtractAll(installDir);
-			}
-		}
-
-		private void CleanFolder(string destinationFolder) {
-			if (destinationFolder.Contains("Asimov") == false) {
-				throw new Exception("Asimov install dir does not contain asimov, will abort upgrade");
-			}
-
-			var dir = new DirectoryInfo(destinationFolder);
-			foreach (FileInfo file in dir.GetFiles()) {
-				if (!file.Extension.Contains("log")) {
-					file.Delete();
-				}
-			}
-
-			foreach (DirectoryInfo subDirectory in dir.GetDirectories()) {
-				subDirectory.Delete(true);
-			}
-		}
-
-	}
-
+   
 }

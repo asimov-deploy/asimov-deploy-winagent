@@ -16,19 +16,18 @@
 
 using System.Collections.Generic;
 
-namespace AsimovDeploy.WinAgent.Web.Commands {
+namespace AsimovDeploy.WinAgent.Web.Commands
+{
+    public class DeployCommand : AsimovCommand
+    {
+        public string unitName { get; set; }
+        public string versionId { get; set; }
 
-	public class DeployCommand : AsimovCommand {
+        public Dictionary<string, object> parameters { get; set; }
+    }
 
-		public string unitName { get; set; }
-		public string versionId { get; set; }
+    public class AsimovCommand
+    {
 
-		public Dictionary<string, object> parameters { get; set; }
-
-	}
-
-	public class AsimovCommand {
-
-	}
-
+    }
 }

@@ -17,22 +17,24 @@
 using System.Dynamic;
 using System.Text;
 
-namespace AsimovDeploy.WinAgent.Framework.Models {
+namespace AsimovDeploy.WinAgent.Framework.Models
+{
+    public class PasswordActionParameter : ActionParameter
+    {
+        public string Password { get; set; }
 
-	public class PasswordActionParameter : ActionParameter {
+        public override dynamic GetDescriptor()
+        {
+            dynamic descriptor = new ExpandoObject();
+            descriptor.type = "password";
+            descriptor.name = Name;
+            descriptor.@default = "";
+            return descriptor;
+        }
 
-		public string Password { get; set; }
+        public override void ApplyToPowershellScript(StringBuilder script, dynamic value)
+        {
 
-		public override dynamic GetDescriptor() {
-			dynamic descriptor = new ExpandoObject();
-			descriptor.type = "password";
-			descriptor.name = Name;
-			descriptor.@default = "";
-			return descriptor;
-		}
-
-		public override void ApplyToPowershellScript(StringBuilder script, dynamic value) {}
-
-	}
-
+        }
+    }
 }

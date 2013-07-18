@@ -16,25 +16,22 @@
 
 using System;
 
-namespace AsimovDeploy.WinAgent.Framework.LoadBalancers {
+namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
+{
+    public interface ILoadBalancer : IDisposable
+    {
+        void Login();
 
-	public interface ILoadBalancer : IDisposable {
+        HostStatus[] GetHostList();
+        HostStatus GetHostStatusById(int id);
+        void EnableHostById(int id);
+        void DisableHostById(int id);
+    }
 
-		void Login();
-
-		HostStatus[] GetHostList();
-		HostStatus GetHostStatusById(int id);
-		void EnableHostById(int id);
-		void DisableHostById(int id);
-
-	}
-
-	public class HostStatus {
-
-		public int id { get; set; }
-		public string name { get; set; }
-		public bool enabled { get; set; }
-
-	}
-
+    public class HostStatus
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public bool enabled { get; set; }
+    }
 }

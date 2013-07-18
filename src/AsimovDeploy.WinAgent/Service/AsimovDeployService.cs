@@ -22,41 +22,43 @@ using StructureMap;
 using log4net;
 using log4net.Repository.Hierarchy;
 
-namespace AsimovDeploy.WinAgent.Service {
+namespace AsimovDeploy.WinAgent.Service
+{
+    public class AsimovDeployService : IAsimovDeployService
+    {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(AsimovDeployService));
 
-	public class AsimovDeployService : IAsimovDeployService {
+        public void Start()
+        {
+            try
+            {
+                ComponentRegistration.RegisterComponents();
+                ComponentRegistration.ReadAndRegisterConfiguration();
+                AddNodeFrontAppender();
+                ComponentRegistration.StartStartableComponenters();
 
-		private static readonly ILog Log = LogManager.GetLogger(typeof (AsimovDeployService));
+                var config = ObjectFactory.GetInstance<IAsimovConfig>();
+                Log.InfoFormat("WinAgent Started, Version={0}, ConfigVersion={1}", VersionUtil.GetAgentVersion(), config.ConfigVersion);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error while starting AsimovDeployService", e);
+                throw;
+            }
+        }
 
-		public void Start() {
-			try {
-				ComponentRegistration.RegisterComponents();
-				ComponentRegistration.ReadAndRegisterConfiguration();
-				AddNodeFrontAppender();
-				ComponentRegistration.StartStartableComponenters();
+        private void AddNodeFrontAppender()
+        {
+            var hierarchy = (Hierarchy)LogManager.GetRepository();
+            var appender = new NodeFrontLogAppender();
+            appender.ActivateOptions();
+            hierarchy.Root.AddAppender(appender);
+        }
 
-				var config = ObjectFactory.GetInstance<IAsimovConfig>();
-				Log.InfoFormat("WinAgent Started, Version={0}, ConfigVersion={1}", VersionUtil.GetAgentVersion(),
-				               config.ConfigVersion);
-			}
-			catch (Exception e) {
-				Log.Error("Error while starting AsimovDeployService", e);
-				throw;
-			}
-		}
-
-		private void AddNodeFrontAppender() {
-			var hierarchy = (Hierarchy) LogManager.GetRepository();
-			var appender = new NodeFrontLogAppender();
-			appender.ActivateOptions();
-			hierarchy.Root.AddAppender(appender);
-		}
-
-		public void Stop() {
-			Log.Info("WinAgent Stopping");
-			ComponentRegistration.StopAll();
-		}
-
-	}
-
+        public void Stop()
+        {
+            Log.Info("WinAgent Stopping");
+            ComponentRegistration.StopAll();
+        }
+    }
 }

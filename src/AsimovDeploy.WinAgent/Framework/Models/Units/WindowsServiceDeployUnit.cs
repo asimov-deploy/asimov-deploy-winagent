@@ -20,53 +20,59 @@ using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
 using AsimovDeploy.WinAgent.Framework.Models.UnitActions;
 using AsimovDeploy.WinAgent.Framework.Tasks;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.Units {
+namespace AsimovDeploy.WinAgent.Framework.Models.Units
+{
+    public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted
+    {
+        private string _serviceName; 
+        public string ServiceName 
+        {
+            get { return _serviceName ?? Name;}
+            set { _serviceName = value; } 
+        }
 
-	public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted {
+        public string Url { get; set; }
 
-		private string _serviceName;
-		public string ServiceName {
-			get { return _serviceName ?? Name; }
-			set { _serviceName = value; }
-		}
+	    public WindowsServiceDeployUnit()
+	    {
+			Actions.Add(new StartDeployUnitAction() { Sort = 10 });
+			Actions.Add(new StopDeployUnitAction() { Sort = 11 });
+	    }
 
-		public string Url { get; set; }
+        public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues)
+        {
+            var task = new DeployTask(this, version, parameterValues);
+            task.AddDeployStep<UpdateWindowsService>();
+            return task;
+        }
 
-		public WindowsServiceDeployUnit() {
-			Actions.Add(new StartDeployUnitAction() {Sort = 10});
-			Actions.Add(new StopDeployUnitAction() {Sort = 11});
-		}
+        public override DeployUnitInfo GetUnitInfo()
+        {
+            var serviceManager = new ServiceController(ServiceName);
 
-		public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues) {
-			var task = new DeployTask(this, version, parameterValues);
-			task.AddDeployStep<UpdateWindowsService>();
-			return task;
-		}
+            var unitInfo = base.GetUnitInfo();
+            unitInfo.Url = Url;
 
-		public override DeployUnitInfo GetUnitInfo() {
-			var serviceManager = new ServiceController(ServiceName);
+            try
+            {
+                unitInfo.Status = serviceManager.Status == ServiceControllerStatus.Running ? UnitStatus.Running : UnitStatus.Stopped;
+            }
+            catch
+            {
+                unitInfo.Status = UnitStatus.NotFound;
+            }
 
-			var unitInfo = base.GetUnitInfo();
-			unitInfo.Url = Url;
+            return unitInfo;
+        }
 
-			try {
-				unitInfo.Status = serviceManager.Status == ServiceControllerStatus.Running ? UnitStatus.Running : UnitStatus.Stopped;
-			}
-			catch {
-				unitInfo.Status = UnitStatus.NotFound;
-			}
+	    public AsimovTask GetStopTask()
+	    {
+		    return new StartStopWindowsServiceTask(this, stop: true);
+	    }
 
-			return unitInfo;
-		}
-
-		public AsimovTask GetStopTask() {
-			return new StartStopWindowsServiceTask(this, stop: true);
-		}
-
-		public AsimovTask GetStartTask() {
+	    public AsimovTask GetStartTask()
+	    {
 			return new StartStopWindowsServiceTask(this, stop: false);
-		}
-
-	}
-
+	    }
+    }
 }

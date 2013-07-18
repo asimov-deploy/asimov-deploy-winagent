@@ -18,11 +18,13 @@ using System.Collections.Generic;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using Newtonsoft.Json;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.Units {
+namespace AsimovDeploy.WinAgent.Framework.Models.Units
+{
+    [JsonConverter(typeof(DeployUnitConverter))]
+    public class DeployUnits : List<DeployUnit>
+    {
 
-	[JsonConverter(typeof (DeployUnitConverter))]
-	public class DeployUnits : List<DeployUnit> {
+    }
 
-	}
 
 }

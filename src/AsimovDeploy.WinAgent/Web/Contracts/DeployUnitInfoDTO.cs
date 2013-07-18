@@ -14,29 +14,26 @@
 * limitations under the License.
 ******************************************************************************/
 
-namespace AsimovDeploy.WinAgent.Web.Contracts {
+namespace AsimovDeploy.WinAgent.Web.Contracts
+{
+    public class DeployUnitInfoDTO
+    {
+        public string name { get; set; }
+        public string url { get; set; }
+        public string version { get; set; }
+        public string branch { get; set; }
+        public string status { get; set; }
+        public string lastDeployed { get; set; }
+        public bool hasDeployParameters { get; set; }
+        public string[] actions { get; set;}
+    }
 
-	public class DeployUnitInfoDTO {
-
-		public string name { get; set; }
-		public string url { get; set; }
-		public string version { get; set; }
-		public string branch { get; set; }
-		public string status { get; set; }
-		public string lastDeployed { get; set; }
-		public bool hasDeployParameters { get; set; }
-		public string[] actions { get; set; }
-
-	}
-
-	public class DeployedVersionDTO {
-
-		public string versionNumber;
-		public string versionTimestamp;
-		public string versionCommit;
-		public string versionBranch;
-		public string deployedTimestamp;
-
-	}
-
+    public class DeployedVersionDTO
+    {
+        public string versionNumber;
+        public string versionTimestamp;
+        public string versionCommit;
+        public string versionBranch;
+        public string deployedTimestamp;
+    }
 }

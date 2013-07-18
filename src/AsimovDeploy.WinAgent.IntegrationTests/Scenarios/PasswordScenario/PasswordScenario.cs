@@ -5,44 +5,46 @@ using AsimovDeploy.WinAgent.Web.Commands;
 using NUnit.Framework;
 using Shouldly;
 
-namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.PasswordScenario {
+namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.PasswordScenario
+{
+    [TestFixture]
+    public class PasswordScenario : WinAgentSystemTest
+    {
+        public override void Given()
+        {
+            GivenFoldersForScenario();
+            GivenRunningAgent();
+        }
 
-	[TestFixture]
-	public class PasswordScenario : WinAgentSystemTest {
+        [Test]
+        public void cannot_deploy_without_correct_password()
+        {
+            var parameterValues = new Dictionary<string, object>();
+            parameterValues["Password"] = "wrong";
 
-		public override void Given() {
-			GivenFoldersForScenario();
-			GivenRunningAgent();
-		}
+            Agent.Post("/deploy/deploy", NodeFront.ApiKey, new DeployCommand
+            {
+                unitName = "PasswordTest",
+                versionId = "somefile-v12.0.0.0-[bbb]-[123123].zip",
+                parameters = parameterValues
+            });
 
-		[Test]
-		public void cannot_deploy_without_correct_password() {
-			var parameterValues = new Dictionary<string, object>();
-			parameterValues["Password"] = "wrong";
+            Thread.Sleep(1000);
 
-			Agent.Post("/deploy/deploy", NodeFront.ApiKey, new DeployCommand {
-				unitName = "PasswordTest",
-				versionId = "somefile-v12.0.0.0-[bbb]-[123123].zip",
-				parameters = parameterValues
-			});
+            File.Exists(Path.Combine(DataDir, "FileCopyTarget\\somefile.txt")).ShouldBe(false);
 
-			Thread.Sleep(1000);
+            parameterValues["Password"] = "the secret";
 
-			File.Exists(Path.Combine(DataDir, "FileCopyTarget\\somefile.txt")).ShouldBe(false);
+            Agent.Post("/deploy/deploy", NodeFront.ApiKey, new DeployCommand
+            {
+                unitName = "PasswordTest",
+                versionId = "somefile-v12.0.0.0-[bbb]-[123123].zip",
+                parameters = parameterValues
+            });
 
-			parameterValues["Password"] = "the secret";
+            Thread.Sleep(1000);
 
-			Agent.Post("/deploy/deploy", NodeFront.ApiKey, new DeployCommand {
-				unitName = "PasswordTest",
-				versionId = "somefile-v12.0.0.0-[bbb]-[123123].zip",
-				parameters = parameterValues
-			});
-
-			Thread.Sleep(1000);
-
-			File.Exists(Path.Combine(DataDir, "FileCopyTarget\\somefile.txt")).ShouldBe(true);
-		}
-
-	}
-
+            File.Exists(Path.Combine(DataDir, "FileCopyTarget\\somefile.txt")).ShouldBe(true);
+        }
+    }
 }

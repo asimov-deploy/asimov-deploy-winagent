@@ -18,17 +18,16 @@ using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 using AsimovDeploy.WinAgent.Framework.Tasks;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions {
-
-	public class VerifyCommandUnitAction : UnitAction {
-
+namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
+{
+	public class VerifyCommandUnitAction : UnitAction
+	{
 		public string ZipPath { get; set; }
 		public string Command { get; set; }
-
-		public override AsimovTask GetTask(DeployUnit unit) {
-			return new VerifyCommandTask((WebSiteDeployUnit) unit, ZipPath, Command);
+		
+		public override AsimovTask GetTask(DeployUnit unit)
+		{
+			return new VerifyCommandTask((WebSiteDeployUnit)unit, ZipPath, Command);
 		}
-
 	}
-
 }

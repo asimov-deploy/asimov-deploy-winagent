@@ -20,87 +20,86 @@ using System.Threading;
 using Microsoft.Web.Administration;
 using log4net;
 
-namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement {
+namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement
+{
+    public class IIS7WebServer : IWebServer
+    {
+        private static ILog _log = LogManager.GetLogger(typeof(IIS7WebServer));
 
-	public class IIS7WebServer : IWebServer {
+        private readonly string _siteName;
+        private readonly string _appPath;
 
-		private static ILog _log = LogManager.GetLogger(typeof (IIS7WebServer));
+        public IIS7WebServer(string siteName, string siteUrl)
+        {
+            _siteName = siteName;
 
-		private readonly string _siteName;
-		private readonly string _appPath;
+            if (siteUrl.EndsWith("/"))
+                siteUrl = siteUrl.TrimEnd('/');
 
-		public IIS7WebServer(string siteName, string siteUrl) {
-			_siteName = siteName;
+            _appPath = new Uri(siteUrl).AbsolutePath;
+        }
 
-			if (siteUrl.EndsWith("/")) {
-				siteUrl = siteUrl.TrimEnd('/');
-			}
+        public void StartAppPool()
+        {
+            using (var serverManager = new ServerManager())
+            {
+                var site = serverManager.Sites.Single(x => x.Name == _siteName);
 
-			_appPath = new Uri(siteUrl).AbsolutePath;
-		}
+                var webApp = site.Applications.Single(x => x.Path == _appPath);
+                var appPool = serverManager.ApplicationPools[webApp.ApplicationPoolName];
 
-		public void StartAppPool() {
-			using (var serverManager = new ServerManager()) {
-				var site = serverManager.Sites.Single(x => x.Name == _siteName);
+                appPool.Start();
+            }
+        }
 
-				var webApp = site.Applications.Single(x => x.Path == _appPath);
-				var appPool = serverManager.ApplicationPools[webApp.ApplicationPoolName];
+        public void StopAppPool()
+        {
+            using (var serverManager = new ServerManager())
+            {
+                var site = serverManager.Sites.Single(x => x.Name == _siteName);
 
-				appPool.Start();
-			}
-		}
+                var rootApp = site.Applications.Single(x => x.Path == _appPath);
+                var appPool = serverManager.ApplicationPools[rootApp.ApplicationPoolName];
 
-		public void StopAppPool() {
-			using (var serverManager = new ServerManager()) {
-				var site = serverManager.Sites.Single(x => x.Name == _siteName);
+                if (appPool.State == ObjectState.Started)
+                    appPool.Stop();
 
-				var rootApp = site.Applications.Single(x => x.Path == _appPath);
-				var appPool = serverManager.ApplicationPools[rootApp.ApplicationPoolName];
+                do
+                {
+                    Thread.Sleep(500);
+                } while (appPool.State == ObjectState.Stopping);
+            }
+        }
 
-				if (appPool.State == ObjectState.Started) {
-					appPool.Stop();
-				}
-
-				do {
-					Thread.Sleep(500);
-				} while (appPool.State == ObjectState.Stopping);
-			}
-		}
-
-		public WebSiteData GetInfo() {
-			using (var serverManager = new ServerManager()) {
-				var site = serverManager.Sites.SingleOrDefault(x => x.Name == _siteName);
-				if (site == null) {
-					return null;
-				}
-
+        public WebSiteData GetInfo()
+        {
+            using (var serverManager = new ServerManager())
+            {
+                var site = serverManager.Sites.SingleOrDefault(x => x.Name == _siteName);
+                if (site == null)
+                    return null;
+                
 				var webApp = site.Applications.SingleOrDefault(x => x.Path == _appPath);
-				if (webApp == null) {
+                if (webApp == null)
+                    return null;
+
+                var vdir = webApp.VirtualDirectories.SingleOrDefault(x => x.Path == "/");
+                if (vdir == null)
 					return null;
-				}
 
-				var vdir = webApp.VirtualDirectories.SingleOrDefault(x => x.Path == "/");
-				if (vdir == null) {
-					return null;
-				}
+                var state = ObjectState.Started;
 
-				var state = ObjectState.Started;
+                // accessing state for WCF AppFabric sites causes com Exception
+                try { state = site.State; } catch { }
 
-				// accessing state for WCF AppFabric sites causes com Exception
-				try {
-					state = site.State;
-				}
-				catch {}
-
-				return new WebSiteData() {
-					SiteStarted = state == ObjectState.Started,
-					AppPoolStarted = serverManager.ApplicationPools[webApp.ApplicationPoolName].State == ObjectState.Started,
-					PhysicalPath = vdir.PhysicalPath,
-					AppPoolName = webApp.ApplicationPoolName
-				};
-			}
-		}
-
-	}
-
+                return new WebSiteData()
+                           {
+                               SiteStarted = state == ObjectState.Started,
+                               AppPoolStarted = serverManager.ApplicationPools[webApp.ApplicationPoolName].State == ObjectState.Started,
+                               PhysicalPath = vdir.PhysicalPath,
+                               AppPoolName = webApp.ApplicationPoolName
+                           };
+            }
+        }
+    }
 }

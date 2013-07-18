@@ -20,87 +20,94 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources {
+namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
+{
+    public class FileSystemPackageSource : PackageSource
+    {
+        public Uri Uri { get; set; }
+        public string Pattern { get; set; }
 
-	public class FileSystemPackageSource : PackageSource {
+        public FileSystemPackageSource()
+        {
+            Pattern = @"v(?<version>\d+\.\d+\.\d+\.\d+)-\[(?<branch>\w*)\]-\[(?<commit>\w*)\]";
+        }
 
-		public Uri Uri { get; set; }
-		public string Pattern { get; set; }
+        public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo)
+        {
+            var versions = new List<AsimovVersion>();
 
-		public FileSystemPackageSource() {
-			Pattern = @"v(?<version>\d+\.\d+\.\d+\.\d+)-\[(?<branch>\w*)\]-\[(?<commit>\w*)\]";
-		}
+            CollectZipFiles(versions, Uri.LocalPath, 1);
 
-		public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo) {
-			var versions = new List<AsimovVersion>();
+            return versions.OrderByDescending(x => x.Timestamp).ToList();
+        }
 
-			CollectZipFiles(versions, Uri.LocalPath, 1);
+        public override AsimovVersion GetVersion(string versionId, PackageInfo packageInfo)
+        {
+            var fileInfo = GetFilePathForVersion(versionId);
+            return GetVersionInfoFromFile(fileInfo);
+        }
 
-			return versions.OrderByDescending(x => x.Timestamp).ToList();
-		}
+        public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder)
+        {
+            var fileInfo = GetFilePathForVersion(versionId);
+            var localZipFileName = Path.Combine(tempFolder, fileInfo.Name);
 
-		public override AsimovVersion GetVersion(string versionId, PackageInfo packageInfo) {
-			var fileInfo = GetFilePathForVersion(versionId);
-			return GetVersionInfoFromFile(fileInfo);
-		}
+            File.Copy(fileInfo.FullName, localZipFileName, true);
 
-		public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder) {
-			var fileInfo = GetFilePathForVersion(versionId);
-			var localZipFileName = Path.Combine(tempFolder, fileInfo.Name);
+            Extract(localZipFileName, tempFolder, packageInfo.InternalPath);
 
-			File.Copy(fileInfo.FullName, localZipFileName, true);
+            File.Delete(localZipFileName);
 
-			Extract(localZipFileName, tempFolder, packageInfo.InternalPath);
-
-			File.Delete(localZipFileName);
-
-			return Path.Combine(tempFolder, packageInfo.InternalPath);
-		}
+            return Path.Combine(tempFolder, packageInfo.InternalPath);
+        }
 
 
-		private FileInfo GetFilePathForVersion(string versionId) {
-			var versionPath = Path.Combine(Uri.LocalPath, versionId);
-			if (!File.Exists(versionPath)) {
-				throw new FileNotFoundException("Could not find version file " + versionId);
-			}
+        private FileInfo GetFilePathForVersion(string versionId)
+        {
+            var versionPath = Path.Combine(Uri.LocalPath, versionId);
+            if (!File.Exists(versionPath))
+            {
+                throw new FileNotFoundException("Could not find version file " + versionId);
+            }
 
-			return new FileInfo(versionPath);
-		}
+            return new FileInfo(versionPath);
+        }
 
-		private void CollectZipFiles(IList<AsimovVersion> versions, string directory, int level) {
-			foreach (var filePath in Directory.EnumerateFiles(directory, "*.zip")) {
-				var fileInfo = new FileInfo(filePath);
-				var version = GetVersionInfoFromFile(fileInfo);
-				if (version != null) {
-					versions.Add(version);
-				}
-			}
+        private void CollectZipFiles(IList<AsimovVersion> versions, string directory, int level)
+        {
+            foreach (var filePath in Directory.EnumerateFiles(directory, "*.zip"))
+            {
+                var fileInfo = new FileInfo(filePath);
+                var version = GetVersionInfoFromFile(fileInfo);
+                if (version != null)
+                    versions.Add(version);
+            }
 
-			if (level <= 2) {
-				foreach (var subDir in Directory.EnumerateDirectories(directory)) {
-					CollectZipFiles(versions, subDir, level + 1);
-				}
-			}
-		}
+            if (level <= 2)
+            {
+                foreach (var subDir in Directory.EnumerateDirectories(directory))
+                {
+                    CollectZipFiles(versions, subDir, level + 1);
+                }
+            }
+        }
 
-		private AsimovVersion GetVersionInfoFromFile(FileInfo fileInfo) {
-			var match = Regex.Match(fileInfo.Name, Pattern);
-			if (!match.Success) {
-				return null;
-			}
+        private AsimovVersion GetVersionInfoFromFile(FileInfo fileInfo)
+        {
+            var match = Regex.Match(fileInfo.Name, Pattern);
+            if (!match.Success)
+                return null;
 
-			var version = new AsimovVersion();
-			version.Id = fileInfo.FullName.Replace(Uri.LocalPath, "");
-			version.Id = version.Id.TrimStart(new[] {'\\'});
+            var version = new AsimovVersion();
+            version.Id = fileInfo.FullName.Replace(Uri.LocalPath, "");
+            version.Id = version.Id.TrimStart(new[] { '\\' });
 
-			version.Number = match.Groups["version"].Value;
-			version.Branch = match.Groups["branch"].Value;
-			version.Commit = match.Groups["commit"].Value;
-			version.Timestamp = fileInfo.LastAccessTime;
+            version.Number = match.Groups["version"].Value;
+            version.Branch = match.Groups["branch"].Value;
+            version.Commit = match.Groups["commit"].Value;
+            version.Timestamp = fileInfo.LastAccessTime;
 
-			return version;
-		}
-
-	}
-
+            return version;
+        }
+    }
 }

@@ -17,15 +17,13 @@
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions {
-
-	public abstract class UnitAction {
-
+namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
+{
+	public abstract class UnitAction
+	{
 		public string Name { get; set; }
 		public int Sort { get; set; }
-
+		
 		public abstract AsimovTask GetTask(DeployUnit unit);
-
 	}
-
 }

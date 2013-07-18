@@ -14,13 +14,11 @@
 * limitations under the License.
 ******************************************************************************/
 
-namespace AsimovDeploy.WinAgent.Framework.Common {
-
-	public interface IStartable {
-
-		void Start();
-		void Stop();
-
-	}
-
+namespace AsimovDeploy.WinAgent.Framework.Common
+{
+    public interface IStartable
+    {
+        void Start();
+        void Stop();
+    }
 }

@@ -16,14 +16,13 @@
 
 using AsimovDeploy.WinAgent.Framework.WebSiteManagement;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.Units {
-
-	public class IIS6WebSiteDeployUnit : WebSiteDeployUnit {
-
-		public override IWebServer GetWebServer() {
-			return new IIS6WebServer(SiteName);
-		}
-
-	}
-
+namespace AsimovDeploy.WinAgent.Framework.Models.Units
+{
+    public class IIS6WebSiteDeployUnit : WebSiteDeployUnit
+    {
+        public override IWebServer GetWebServer()
+        {
+            return new IIS6WebServer(SiteName);
+        }
+    }
 }

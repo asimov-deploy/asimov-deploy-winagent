@@ -20,44 +20,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AsimovDeploy.WinAgent.Framework.Models {
+namespace AsimovDeploy.WinAgent.Framework.Models
+{
+    public class ParameterValues
+    {
+        private readonly IDictionary<string, dynamic> _parameters;
 
-	public class ParameterValues {
+        public ParameterValues(IDictionary<string, dynamic> parameters)
+        {
+            _parameters = parameters;
+        }
 
-		private readonly IDictionary<string, dynamic> _parameters;
+        public dynamic GetValue(string parameterName)
+        {
+            if (_parameters == null)
+                return null;
 
-		public ParameterValues(IDictionary<string, dynamic> parameters) {
-			_parameters = parameters;
-		}
+            return _parameters[parameterName];
+        }
 
-		public dynamic GetValue(string parameterName) {
-			if (_parameters == null) {
-				return null;
-			}
+        public string GetLogString()
+        {
+            if (_parameters == null || _parameters.Count == 0)
+                return "";
 
-			return _parameters[parameterName];
-		}
+            var str = new StringBuilder("Parameters: {");
 
-		public string GetLogString() {
-			if (_parameters == null || _parameters.Count == 0) {
-				return "";
-			}
+            foreach (var keyValue in _parameters)
+            {
+                if (keyValue.Key.IndexOf("password", StringComparison.OrdinalIgnoreCase) != -1)
+                    continue;
 
-			var str = new StringBuilder("Parameters: {");
+                str.AppendFormat(" {0}: {1}", keyValue.Key, keyValue.Value);
+            }
 
-			foreach (var keyValue in _parameters) {
-				if (keyValue.Key.IndexOf("password", StringComparison.OrdinalIgnoreCase) != -1) {
-					continue;
-				}
+            str.Append(" }");
 
-				str.AppendFormat(" {0}: {1}", keyValue.Key, keyValue.Value);
-			}
-
-			str.Append(" }");
-
-			return str.ToString();
-		}
-
-	}
-
+            return str.ToString();
+        }
+    }
 }

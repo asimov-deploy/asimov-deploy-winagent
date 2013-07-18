@@ -19,29 +19,27 @@ using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
-namespace AsimovDeploy.WinAgent.Framework.Models {
+namespace AsimovDeploy.WinAgent.Framework.Models
+{
+    public interface IAsimovConfig
+    {
+        string Environment { get; }
+        int HeartbeatIntervalSeconds { get; }
+        string TempFolder { get; }
+        string NodeFrontUrl { get;}
+        int WebPort { get; }
+        string ApiKey { get; set; }
+        int LoadBalancerId { get; }
+        int ConfigVersion { get; }
 
-	public interface IAsimovConfig {
+        DeployUnits Units { get; }
 
-		string Environment { get; }
-		int HeartbeatIntervalSeconds { get; }
-		string TempFolder { get; }
-		string NodeFrontUrl { get; }
-		int WebPort { get; }
-		string ApiKey { get; set; }
-		int LoadBalancerId { get; }
-		int ConfigVersion { get; }
+        DeployUnit GetUnitByName(string name);
 
-		DeployUnits Units { get; }
+        LoadBalancerSettings LoadBalancer { get; }
 
-		DeployUnit GetUnitByName(string name);
+        Uri WebControlUrl { get; }
 
-		LoadBalancerSettings LoadBalancer { get; }
-
-		Uri WebControlUrl { get; }
-
-		PackageSource GetPackageSourceFor(DeployUnit deployUnit);
-
-	}
-
+        PackageSource GetPackageSourceFor(DeployUnit deployUnit);
+    }
 }

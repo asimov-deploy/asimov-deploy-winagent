@@ -21,61 +21,67 @@ using AsimovDeploy.WinAgent.Framework.Models;
 using StructureMap;
 using log4net;
 
-namespace AsimovDeploy.WinAgent.Framework.Common {
+namespace AsimovDeploy.WinAgent.Framework.Common
+{
+    public abstract class AsimovTask
+    {
+        protected ILog Log;
 
-	public abstract class AsimovTask {
+        protected AsimovTask()
+        {
+            Log = LogManager.GetLogger(GetType());
+        }
 
-		protected ILog Log;
+        protected abstract void Execute();
 
-		protected AsimovTask() {
-			Log = LogManager.GetLogger(GetType());
-		}
+        protected virtual string InfoString()
+        {
+            return "";
+        }
+        
+        protected virtual string GetTaskName() 
+        {
+        	return GetType().Name;
+        }
 
-		protected abstract void Execute();
+        public event Action<Exception> Completed;
 
-		protected virtual string InfoString() {
-			return "";
-		}
+        public void ExecuteTask()
+        {
+            try
+            {
+            	Log.InfoFormat("Executing {0} - {1}", GetTaskName(), InfoString());
+                Execute();
+                RaiseExecuted(null);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Task failed", ex);
+                RaiseExecuted(ex);
+            }
+        }
 
-		protected virtual string GetTaskName() {
-			return GetType().Name;
-		}
+        public void RaiseExecuted(Exception exception)
+        {
+            if (Completed != null)
+                Completed(exception);
+        }
 
-		public event Action<Exception> Completed;
+        private IAsimovConfig _config;
+        protected virtual IAsimovConfig Config
+        {
+            get
+            {
+                if (_config == null)
+                    _config = ObjectFactory.GetInstance<IAsimovConfig>();
 
-		public void ExecuteTask() {
-			try {
-				Log.InfoFormat("Executing {0} - {1}", GetTaskName(), InfoString());
-				Execute();
-				RaiseExecuted(null);
-			}
-			catch (Exception ex) {
-				Log.Error("Task failed", ex);
-				RaiseExecuted(ex);
-			}
-		}
+                return _config;
+            }
+        }
 
-		public void RaiseExecuted(Exception exception) {
-			if (Completed != null) {
-				Completed(exception);
-			}
-		}
-
-		private IAsimovConfig _config;
-		protected virtual IAsimovConfig Config {
-			get {
-				if (_config == null) {
-					_config = ObjectFactory.GetInstance<IAsimovConfig>();
-				}
-
-				return _config;
-			}
-		}
-
-		protected virtual void AddTask(AsimovTask task) {
-			ObjectFactory.GetInstance<ITaskExecutor>().AddTask(task);
-		}
-
-	}
-
+        protected virtual void AddTask(AsimovTask task)
+        {
+            ObjectFactory.GetInstance<ITaskExecutor>().AddTask(task);
+        }
+    }
 }

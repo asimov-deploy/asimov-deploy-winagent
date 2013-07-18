@@ -19,21 +19,21 @@ using System.Configuration;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AsimovDeploy.WinAgent.Framework.Common {
-
-	public static class ConsoleOutputParseUtil {
-
-		public static IDictionary<string, string> ParseKeyValueString(string str) {
+namespace AsimovDeploy.WinAgent.Framework.Common
+{
+	public static class ConsoleOutputParseUtil
+	{
+		public static IDictionary<string, string> ParseKeyValueString(string str)
+		{
 			var within = str.Replace("##asimov-deploy[", "").TrimEnd(']');
 			var dictionary = new Dictionary<string, string>();
-
-			foreach (Match match in Regex.Matches(within, "(\\w+)='([^\']+)\'|([^\\s]+)")) {
+			
+			foreach (Match match in Regex.Matches(within, "(\\w+)='([^\']+)\'|([^\\s]+)"))
+			{
 				dictionary.Add(match.Groups[1].Value, match.Groups[2].Value);
 			}
 
 			return dictionary;
 		}
-
 	}
-
 }

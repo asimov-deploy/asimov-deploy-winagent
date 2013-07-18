@@ -14,18 +14,17 @@
 * limitations under the License.
 ******************************************************************************/
 
-namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources {
+namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
+{
+    public class PackageInfo
+    {
+        public string Source { get; set; }
+        public string InternalPath { get; set; }
+        public string SourceRelativePath { get; set; }
 
-	public class PackageInfo {
-
-		public string Source { get; set; }
-		public string InternalPath { get; set; }
-		public string SourceRelativePath { get; set; }
-
-		public PackageInfo() {
-			InternalPath = "";
-		}
-
-	}
-
+        public PackageInfo()
+        {
+            InternalPath = "";
+        }
+    }
 }

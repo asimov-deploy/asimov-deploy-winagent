@@ -1,39 +1,42 @@
 ﻿using Topshelf;
 using log4net;
 
-namespace AsimovDeploy.WinAgentUpdater {
+namespace AsimovDeploy.WinAgentUpdater
+{
+    class Program
+    {
+        public static ILog _log = LogManager.GetLogger(typeof(Program));
 
-	internal class Program {
+        private const string ServiceName = "AsimovDeploy.WinAgentUpdater";
+        
+        static void Main(string[] args)
+        {
+            log4net.Config.XmlConfigurator.Configure();
 
-		public static ILog _log = LogManager.GetLogger(typeof (Program));
+            var host = HostFactory.New(x =>
+            {
+                x.BeforeStartingServices(s => _log.InfoFormat("Starting {0}...", ServiceName));
+                x.AfterStoppingServices(s => _log.InfoFormat("Stopping {0}...", ServiceName));
 
-		private const string ServiceName = "AsimovDeploy.WinAgentUpdater";
+                x.Service<Updater>(s =>
+                {
+                    s.SetServiceName(ServiceName);
+                    s.ConstructUsing(name => new Updater());
 
-		private static void Main(string[] args) {
-			log4net.Config.XmlConfigurator.Configure();
+                    s.WhenStarted(tc => tc.Start());
+                    s.WhenStopped(tc => tc.Stop());
+                });
 
-			var host = HostFactory.New(x => {
-				x.BeforeStartingServices(s => _log.InfoFormat("Starting {0}...", ServiceName));
-				x.AfterStoppingServices(s => _log.InfoFormat("Stopping {0}...", ServiceName));
+                x.RunAsLocalSystem();
 
-				x.Service<Updater>(s => {
-					s.SetServiceName(ServiceName);
-					s.ConstructUsing(name => new Updater());
+                x.SetDisplayName(ServiceName);
+                x.SetDescription(ServiceName);
+                x.SetServiceName(ServiceName);
+            });
 
-					s.WhenStarted(tc => tc.Start());
-					s.WhenStopped(tc => tc.Stop());
-				});
+            host.Run();
 
-				x.RunAsLocalSystem();
-
-				x.SetDisplayName(ServiceName);
-				x.SetDescription(ServiceName);
-				x.SetServiceName(ServiceName);
-			});
-
-			host.Run();
-		}
-
-	}
-
+            
+        }
+    }
 }

@@ -14,15 +14,13 @@
 * limitations under the License.
 ******************************************************************************/
 
-namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement {
+namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement
+{
+    public interface IWebServer
+    {
+        void StartAppPool();
+        void StopAppPool();
 
-	public interface IWebServer {
-
-		void StartAppPool();
-		void StopAppPool();
-
-		WebSiteData GetInfo();
-
-	}
-
+        WebSiteData GetInfo();
+    }
 }

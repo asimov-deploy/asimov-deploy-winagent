@@ -20,54 +20,57 @@ using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
-namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps {
+namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
+{
+    public class UpdateWebSite : IDeployStep
+    {
+        private readonly IAsimovConfig _config;
 
-	public class UpdateWebSite : IDeployStep {
+        public UpdateWebSite(IAsimovConfig config)
+        {
+            _config = config;
+        }
 
-		private readonly IAsimovConfig _config;
+        public void Execute(DeployContext context)
+        {
+            var deployUnit = (WebSiteDeployUnit) context.DeployUnit;
+            var webServer = deployUnit.GetWebServer();
 
-		public UpdateWebSite(IAsimovConfig config) {
-			_config = config;
-		}
+            var siteData = webServer.GetInfo();
+            if (siteData == null)
+                throw new DeployException("Site not found: " + deployUnit.SiteName);
 
-		public void Execute(DeployContext context) {
-			var deployUnit = (WebSiteDeployUnit) context.DeployUnit;
-			var webServer = deployUnit.GetWebServer();
+            context.Log.Info("Stopping AppPool...");
+            webServer.StopAppPool();
 
-			var siteData = webServer.GetInfo();
-			if (siteData == null) {
-				throw new DeployException("Site not found: " + deployUnit.SiteName);
-			}
+            context.PhysicalPath = siteData.PhysicalPath;
 
-			context.Log.Info("Stopping AppPool...");
-			webServer.StopAppPool();
+            CleanSitePhysicalPath(context, deployUnit.CleanDeploy);
 
-			context.PhysicalPath = siteData.PhysicalPath;
+            CopyNewFilesToPhysicalPath(context);
 
-			CleanSitePhysicalPath(context, deployUnit.CleanDeploy);
+            context.Log.Info("Starting AppPool...");
+            webServer.StartAppPool();
+        }
 
-			CopyNewFilesToPhysicalPath(context);
+        private void CopyNewFilesToPhysicalPath(DeployContext context)
+        {
+            context.Log.Info("Copying files...");
 
-			context.Log.Info("Starting AppPool...");
-			webServer.StartAppPool();
-		}
+            DirectoryUtil.CopyDirectory(context.TempFolderWithNewVersionFiles, context.PhysicalPath);
+        }
 
-		private void CopyNewFilesToPhysicalPath(DeployContext context) {
-			context.Log.Info("Copying files...");
-
-			DirectoryUtil.CopyDirectory(context.TempFolderWithNewVersionFiles, context.PhysicalPath);
-		}
-
-		private void CleanSitePhysicalPath(DeployContext context, bool cleanDeploy) {
-			if (cleanDeploy) {
-				context.Log.Info("Cleaning site physical path...");
-				DirectoryUtil.Clean(context.PhysicalPath);
-			}
-			else {
-				context.Log.Info("Clean deploy disabled, skipping cleaning step");
-			}
-		}
-
-	}
-
+        private void CleanSitePhysicalPath(DeployContext context, bool cleanDeploy)
+        {
+            if (cleanDeploy)
+            {
+                context.Log.Info("Cleaning site physical path...");
+                DirectoryUtil.Clean(context.PhysicalPath);
+            }
+            else
+            {
+                context.Log.Info("Clean deploy disabled, skipping cleaning step");
+            }
+        }
+    }
 }

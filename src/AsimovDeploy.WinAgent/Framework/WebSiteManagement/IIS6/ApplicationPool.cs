@@ -1,19 +1,20 @@
 using System.Management;
 
-namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement.IIS6 {
+namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement.IIS6
+{
+    public class ApplicationPool : WmiObjectBase
+    {
+        internal ApplicationPool(ManagementScope scope)
+            : base(scope)
+        {
+        }
 
-	public class ApplicationPool : WmiObjectBase {
+        internal ApplicationPool(ManagementScope scope, string name)
+            : base(scope)
+        {
+            this.Name = name;
+        }
 
-		internal ApplicationPool(ManagementScope scope)
-			: base(scope) {}
-
-		internal ApplicationPool(ManagementScope scope, string name)
-			: base(scope) {
-			this.Name = name;
-		}
-
-		public string Name { get; internal set; }
-
-	}
-
+        public string Name { get; internal set; }
+    }
 }
