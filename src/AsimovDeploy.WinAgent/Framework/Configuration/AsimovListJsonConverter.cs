@@ -19,52 +19,44 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace AsimovDeploy.WinAgent.Framework.Configuration
-{
-	public class AsimovListJsonConverter : JsonConverter
-	{
-	    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-	    {
-	
-	    }
-	
-	    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-	    {        	
-	    	var list = existingValue ?? Activator.CreateInstance(objectType);
-	    	var types = GetTypesForList(objectType);
-	
-	        var json = JObject.Load(reader);
-	        foreach (var jsonProperty in json)
-	        {
-	            var jObject = (JObject)jsonProperty.Value;
-	            var itemType = types[jObject.Property("Type").Value.ToString()];
-	            var itemInstance = (dynamic)serializer.Deserialize(jObject.CreateReader(), itemType);
-	            itemInstance.Name = jsonProperty.Key;
-	
-	            ((dynamic)list).Add(itemInstance);
-	        }
-	
-	        return list;
-	    }
-	    
-		private IDictionary<string, Type> GetTypesForList(Type objectType)
-		{
+namespace AsimovDeploy.WinAgent.Framework.Configuration {
+
+	public class AsimovListJsonConverter : JsonConverter {
+
+		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {}
+
+		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
+			var list = existingValue ?? Activator.CreateInstance(objectType);
+			var types = GetTypesForList(objectType);
+
+			var json = JObject.Load(reader);
+			foreach (var jsonProperty in json) {
+				var jObject = (JObject) jsonProperty.Value;
+				var itemType = types[jObject.Property("Type").Value.ToString()];
+				var itemInstance = (dynamic) serializer.Deserialize(jObject.CreateReader(), itemType);
+				itemInstance.Name = jsonProperty.Key;
+
+				((dynamic) list).Add(itemInstance);
+			}
+
+			return list;
+		}
+
+		private IDictionary<string, Type> GetTypesForList(Type objectType) {
 			var typeLookup = new Dictionary<string, Type>();
-			var attributes = objectType.GetCustomAttributes(typeof(AsimovListTypeAttribute), false);
-			
-			foreach (AsimovListTypeAttribute attr in attributes)
-			{
+			var attributes = objectType.GetCustomAttributes(typeof (AsimovListTypeAttribute), false);
+
+			foreach (AsimovListTypeAttribute attr in attributes) {
 				typeLookup.Add(attr.Name, attr.Type);
 			}
-			
+
 			return typeLookup;
 		}
-	
-	    public override bool CanConvert(Type objectType)
-	    {
-	        return false;
-	    }
+
+		public override bool CanConvert(Type objectType) {
+			return false;
+		}
+
 	}
-	
 
 }

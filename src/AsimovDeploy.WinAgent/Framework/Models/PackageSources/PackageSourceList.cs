@@ -18,13 +18,13 @@ using System.Collections.Generic;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using Newtonsoft.Json;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
-{
-    [JsonConverter(typeof(AsimovListJsonConverter))]
-	[AsimovListType("FileSystem", typeof(FileSystemPackageSource))]
-	[AsimovListType("AsimovWeb", typeof(AsimovWebPackageSource))]
-    public class PackageSourceList : List<PackageSource>
-    {
+namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources {
 
-    }
+	[JsonConverter(typeof (AsimovListJsonConverter))]
+	[AsimovListType("FileSystem", typeof (FileSystemPackageSource))]
+	[AsimovListType("AsimovWeb", typeof (AsimovWebPackageSource))]
+	public class PackageSourceList : List<PackageSource> {
+
+	}
+
 }

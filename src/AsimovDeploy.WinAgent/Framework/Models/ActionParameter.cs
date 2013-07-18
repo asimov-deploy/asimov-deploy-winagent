@@ -16,14 +16,16 @@
 
 using System.Text;
 
-namespace AsimovDeploy.WinAgent.Framework.Models
-{
-    public abstract class ActionParameter
-    {
-        public string Name { get; set; }
+namespace AsimovDeploy.WinAgent.Framework.Models {
 
-        public abstract dynamic GetDescriptor();
+	public abstract class ActionParameter {
 
-        public abstract void ApplyToPowershellScript(StringBuilder script, dynamic value);
-    }
+		public string Name { get; set; }
+
+		public abstract dynamic GetDescriptor();
+
+		public abstract void ApplyToPowershellScript(StringBuilder script, dynamic value);
+
+	}
+
 }

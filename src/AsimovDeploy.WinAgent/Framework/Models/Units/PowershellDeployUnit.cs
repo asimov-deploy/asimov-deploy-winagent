@@ -18,28 +18,28 @@ using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
 using AsimovDeploy.WinAgent.Framework.Tasks;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.Units
-{
-    public class PowerShellDeployUnit : DeployUnit
-    {
-        public string Script { get; set; }
-        public string Url { get; set; }
+namespace AsimovDeploy.WinAgent.Framework.Models.Units {
 
-        public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues)
-        {
-            var task = new DeployTask(this, version, parameterValues);
-            task.AddDeployStep<PowerShellDeployStep>();
-            return task;
-        }
+	public class PowerShellDeployUnit : DeployUnit {
 
-        public override DeployUnitInfo GetUnitInfo()
-        {
-            var deployUnitInfo = base.GetUnitInfo();
+		public string Script { get; set; }
+		public string Url { get; set; }
 
-            deployUnitInfo.Status = UnitStatus.NA;
-            deployUnitInfo.Url = Url != null ? Url.Replace("localhost", HostNameUtil.GetFullHostName()) : null;
+		public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues) {
+			var task = new DeployTask(this, version, parameterValues);
+			task.AddDeployStep<PowerShellDeployStep>();
+			return task;
+		}
 
-            return deployUnitInfo;
-        }
-    }
+		public override DeployUnitInfo GetUnitInfo() {
+			var deployUnitInfo = base.GetUnitInfo();
+
+			deployUnitInfo.Status = UnitStatus.NA;
+			deployUnitInfo.Url = Url != null ? Url.Replace("localhost", HostNameUtil.GetFullHostName()) : null;
+
+			return deployUnitInfo;
+		}
+
+	}
+
 }

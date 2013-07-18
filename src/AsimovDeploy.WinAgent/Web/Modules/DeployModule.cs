@@ -22,27 +22,27 @@ using Nancy;
 using Nancy.ModelBinding;
 using log4net;
 
-namespace AsimovDeploy.WinAgent.Web.Modules
-{
-    public class DeployModule : NancyModule
-    {
-        private static ILog Log = LogManager.GetLogger(typeof (DeployModule));
+namespace AsimovDeploy.WinAgent.Web.Modules {
 
-        public DeployModule(ITaskExecutor taskExecutor, IAsimovConfig config)
-        {
-            Post["/deploy/deploy"] = _ =>
-            {
-                var command = this.Bind<DeployCommand>();
-                var deployUnit = config.GetUnitByName(command.unitName);
+	public class DeployModule : NancyModule {
 
-                var packageSource = config.GetPackageSourceFor(deployUnit);
-                var version = packageSource.GetVersion(command.versionId, deployUnit.PackageInfo);
-                var deployTask = deployUnit.GetDeployTask(version, new ParameterValues(command.parameters));
+		private static ILog Log = LogManager.GetLogger(typeof (DeployModule));
 
-                taskExecutor.AddTask(deployTask);
+		public DeployModule(ITaskExecutor taskExecutor, IAsimovConfig config) {
+			Post["/deploy/deploy"] = _ => {
+				var command = this.Bind<DeployCommand>();
+				var deployUnit = config.GetUnitByName(command.unitName);
 
-				return Response.AsJson(new { OK = true });
-            };
-        }
-    }
+				var packageSource = config.GetPackageSourceFor(deployUnit);
+				var version = packageSource.GetVersion(command.versionId, deployUnit.PackageInfo);
+				var deployTask = deployUnit.GetDeployTask(version, new ParameterValues(command.parameters));
+
+				taskExecutor.AddTask(deployTask);
+
+				return Response.AsJson(new {OK = true});
+			};
+		}
+
+	}
+
 }

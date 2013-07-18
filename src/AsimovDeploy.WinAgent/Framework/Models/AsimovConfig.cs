@@ -23,46 +23,46 @@ using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
-namespace AsimovDeploy.WinAgent.Framework.Models
-{
-    public class AsimovConfig : IAsimovConfig
-    {
-        public string Environment { get; set; }
-        public int HeartbeatIntervalSeconds { get; set; }
-        public int WebPort { get; set; }
-        public string ApiKey { get; set; }
-        public int LoadBalancerId { get; set; }
-        public int ConfigVersion { get; set; }
+namespace AsimovDeploy.WinAgent.Framework.Models {
 
-        public string TempFolder { get { return Path.Combine(DataFolder, "Temp"); } }
-        public string DataFolder { get; set; }
+	public class AsimovConfig : IAsimovConfig {
 
-        public string NodeFrontUrl { get; set; }
+		public string Environment { get; set; }
+		public int HeartbeatIntervalSeconds { get; set; }
+		public int WebPort { get; set; }
+		public string ApiKey { get; set; }
+		public int LoadBalancerId { get; set; }
+		public int ConfigVersion { get; set; }
 
-        public DeployUnits Units { get; set; }
+		public string TempFolder {
+			get { return Path.Combine(DataFolder, "Temp"); }
+		}
+		public string DataFolder { get; set; }
 
-        public LoadBalancerSettings LoadBalancer { get; set; }
+		public string NodeFrontUrl { get; set; }
 
-        public PackageSourceList PackageSources { get; set; }
+		public DeployUnits Units { get; set; }
 
-        public Uri WebControlUrl
-        {
-            get { return new Uri(string.Format("http://{0}:{1}", HostNameUtil.GetFullHostName(), WebPort)); }
-        }
+		public LoadBalancerSettings LoadBalancer { get; set; }
 
-        public PackageSource GetPackageSourceFor(DeployUnit deployUnit)
-        {
-            return PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
-        }
+		public PackageSourceList PackageSources { get; set; }
 
-        public AsimovConfig()
-        {
-            Units = new DeployUnits();
-        }
+		public Uri WebControlUrl {
+			get { return new Uri(string.Format("http://{0}:{1}", HostNameUtil.GetFullHostName(), WebPort)); }
+		}
 
-        public DeployUnit GetUnitByName(string name)
-        {
-            return Units.Single(x => x.Name == name);
-        }
-    }
+		public PackageSource GetPackageSourceFor(DeployUnit deployUnit) {
+			return PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
+		}
+
+		public AsimovConfig() {
+			Units = new DeployUnits();
+		}
+
+		public DeployUnit GetUnitByName(string name) {
+			return Units.Single(x => x.Name == name);
+		}
+
+	}
+
 }

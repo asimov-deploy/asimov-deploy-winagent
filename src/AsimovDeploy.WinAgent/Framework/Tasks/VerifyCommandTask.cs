@@ -27,148 +27,131 @@ using AsimovDeploy.WinAgent.Framework.Events;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 using Ionic.Zip;
 
-namespace AsimovDeploy.WinAgent.Framework.Tasks
-{
-    public class VerifyCommandTask : AsimovTask
-    {
-        private readonly WebSiteDeployUnit deployUnit;
-	    private readonly string zipPath;
-	    private readonly string command;
-	    private dynamic report;
-	    
-	    public VerifyCommandTask(WebSiteDeployUnit webSiteDeployUnit, string zipPath, string command)
-        {
-            deployUnit = webSiteDeployUnit;
-            this.zipPath = zipPath;
-            this.command = command;
-        }
+namespace AsimovDeploy.WinAgent.Framework.Tasks {
 
-        protected override void Execute()
-        {
-            CleanTempFolderAndExtractVerifyPackage();
+	public class VerifyCommandTask : AsimovTask {
 
-            using (var p = new Process())
-            {
-				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name) { started = true });
+		private readonly WebSiteDeployUnit deployUnit;
+		private readonly string zipPath;
+		private readonly string command;
+		private dynamic report;
 
-                // Redirect the output stream of the child process.
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.RedirectStandardError = true;
-                p.StartInfo.WorkingDirectory = Config.TempFolder;
+		public VerifyCommandTask(WebSiteDeployUnit webSiteDeployUnit, string zipPath, string command) {
+			deployUnit = webSiteDeployUnit;
+			this.zipPath = zipPath;
+			this.command = command;
+		}
 
-                var commandParts = GetCommandParts();
+		protected override void Execute() {
+			CleanTempFolderAndExtractVerifyPackage();
 
-                p.StartInfo.FileName = Path.Combine(Config.TempFolder, commandParts[0]);
-                p.StartInfo.CreateNoWindow = true;
+			using (var p = new Process()) {
+				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name) {started = true});
 
-                p.StartInfo.Arguments = string.Join(" ", commandParts, 1, commandParts.Length - 1);
+				// Redirect the output stream of the child process.
+				p.StartInfo.UseShellExecute = false;
+				p.StartInfo.RedirectStandardOutput = true;
+				p.StartInfo.RedirectStandardError = true;
+				p.StartInfo.WorkingDirectory = Config.TempFolder;
 
-                p.Start();
+				var commandParts = GetCommandParts();
 
-                ListenToStream(p.StandardOutput, ParseVerifyCommandOutput,  () => Log.Debug("Verify command output ended"));
-                ListenToStream(p.StandardError, line => Log.Error(line), () => Log.Debug("Verify command error output ended"));
+				p.StartInfo.FileName = Path.Combine(Config.TempFolder, commandParts[0]);
+				p.StartInfo.CreateNoWindow = true;
 
-                p.WaitForExit((int)TimeSpan.FromMinutes(10).TotalMilliseconds);
-				
-                if (!p.HasExited)
-                    p.Kill();
+				p.StartInfo.Arguments = string.Join(" ", commandParts, 1, commandParts.Length - 1);
 
-				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name) { completed = true, report = report });
-            }
-        }
+				p.Start();
 
-        private void CleanTempFolderAndExtractVerifyPackage()
-        {
+				ListenToStream(p.StandardOutput, ParseVerifyCommandOutput, () => Log.Debug("Verify command output ended"));
+				ListenToStream(p.StandardError, line => Log.Error(line), () => Log.Debug("Verify command error output ended"));
+
+				p.WaitForExit((int) TimeSpan.FromMinutes(10).TotalMilliseconds);
+
+				if (!p.HasExited) {
+					p.Kill();
+				}
+
+				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name) {completed = true, report = report});
+			}
+		}
+
+		private void CleanTempFolderAndExtractVerifyPackage() {
 			DirectoryUtil.Clean(Config.TempFolder);
 
 			var webAppInfo = deployUnit.GetWebServer().GetInfo();
 
 			var zipPath = Path.Combine(webAppInfo.PhysicalPath, this.zipPath);
 
-			using (var zipFile = ZipFile.Read(zipPath))
-			{
+			using (var zipFile = ZipFile.Read(zipPath)) {
 				zipFile.ExtractAll(Config.TempFolder);
 			}
-        }
+		}
 
-        private string[] GetCommandParts()
-        {
-            var siteUrl = deployUnit.SiteUrl.Replace("localhost", HostNameUtil.GetFullHostName());
-            var verifyCommand = command.Replace("%SITE_URL%", siteUrl);
-            var commandParts = verifyCommand.Split(new[] {' '});
-            return commandParts;
-        }
+		private string[] GetCommandParts() {
+			var siteUrl = deployUnit.SiteUrl.Replace("localhost", HostNameUtil.GetFullHostName());
+			var verifyCommand = command.Replace("%SITE_URL%", siteUrl);
+			var commandParts = verifyCommand.Split(new[] {' '});
+			return commandParts;
+		}
 
-        private void ListenToStream(StreamReader input, Action<string> action, Action done)
-        {
-            new Thread(a =>
-            {
-                var buffer = new char[1];
-                var str = new StringBuilder();
-                while (input.Read(buffer, 0, 1) > 0)
-                {
-                    str.Append(buffer[0]);
-                    if (buffer[0] == '\n')
-                    {
-                        var line = str.ToString();
-                        action(line);
-                        str.Clear();
-                    }
-                };
+		private void ListenToStream(StreamReader input, Action<string> action, Action done) {
+			new Thread(a => {
+				var buffer = new char[1];
+				var str = new StringBuilder();
+				while (input.Read(buffer, 0, 1) > 0) {
+					str.Append(buffer[0]);
+					if (buffer[0] == '\n') {
+						var line = str.ToString();
+						action(line);
+						str.Clear();
+					}
+				}
+				;
 
-                done();
-            }).Start();
-        }
+				done();
+			}).Start();
+		}
 
 
-        private void ParseVerifyCommandOutput(string line)
-        {
-			if (line.StartsWith("##asimov-deploy"))
-			{
+		private void ParseVerifyCommandOutput(string line) {
+			if (line.StartsWith("##asimov-deploy")) {
 				HandleAssimovMessage(line);
 			}
 
-	        Log.Debug(line);
-        }
+			Log.Debug(line);
+		}
 
-		private void HandleAssimovMessage(string line)
-	    {
-		    var keys = ConsoleOutputParseUtil.ParseKeyValueString(line);
+		private void HandleAssimovMessage(string line) {
+			var keys = ConsoleOutputParseUtil.ParseKeyValueString(line);
 
-			if (keys.ContainsKey("image"))
-			{
-				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name)
-				{
-					image = new
-					{
+			if (keys.ContainsKey("image")) {
+				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name) {
+					image = new {
 						title = keys["title"],
 						url = GetUrlForFileInTempReportsFolder(keys["image"])
 					}
 				});
 			}
 
-			if (keys.ContainsKey("test"))
-			{
-				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name)
-				{
-					test = new { pass = keys["pass"] == "true", message = keys["test"] }
+			if (keys.ContainsKey("test")) {
+				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name) {
+					test = new {pass = keys["pass"] == "true", message = keys["test"]}
 				});
 			}
 
-			if (keys.ContainsKey("report"))
-			{
-				report = new
-				{
+			if (keys.ContainsKey("report")) {
+				report = new {
 					title = keys["title"],
 					url = GetUrlForFileInTempReportsFolder(keys["report"])
 				};
 			}
-	    }
+		}
 
-	    private string GetUrlForFileInTempReportsFolder(string file)
-	    {
-		    return new Uri(Config.WebControlUrl, "temp-reports/" + file).ToString();
-	    }
-    }
+		private string GetUrlForFileInTempReportsFolder(string file) {
+			return new Uri(Config.WebControlUrl, "temp-reports/" + file).ToString();
+		}
+
+	}
+
 }

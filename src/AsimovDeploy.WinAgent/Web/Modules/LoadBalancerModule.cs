@@ -23,47 +23,46 @@ using AsimovDeploy.WinAgent.Web.Commands;
 using Nancy;
 using Nancy.ModelBinding;
 
-namespace AsimovDeploy.WinAgent.Web.Modules
-{
-    public class LoadBalancerModule : NancyModule
-    {
-        private readonly IAsimovConfig _config;
-        private readonly ITaskExecutor _taskExecutor;
+namespace AsimovDeploy.WinAgent.Web.Modules {
 
-        public LoadBalancerModule(IAsimovConfig config, ITaskExecutor taskExecutor)
-        {
-            _config = config;
-            _taskExecutor = taskExecutor;
+	public class LoadBalancerModule : NancyModule {
 
-            Get["/loadbalancer/listHosts"] = _ =>
-            {
-                if (_config.LoadBalancer.Password == null)
-                    return Response.AsJson(new object[] { });
+		private readonly IAsimovConfig _config;
+		private readonly ITaskExecutor _taskExecutor;
 
-                using (var loadBalancer = new AlteonLoadBalancer(_config.LoadBalancer))
-                {
-                    loadBalancer.Login();
-                    return Response.AsJson(loadBalancer.GetHostList());
-                }
-            };
+		public LoadBalancerModule(IAsimovConfig config, ITaskExecutor taskExecutor) {
+			_config = config;
+			_taskExecutor = taskExecutor;
 
-            Post["/loadbalancer/change"] = _ =>
-            {
-                var command = this.Bind<ChangeLoadBalancerStateCommand>();
-                _taskExecutor.AddTask(new ChangeLoadBalancerStates(command));
-                return "OK";
-            };
+			Get["/loadbalancer/listHosts"] = _ => {
+				if (_config.LoadBalancer.Password == null) {
+					return Response.AsJson(new object[] {});
+				}
 
-            Post["/loadbalancer/settings"] = _ =>
-            {
-                var command = this.Bind<UpdateLoadBalancerSettingsCommand>();
-                _config.LoadBalancer.Password = command.password;
+				using (var loadBalancer = new AlteonLoadBalancer(_config.LoadBalancer)) {
+					loadBalancer.Login();
+					return Response.AsJson(loadBalancer.GetHostList());
+				}
+			};
 
-                if (!string.IsNullOrEmpty(command.host))
-                    _config.LoadBalancer.Host = command.host;
+			Post["/loadbalancer/change"] = _ => {
+				var command = this.Bind<ChangeLoadBalancerStateCommand>();
+				_taskExecutor.AddTask(new ChangeLoadBalancerStates(command));
+				return "OK";
+			};
 
-                return "OK";
-            };
-        }
-    }
+			Post["/loadbalancer/settings"] = _ => {
+				var command = this.Bind<UpdateLoadBalancerSettingsCommand>();
+				_config.LoadBalancer.Password = command.password;
+
+				if (!string.IsNullOrEmpty(command.host)) {
+					_config.LoadBalancer.Host = command.host;
+				}
+
+				return "OK";
+			};
+		}
+
+	}
+
 }

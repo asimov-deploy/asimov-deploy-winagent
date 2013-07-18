@@ -21,34 +21,31 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
-{
-	public class AsimovWebPackageSource : PackageSource
-	{
-		private readonly Regex anchorPattern = new Regex("<a.*?href\\s*=\\s*[\\\"']{1}(?<url>.*?)[\\\"']{1}.*?>.+?</a>", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources {
+
+	public class AsimovWebPackageSource : PackageSource {
+
+		private readonly Regex anchorPattern = new Regex("<a.*?href\\s*=\\s*[\\\"']{1}(?<url>.*?)[\\\"']{1}.*?>.+?</a>",
+		                                                 RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
 		private readonly WebClient webClient = new WebClient();
 
-		public AsimovWebPackageSource()
-		{
+		public AsimovWebPackageSource() {
 			Pattern = @"v(?<version>\d+\.\d+\.\d+\.\d+)-\[(?<branch>\w*)\]-\[(?<commit>\w*)\]";
 		}
 
 		public string Pattern { get; set; }
 		public Uri Uri { get; set; }
 
-		public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo)
-		{
+		public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo) {
 			return FetchAvailableFiles().ToList();
 		}
 
-		public override AsimovVersion GetVersion(string versionId, PackageInfo packageInfo)
-		{
+		public override AsimovVersion GetVersion(string versionId, PackageInfo packageInfo) {
 			return GetAsimovVersionByName(versionId);
 		}
 
-		public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder)
-		{
+		public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder) {
 			string fileName = versionId + ".zip";
 			string localZipFileName = Path.Combine(tempFolder, fileName);
 
@@ -61,50 +58,47 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 			return Path.Combine(tempFolder, packageInfo.InternalPath);
 		}
 
-		private IEnumerable<AsimovVersion> FetchAvailableFiles()
-		{
+		private IEnumerable<AsimovVersion> FetchAvailableFiles() {
 			string html = webClient.DownloadString(Uri);
 
 			string basePath = Uri.ToString();
-			foreach (Uri uri in anchorPattern.Matches(html).Cast<Match>().Select(m => CreateUrl(m.Groups["url"].Value)))
-			{
+			foreach (Uri uri in anchorPattern.Matches(html).Cast<Match>().Select(m => CreateUrl(m.Groups["url"].Value))) {
 				string cleanedName = uri.ToString();
-				if (!cleanedName.StartsWith(basePath))
-				{
+				if (!cleanedName.StartsWith(basePath)) {
 					continue;
 				}
 
 				cleanedName = cleanedName.Remove(0, basePath.Length);
 				cleanedName = cleanedName.TrimStart('/');
 
-				if (cleanedName.Contains("/"))
+				if (cleanedName.Contains("/")) {
 					continue;
+				}
 
 				cleanedName = cleanedName.Replace(".zip", "");
 
 				AsimovVersion asimovVersion = GetAsimovVersionByName(cleanedName);
-				if (asimovVersion != null)
+				if (asimovVersion != null) {
 					yield return asimovVersion;
+				}
 			}
 		}
 
-		public Uri CreateUrl(string absoluteOrRelativeUri)
-		{
+		public Uri CreateUrl(string absoluteOrRelativeUri) {
 			var uri = new Uri(absoluteOrRelativeUri, IsAbsoluteUrl(absoluteOrRelativeUri) ? UriKind.Absolute : UriKind.Relative);
 			return uri.IsAbsoluteUri ? uri : new Uri(Uri, uri);
 		}
 
-		public bool IsAbsoluteUrl(string url)
-		{
+		public bool IsAbsoluteUrl(string url) {
 			Uri result;
 			return Uri.TryCreate(url, UriKind.Absolute, out result);
 		}
 
-		private AsimovVersion GetAsimovVersionByName(string cleanedName)
-		{
+		private AsimovVersion GetAsimovVersionByName(string cleanedName) {
 			Match match = Regex.Match(cleanedName, Pattern);
-			if (!match.Success)
+			if (!match.Success) {
 				return null;
+			}
 
 			var version = new AsimovVersion();
 			version.Id = cleanedName;
@@ -116,5 +110,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
 			return version;
 		}
+
 	}
+
 }

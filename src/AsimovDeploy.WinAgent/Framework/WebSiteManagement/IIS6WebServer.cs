@@ -16,47 +16,46 @@
 
 using AsimovDeploy.WinAgent.Framework.WebSiteManagement.IIS6;
 
-namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement
-{
-    public class IIS6WebServer : IWebServer
-    {
-        private readonly string _siteName;
+namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement {
 
-        public IIS6WebServer(string siteName)
-        {
-            _siteName = siteName;
-        }
+	public class IIS6WebServer : IWebServer {
 
-        public void StartAppPool()
-        {
-            InternetInformationServer iis = new InternetInformationServer();
-            WebSite webSite = iis.GetWebSite(_siteName);
-            webSite.Start();
-        }
+		private readonly string _siteName;
 
-        public void StopAppPool()
-        {
-            InternetInformationServer iis = new InternetInformationServer();
-            WebSite webSite = iis.GetWebSite(_siteName);
-            webSite.Stop();
-        }
+		public IIS6WebServer(string siteName) {
+			_siteName = siteName;
+		}
 
-        public WebSiteData GetInfo()
-        {
-            InternetInformationServer iis = new InternetInformationServer();
-            WebSite webSite = iis.GetWebSite(_siteName);
+		public void StartAppPool() {
+			InternetInformationServer iis = new InternetInformationServer();
+			WebSite webSite = iis.GetWebSite(_siteName);
+			webSite.Start();
+		}
 
-            if (webSite == null)
-                return null;
+		public void StopAppPool() {
+			InternetInformationServer iis = new InternetInformationServer();
+			WebSite webSite = iis.GetWebSite(_siteName);
+			webSite.Stop();
+		}
 
-            var siteData = new WebSiteData();
-            var dirSettings = webSite.DirectorySettings;
-            siteData.AppPoolName = (string)dirSettings.GetInstance(dirSettings.Path).GetPropertyValue("AppPoolId");
-            siteData.PhysicalPath = (string)dirSettings.GetInstance(dirSettings.Path).GetPropertyValue("Path");
-            siteData.SiteStarted = webSite.CurrentState == ServerState.Started;
-            siteData.AppPoolStarted = true;
+		public WebSiteData GetInfo() {
+			InternetInformationServer iis = new InternetInformationServer();
+			WebSite webSite = iis.GetWebSite(_siteName);
 
-            return siteData;
-        }
-    }
+			if (webSite == null) {
+				return null;
+			}
+
+			var siteData = new WebSiteData();
+			var dirSettings = webSite.DirectorySettings;
+			siteData.AppPoolName = (string) dirSettings.GetInstance(dirSettings.Path).GetPropertyValue("AppPoolId");
+			siteData.PhysicalPath = (string) dirSettings.GetInstance(dirSettings.Path).GetPropertyValue("Path");
+			siteData.SiteStarted = webSite.CurrentState == ServerState.Started;
+			siteData.AppPoolStarted = true;
+
+			return siteData;
+		}
+
+	}
+
 }

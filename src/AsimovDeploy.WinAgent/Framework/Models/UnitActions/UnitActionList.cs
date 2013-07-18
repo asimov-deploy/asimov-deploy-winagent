@@ -19,19 +19,17 @@ using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using Newtonsoft.Json;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
-{
-	[JsonConverter(typeof(AsimovListJsonConverter))]
-	[AsimovListType("VerifyUrls", typeof(VerifyUrlsUnitAction))]
-	[AsimovListType("VerifyCommand", typeof(VerifyCommandUnitAction))]
-	public class UnitActionList : List<UnitAction>
-	{
-		public UnitAction this[string name] 
-		{
-			get 
-			{
-				return this.SingleOrDefault(x => x.Name == name);
-			}
+namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions {
+
+	[JsonConverter(typeof (AsimovListJsonConverter))]
+	[AsimovListType("VerifyUrls", typeof (VerifyUrlsUnitAction))]
+	[AsimovListType("VerifyCommand", typeof (VerifyCommandUnitAction))]
+	public class UnitActionList : List<UnitAction> {
+
+		public UnitAction this[string name] {
+			get { return this.SingleOrDefault(x => x.Name == name); }
 		}
+
 	}
+
 }

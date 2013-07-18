@@ -16,23 +16,24 @@
 
 using System.Collections.Generic;
 
-namespace AsimovDeploy.WinAgent.Framework.Events
-{
-    public class VerifyProgressEvent : AsimovEvent
-    {
-        public bool? completed;
-        public bool? started;        
-		
+namespace AsimovDeploy.WinAgent.Framework.Events {
+
+	public class VerifyProgressEvent : AsimovEvent {
+
+		public bool? completed;
+		public bool? started;
+
 		public string unitName;
 
-	    public dynamic test;
+		public dynamic test;
 		public dynamic image;
-	    public dynamic report;
-		
-		public VerifyProgressEvent(string unitName)
-		{
+		public dynamic report;
+
+		public VerifyProgressEvent(string unitName) {
 			this.eventName = "verify-progress";
 			this.unitName = unitName;
 		}
-    }
+
+	}
+
 }

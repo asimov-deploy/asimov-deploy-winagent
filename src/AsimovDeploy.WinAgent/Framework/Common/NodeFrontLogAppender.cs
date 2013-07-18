@@ -20,41 +20,39 @@ using System.Threading;
 using log4net.Appender;
 using log4net.Core;
 
-namespace AsimovDeploy.WinAgent.Framework.Common
-{
-    public class NodeFrontLogAppender : BufferingAppenderSkeleton
-    {
-        private NodeFrontPublisherPublisher _nodeFrontPublisherPublisher;
-        private Timer _timer;
+namespace AsimovDeploy.WinAgent.Framework.Common {
 
-        public NodeFrontLogAppender()
-        {
-            _nodeFrontPublisherPublisher = new NodeFrontPublisherPublisher();
-            Evaluator = new TimeEvaluator(1);
-            _timer = new Timer(TimerTick, null, 0, 500);
-        }
+	public class NodeFrontLogAppender : BufferingAppenderSkeleton {
 
-        private void TimerTick(object state)
-        {
-            Flush();
-        }
+		private NodeFrontPublisherPublisher _nodeFrontPublisherPublisher;
+		private Timer _timer;
 
-        protected override void SendBuffer(LoggingEvent[] events)
-        {
-            var eventArray = events
-                .Where(x => x.Level > Level.Debug)
-                .Select(loggingEvent => new
-                                 {
-                                     agentName = Environment.MachineName,
-                                     timestamp = loggingEvent.TimeStamp,
-                                     time = loggingEvent.TimeStamp.ToString("hh:mm:ss"),
-                                     level = loggingEvent.Level.ToString().ToLower(),
-                                     message = loggingEvent.RenderedMessage,
-                                     exception = loggingEvent.ExceptionObject != null ? loggingEvent.GetExceptionString() : null
-                                 }).ToArray();
+		public NodeFrontLogAppender() {
+			_nodeFrontPublisherPublisher = new NodeFrontPublisherPublisher();
+			Evaluator = new TimeEvaluator(1);
+			_timer = new Timer(TimerTick, null, 0, 500);
+		}
+
+		private void TimerTick(object state) {
+			Flush();
+		}
+
+		protected override void SendBuffer(LoggingEvent[] events) {
+			var eventArray = events
+				.Where(x => x.Level > Level.Debug)
+				.Select(loggingEvent => new {
+					agentName = Environment.MachineName,
+					timestamp = loggingEvent.TimeStamp,
+					time = loggingEvent.TimeStamp.ToString("hh:mm:ss"),
+					level = loggingEvent.Level.ToString().ToLower(),
+					message = loggingEvent.RenderedMessage,
+					exception = loggingEvent.ExceptionObject != null ? loggingEvent.GetExceptionString() : null
+				}).ToArray();
 
 
-            _nodeFrontPublisherPublisher.Notify("/agent/log", eventArray);
-        }
-    }
+			_nodeFrontPublisherPublisher.Notify("/agent/log", eventArray);
+		}
+
+	}
+
 }

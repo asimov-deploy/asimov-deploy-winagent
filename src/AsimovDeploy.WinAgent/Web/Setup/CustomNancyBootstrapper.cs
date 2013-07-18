@@ -22,46 +22,41 @@ using Nancy.Diagnostics;
 using Nancy.Responses;
 using StructureMap;
 
-namespace AsimovDeploy.WinAgent.Web.Setup
-{
-    public class CustomNancyBootstrapper : StructureMapNancyBootstrapper
-    {
-        protected override void ApplicationStartup(IContainer container, Nancy.Bootstrapper.IPipelines pipelines)
-        {
-            base.ApplicationStartup(container, pipelines);
+namespace AsimovDeploy.WinAgent.Web.Setup {
 
-            var config = container.GetInstance<IAsimovConfig>();
-	        var tempReportsFolder = Path.Combine(config.TempFolder, "AsimovTempReports");
+	public class CustomNancyBootstrapper : StructureMapNancyBootstrapper {
+
+		protected override void ApplicationStartup(IContainer container, Nancy.Bootstrapper.IPipelines pipelines) {
+			base.ApplicationStartup(container, pipelines);
+
+			var config = container.GetInstance<IAsimovConfig>();
+			var tempReportsFolder = Path.Combine(config.TempFolder, "AsimovTempReports");
 
 			GenericFileResponse.SafePaths.Add(tempReportsFolder);
 
 			Conventions.StaticContentsConventions.Add(
 				StaticContentConventionBuilder.AddDirectory("temp-reports", tempReportsFolder)
-			);
+				);
 
-            pipelines.BeforeRequest.AddItemToEndOfPipeline(ctx =>
-            {
-                if (ctx.Request.Method == "POST")
-                {
-                    if (ctx.Request.Query.apiKey != config.ApiKey)
-                    {
-                        return 401;
-                    }
-                }
+			pipelines.BeforeRequest.AddItemToEndOfPipeline(ctx => {
+				if (ctx.Request.Method == "POST") {
+					if (ctx.Request.Query.apiKey != config.ApiKey) {
+						return 401;
+					}
+				}
 
-                return null;
-            });
-        }
+				return null;
+			});
+		}
 
-        protected override DiagnosticsConfiguration DiagnosticsConfiguration
-        {
-            get { return new DiagnosticsConfiguration { Password = @"misoH0rny" }; }
-        }
+		protected override DiagnosticsConfiguration DiagnosticsConfiguration {
+			get { return new DiagnosticsConfiguration {Password = @"misoH0rny"}; }
+		}
 
-        protected override IContainer GetApplicationContainer()
-        {
-            return ObjectFactory.Container;
-        }
-    }
+		protected override IContainer GetApplicationContainer() {
+			return ObjectFactory.Container;
+		}
+
+	}
+
 }
-

@@ -27,128 +27,118 @@ using log4net.Appender;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
 
-namespace AsimovDeploy.WinAgent.Framework.Tasks
-{
-    public class DeployTask : AsimovTask
-    {
-        private readonly DeployUnit _deployUnit;
-        private readonly AsimovVersion _version;
-        private readonly ParameterValues _parameterValues;
+namespace AsimovDeploy.WinAgent.Framework.Tasks {
 
-        private IList<Type> _steps = new List<Type>();
+	public class DeployTask : AsimovTask {
 
-        public DeployTask(DeployUnit deployUnit, AsimovVersion version, ParameterValues parameterValues)
-        {
-            _deployUnit = deployUnit;
-            _version = version;
-            _parameterValues = parameterValues;
+		private readonly DeployUnit _deployUnit;
+		private readonly AsimovVersion _version;
+		private readonly ParameterValues _parameterValues;
 
-            AddDeployStep<CleanTempFolder>();
-            AddDeployStep<CopyPackageToTempFolder>();
-        }
+		private IList<Type> _steps = new List<Type>();
 
-        public void AddDeployStep<T>() where T : IDeployStep
-        {
-            _steps.Add(typeof(T));
-        }
+		public DeployTask(DeployUnit deployUnit, AsimovVersion version, ParameterValues parameterValues) {
+			_deployUnit = deployUnit;
+			_version = version;
+			_parameterValues = parameterValues;
 
-        protected virtual DeployContext CreateDeployContext()
-        {
-            return new DeployContext()
-                {
-                    DeployUnit = _deployUnit,
-                    Log = Log,
-                    NewVersion = _version,
-                    ParameterValues = _parameterValues
-                };
-        }
+			AddDeployStep<CleanTempFolder>();
+			AddDeployStep<CopyPackageToTempFolder>();
+		}
 
-        protected override void Execute()
-        {
-            if (PasswordIsIncorrect())
-            {
-                Log.Error("Invalid deploy password, aborting deployment");
-                return;
-            }
+		public void AddDeployStep<T>() where T : IDeployStep {
+			_steps.Add(typeof (T));
+		}
+
+		protected virtual DeployContext CreateDeployContext() {
+			return new DeployContext() {
+				DeployUnit = _deployUnit,
+				Log = Log,
+				NewVersion = _version,
+				ParameterValues = _parameterValues
+			};
+		}
+
+		protected override void Execute() {
+			if (PasswordIsIncorrect()) {
+				Log.Error("Invalid deploy password, aborting deployment");
+				return;
+			}
 
 
-            InDeployContext(context =>
-            {
-                context.DeployUnit.StartingDeploy(context.NewVersion, context.LogFileName);
+			InDeployContext(context => {
+				context.DeployUnit.StartingDeploy(context.NewVersion, context.LogFileName);
 
-                Log.InfoFormat("Starting deployment of {0}, Version: {1}, {2}", _deployUnit.Name, _version.Number, _parameterValues.GetLogString());
+				Log.InfoFormat("Starting deployment of {0}, Version: {1}, {2}", _deployUnit.Name, _version.Number,
+				               _parameterValues.GetLogString());
 
-                foreach (var stepType in _steps)
-                {
-                    Log.InfoFormat("Executing deploy step: {0}", stepType.Name);
-                    var step = ObjectFactory.GetInstance(stepType) as IDeployStep;
-                    step.Execute(context);
-                }
+				foreach (var stepType in _steps) {
+					Log.InfoFormat("Executing deploy step: {0}", stepType.Name);
+					var step = ObjectFactory.GetInstance(stepType) as IDeployStep;
+					step.Execute(context);
+				}
 
-                context.DeployUnit.DeployCompleted();
+				context.DeployUnit.DeployCompleted();
 
-                Log.Info("Deployment completed");
-            });
-        }
+				Log.Info("Deployment completed");
+			});
+		}
 
-        private bool PasswordIsIncorrect()
-        {
-            if (!_deployUnit.HasDeployParameters)
-                return false;
+		private bool PasswordIsIncorrect() {
+			if (!_deployUnit.HasDeployParameters) {
+				return false;
+			}
 
-            foreach (var parameter in _deployUnit.DeployParameters)
-            {
-                var passwordParameter = parameter as PasswordActionParameter;
-                if (passwordParameter == null) continue;
+			foreach (var parameter in _deployUnit.DeployParameters) {
+				var passwordParameter = parameter as PasswordActionParameter;
+				if (passwordParameter == null) {
+					continue;
+				}
 
-                var suppliedPassword = _parameterValues.GetValue(passwordParameter.Name);
-                return suppliedPassword != passwordParameter.Password;
-            }
+				var suppliedPassword = _parameterValues.GetValue(passwordParameter.Name);
+				return suppliedPassword != passwordParameter.Password;
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        private void InDeployContext(Action<DeployContext> action)
-        {
-            var context = CreateDeployContext();
+		private void InDeployContext(Action<DeployContext> action) {
+			var context = CreateDeployContext();
 
-            FileAppender fileAppender;
-            var logger = CreateLogger(context, out fileAppender);
+			FileAppender fileAppender;
+			var logger = CreateLogger(context, out fileAppender);
 
-            try
-            {
-                action(context);
-            }
-            catch (Exception ex)
-            {
-                context.DeployUnit.DeployFailed();
-                context.Log.Error("DeployFailed", ex);
-            }
-            finally
-            {
-                logger.RemoveAppender(fileAppender);
-                fileAppender.Close();
-            }
+			try {
+				action(context);
+			}
+			catch (Exception ex) {
+				context.DeployUnit.DeployFailed();
+				context.Log.Error("DeployFailed", ex);
+			}
+			finally {
+				logger.RemoveAppender(fileAppender);
+				fileAppender.Close();
+			}
+		}
 
-        }
+		private Logger CreateLogger(DeployContext context, out FileAppender fileAppender) {
+			var logger = (Logger) Log.Logger;
 
-        private Logger CreateLogger(DeployContext context, out FileAppender fileAppender)
-        {
-            var logger = (Logger) Log.Logger;
+			fileAppender = new FileAppender();
+			// update file property of appender
+			context.LogFileName = string.Format("deploy-{0:yyyy-MM-dd_HH_mm_ss}.log", DateTime.Now);
+			fileAppender.File = Path.Combine(context.DeployUnit.DataDirectory, "Logs", context.LogFileName);
+			// add the layout
+			var patternLayout = new PatternLayout("%date{HH:mm:ss} [%-5level]  %m%n");
+			fileAppender.Layout = patternLayout;
+			// add the filter for the log source
+			// activate the options
+			fileAppender.ActivateOptions();
 
-            fileAppender = new FileAppender();
-            // update file property of appender
-            context.LogFileName = string.Format("deploy-{0:yyyy-MM-dd_HH_mm_ss}.log", DateTime.Now);
-            fileAppender.File = Path.Combine(context.DeployUnit.DataDirectory, "Logs", context.LogFileName);
-            // add the layout
-            var patternLayout = new PatternLayout("%date{HH:mm:ss} [%-5level]  %m%n");
-            fileAppender.Layout = patternLayout;
-            // add the filter for the log source
-            // activate the options
-            fileAppender.ActivateOptions();
+			logger.AddAppender(fileAppender);
+			return logger;
+		}
 
-            logger.AddAppender(fileAppender);
-            return logger;
-        }
-    }
+	}
+
 }

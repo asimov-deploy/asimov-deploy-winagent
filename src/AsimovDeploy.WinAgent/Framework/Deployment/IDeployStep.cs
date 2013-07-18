@@ -14,10 +14,12 @@
 * limitations under the License.
 ******************************************************************************/
 
-namespace AsimovDeploy.WinAgent.Framework.Deployment
-{
-    public interface IDeployStep
-    {
-        void Execute(DeployContext context);
-    }
+namespace AsimovDeploy.WinAgent.Framework.Deployment {
+
+	public interface IDeployStep {
+
+		void Execute(DeployContext context);
+
+	}
+
 }

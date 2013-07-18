@@ -10,124 +10,109 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using log4net;
 
-namespace AsimovDeploy.WinAgentUpdater
-{
-    public class UpdateInfoCollector
-    {
-        private static ILog _log = LogManager.GetLogger(typeof (UpdateInfoCollector));
+namespace AsimovDeploy.WinAgentUpdater {
 
-        private readonly string _watchFolder;
-        private readonly int _port;
+	public class UpdateInfoCollector {
 
-        public UpdateInfoCollector(string watchFolder, int port)
-        {
-            _watchFolder = watchFolder;
-            _port = port;
-        }
+		private static ILog _log = LogManager.GetLogger(typeof (UpdateInfoCollector));
 
-        public UpdateInfo Collect()
-        {
-            return new UpdateInfo()
-                {
-                    LastBuild = GetLatestVersion(),
-                    LastConfig = GetLatestBuild(),
-                    Current = GetCurrentBuild()
-                };
-        }
+		private readonly string _watchFolder;
+		private readonly int _port;
 
-        private AsimovConfigUpdate GetLatestBuild()
-        {
-            if (!Directory.Exists(_watchFolder))
-            {
-                _log.Error("Watchfolder does not exist: " + _watchFolder);
-                return null;
-            }
+		public UpdateInfoCollector(string watchFolder, int port) {
+			_watchFolder = watchFolder;
+			_port = port;
+		}
 
-            var regex = new Regex(@"AsimovDeploy.WinAgent.ConfigFiles-Version-(\d+).zip");
-            var list = new List<AsimovConfigUpdate>();
+		public UpdateInfo Collect() {
+			return new UpdateInfo() {
+				LastBuild = GetLatestVersion(),
+				LastConfig = GetLatestBuild(),
+				Current = GetCurrentBuild()
+			};
+		}
 
-            foreach (var file in Directory.EnumerateFiles(_watchFolder))
-            {
-                var match = regex.Match(file);
-                if (match.Success)
-                {
-                    list.Add(new AsimovConfigUpdate()
-                        {
-                            FilePath = file,
-                            Version = int.Parse(match.Groups[1].Value)
-                        });
-                }
-            }
+		private AsimovConfigUpdate GetLatestBuild() {
+			if (!Directory.Exists(_watchFolder)) {
+				_log.Error("Watchfolder does not exist: " + _watchFolder);
+				return null;
+			}
 
-            return list.OrderByDescending(x => x.Version).FirstOrDefault();
-        }
+			var regex = new Regex(@"AsimovDeploy.WinAgent.ConfigFiles-Version-(\d+).zip");
+			var list = new List<AsimovConfigUpdate>();
 
-        private AsimovVersion GetLatestVersion()
-        {
-            if (!Directory.Exists(_watchFolder))
-            {
-                _log.Error("Watchfolder does not exist: " + _watchFolder);
-                return null;
-            }
+			foreach (var file in Directory.EnumerateFiles(_watchFolder)) {
+				var match = regex.Match(file);
+				if (match.Success) {
+					list.Add(new AsimovConfigUpdate() {
+						FilePath = file,
+						Version = int.Parse(match.Groups[1].Value)
+					});
+				}
+			}
 
-            var pattern = @"v(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)";
-            var regex = new Regex(pattern);
-            var list = new List<AsimovVersion>();
+			return list.OrderByDescending(x => x.Version).FirstOrDefault();
+		}
 
-            foreach (var file in Directory.EnumerateFiles(_watchFolder))
-            {
-                var match = regex.Match(file);
-                if (match.Success)
-                {
-                    list.Add(new AsimovVersion()
-                    {
-                        FilePath = file,
-                        Version = new Version(int.Parse(match.Groups["major"].Value), int.Parse(match.Groups["minor"].Value), int.Parse(match.Groups["build"].Value))
-                    });
-                }
-            }
+		private AsimovVersion GetLatestVersion() {
+			if (!Directory.Exists(_watchFolder)) {
+				_log.Error("Watchfolder does not exist: " + _watchFolder);
+				return null;
+			}
 
-            return list.OrderByDescending(x => x.Version).FirstOrDefault();
-        }
+			var pattern = @"v(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)";
+			var regex = new Regex(pattern);
+			var list = new List<AsimovVersion>();
 
-        public static string GetFullHostName()
-        {
-            var ipProperties = IPGlobalProperties.GetIPGlobalProperties();
-            if (ipProperties.DomainName != string.Empty)
-                return string.Format("{0}.{1}", ipProperties.HostName, ipProperties.DomainName);
-            else
-                return ipProperties.HostName;
-        }
+			foreach (var file in Directory.EnumerateFiles(_watchFolder)) {
+				var match = regex.Match(file);
+				if (match.Success) {
+					list.Add(new AsimovVersion() {
+						FilePath = file,
+						Version =
+							new Version(int.Parse(match.Groups["major"].Value), int.Parse(match.Groups["minor"].Value),
+							            int.Parse(match.Groups["build"].Value))
+					});
+				}
+			}
 
-        private AgentVersionInfo GetCurrentBuild()
-        {
-            string url = String.Format("http://{0}:{1}/version", GetFullHostName(), _port);
-            try
-            {
-                using (var response = WebRequest.Create(url).GetResponse())
-                {
-                    using (var reader = new StreamReader(response.GetResponseStream()))
-                    {
-                        using (var jsonReader = new JsonTextReader(reader))
-                        {
-                            var jObject = JObject.Load(jsonReader);
-                            var version = (string)jObject.Property("version").Value;
-                            var parts = version.Split('.');
-                            return new AgentVersionInfo()
-                                {
-                                    Version = new Version(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2])),
-                                    ConfigVersion = (int) jObject.Property("configVersion")
-                                };
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.ErrorFormat("Failed fetch version from: {0}", url);
-                _log.Error(ex);
-                return new AgentVersionInfo() { Version = new Version(0,0,0),  ConfigVersion = 0 };
-            }
-        }
-    }
+			return list.OrderByDescending(x => x.Version).FirstOrDefault();
+		}
+
+		public static string GetFullHostName() {
+			var ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+			if (ipProperties.DomainName != string.Empty) {
+				return string.Format("{0}.{1}", ipProperties.HostName, ipProperties.DomainName);
+			}
+			else {
+				return ipProperties.HostName;
+			}
+		}
+
+		private AgentVersionInfo GetCurrentBuild() {
+			string url = String.Format("http://{0}:{1}/version", GetFullHostName(), _port);
+			try {
+				using (var response = WebRequest.Create(url).GetResponse()) {
+					using (var reader = new StreamReader(response.GetResponseStream())) {
+						using (var jsonReader = new JsonTextReader(reader)) {
+							var jObject = JObject.Load(jsonReader);
+							var version = (string) jObject.Property("version").Value;
+							var parts = version.Split('.');
+							return new AgentVersionInfo() {
+								Version = new Version(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2])),
+								ConfigVersion = (int) jObject.Property("configVersion")
+							};
+						}
+					}
+				}
+			}
+			catch (Exception ex) {
+				_log.ErrorFormat("Failed fetch version from: {0}", url);
+				_log.Error(ex);
+				return new AgentVersionInfo() {Version = new Version(0, 0, 0), ConfigVersion = 0};
+			}
+		}
+
+	}
+
 }

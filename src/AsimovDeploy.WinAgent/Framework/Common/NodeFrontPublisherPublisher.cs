@@ -24,85 +24,70 @@ using AsimovDeploy.WinAgent.Framework.Models;
 using Newtonsoft.Json;
 using StructureMap;
 
-namespace AsimovDeploy.WinAgent.Framework.Common
-{
-    public class NodeFrontPublisherPublisher : INodeFrontPublisher, IStartable
-    {
-        private static string _nodeFrontUrl;
-        private Task _workerTask;
-        private static BlockingCollection<NodeFrontMessage> _messages = new BlockingCollection<NodeFrontMessage>(200);
+namespace AsimovDeploy.WinAgent.Framework.Common {
 
-        static NodeFrontPublisherPublisher()
-        {
-            var config = ObjectFactory.GetInstance<IAsimovConfig>();
-            _nodeFrontUrl = config.NodeFrontUrl;
-        }
+	public class NodeFrontPublisherPublisher : INodeFrontPublisher, IStartable {
 
-        public void Notify(string url, object data)
-        {
-            if (!_messages.IsAddingCompleted)
-            {
-                _messages.Add(new NodeFrontMessage() { Url = url, Data = data });    
-            }
-        }
+		private static string _nodeFrontUrl;
+		private Task _workerTask;
+		private static BlockingCollection<NodeFrontMessage> _messages = new BlockingCollection<NodeFrontMessage>(200);
 
-        private void SendMessage(NodeFrontMessage message)
-        {
-            try
-            {
-                var fullUrl = new Uri(new Uri(_nodeFrontUrl), message.Url);
+		static NodeFrontPublisherPublisher() {
+			var config = ObjectFactory.GetInstance<IAsimovConfig>();
+			_nodeFrontUrl = config.NodeFrontUrl;
+		}
 
-                var request = WebRequest.Create(fullUrl) as HttpWebRequest;
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                request.ServicePoint.Expect100Continue = false;
-                request.Timeout = 3000;
+		public void Notify(string url, object data) {
+			if (!_messages.IsAddingCompleted) {
+				_messages.Add(new NodeFrontMessage() {Url = url, Data = data});
+			}
+		}
 
-                using (var requestStream = request.GetRequestStream())
-                {
-                    using (var writer = new StreamWriter(requestStream))
-                    {
-	                    var serializer = new JsonSerializer();
+		private void SendMessage(NodeFrontMessage message) {
+			try {
+				var fullUrl = new Uri(new Uri(_nodeFrontUrl), message.Url);
+
+				var request = WebRequest.Create(fullUrl) as HttpWebRequest;
+				request.Method = "POST";
+				request.ContentType = "application/json";
+				request.ServicePoint.Expect100Continue = false;
+				request.Timeout = 3000;
+
+				using (var requestStream = request.GetRequestStream()) {
+					using (var writer = new StreamWriter(requestStream)) {
+						var serializer = new JsonSerializer();
 						serializer.NullValueHandling = NullValueHandling.Ignore;
-	                    serializer.Serialize(writer, message.Data);
-                    }
-                }
+						serializer.Serialize(writer, message.Data);
+					}
+				}
 
-                using (var resp = request.GetResponse())
-                {
-                    resp.Close();
-                }
+				using (var resp = request.GetResponse()) {
+					resp.Close();
+				}
+			}
+			catch (Exception) {}
+		}
 
-            }
-            catch (Exception) { }
-        }
+		public void Start() {
+			_workerTask = Task.Factory.StartNew(() => {
+				while (!_messages.IsCompleted) {
+					NodeFrontMessage message = null;
 
-        public void Start()
-        {
-            _workerTask = Task.Factory.StartNew(() =>
-            {
-                while (!_messages.IsCompleted)
-                {
-                    NodeFrontMessage message = null;
+					try {
+						message = _messages.Take();
+					}
+					catch (InvalidOperationException) {}
 
-                    try
-                    {
-                        message = _messages.Take();
-                    }
-                    catch (InvalidOperationException) { }
+					SendMessage(message);
+				}
+			}, TaskCreationOptions.LongRunning);
+		}
 
-                    SendMessage(message);
-                }
+		public void Stop() {
+			_messages.CompleteAdding();
+			_workerTask.Wait(TimeSpan.FromMinutes(5));
+		}
 
-            }, TaskCreationOptions.LongRunning);
-        }
-
-        public void Stop()
-        {
-            _messages.CompleteAdding();
-            _workerTask.Wait(TimeSpan.FromMinutes(5));
-        }
-    }
-
+	}
 
 }

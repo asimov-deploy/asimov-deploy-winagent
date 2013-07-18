@@ -16,23 +16,24 @@
 
 using AsimovDeploy.WinAgent.Framework.Models;
 
-namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
-{
-    public class CopyPackageToTempFolder : IDeployStep
-    {
-        private readonly IAsimovConfig _asimovConfig;
+namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps {
 
-        public CopyPackageToTempFolder(IAsimovConfig asimovConfig)
-        {
-            _asimovConfig = asimovConfig;
-        }
+	public class CopyPackageToTempFolder : IDeployStep {
 
-        public void Execute(DeployContext context)
-        {
-            var packageSource = _asimovConfig.GetPackageSourceFor(context.DeployUnit);
+		private readonly IAsimovConfig _asimovConfig;
 
-            context.TempFolderWithNewVersionFiles = packageSource.CopyAndExtractToTempFolder(context.NewVersion.Id, context.DeployUnit.PackageInfo, _asimovConfig.TempFolder);
-        }
-    }
+		public CopyPackageToTempFolder(IAsimovConfig asimovConfig) {
+			_asimovConfig = asimovConfig;
+		}
+
+		public void Execute(DeployContext context) {
+			var packageSource = _asimovConfig.GetPackageSourceFor(context.DeployUnit);
+
+			context.TempFolderWithNewVersionFiles = packageSource.CopyAndExtractToTempFolder(context.NewVersion.Id,
+			                                                                                 context.DeployUnit.PackageInfo,
+			                                                                                 _asimovConfig.TempFolder);
+		}
+
+	}
 
 }

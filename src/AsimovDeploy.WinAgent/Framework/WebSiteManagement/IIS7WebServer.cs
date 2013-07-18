@@ -20,86 +20,87 @@ using System.Threading;
 using Microsoft.Web.Administration;
 using log4net;
 
-namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement
-{
-    public class IIS7WebServer : IWebServer
-    {
-        private static ILog _log = LogManager.GetLogger(typeof(IIS7WebServer));
+namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement {
 
-        private readonly string _siteName;
-        private readonly string _appPath;
+	public class IIS7WebServer : IWebServer {
 
-        public IIS7WebServer(string siteName, string siteUrl)
-        {
-            _siteName = siteName;
+		private static ILog _log = LogManager.GetLogger(typeof (IIS7WebServer));
 
-            if (siteUrl.EndsWith("/"))
-                siteUrl = siteUrl.TrimEnd('/');
+		private readonly string _siteName;
+		private readonly string _appPath;
 
-            _appPath = new Uri(siteUrl).AbsolutePath;
-        }
+		public IIS7WebServer(string siteName, string siteUrl) {
+			_siteName = siteName;
 
-        public void StartAppPool()
-        {
-            using (var serverManager = new ServerManager())
-            {
-                var site = serverManager.Sites.Single(x => x.Name == _siteName);
+			if (siteUrl.EndsWith("/")) {
+				siteUrl = siteUrl.TrimEnd('/');
+			}
 
-                var webApp = site.Applications.Single(x => x.Path == _appPath);
-                var appPool = serverManager.ApplicationPools[webApp.ApplicationPoolName];
+			_appPath = new Uri(siteUrl).AbsolutePath;
+		}
 
-                appPool.Start();
-            }
-        }
+		public void StartAppPool() {
+			using (var serverManager = new ServerManager()) {
+				var site = serverManager.Sites.Single(x => x.Name == _siteName);
 
-        public void StopAppPool()
-        {
-            using (var serverManager = new ServerManager())
-            {
-                var site = serverManager.Sites.Single(x => x.Name == _siteName);
+				var webApp = site.Applications.Single(x => x.Path == _appPath);
+				var appPool = serverManager.ApplicationPools[webApp.ApplicationPoolName];
 
-                var rootApp = site.Applications.Single(x => x.Path == _appPath);
-                var appPool = serverManager.ApplicationPools[rootApp.ApplicationPoolName];
+				appPool.Start();
+			}
+		}
 
-                if (appPool.State == ObjectState.Started)
-                    appPool.Stop();
+		public void StopAppPool() {
+			using (var serverManager = new ServerManager()) {
+				var site = serverManager.Sites.Single(x => x.Name == _siteName);
 
-                do
-                {
-                    Thread.Sleep(500);
-                } while (appPool.State == ObjectState.Stopping);
-            }
-        }
+				var rootApp = site.Applications.Single(x => x.Path == _appPath);
+				var appPool = serverManager.ApplicationPools[rootApp.ApplicationPoolName];
 
-        public WebSiteData GetInfo()
-        {
-            using (var serverManager = new ServerManager())
-            {
-                var site = serverManager.Sites.SingleOrDefault(x => x.Name == _siteName);
-                if (site == null)
-                    return null;
-                
-				var webApp = site.Applications.SingleOrDefault(x => x.Path == _appPath);
-                if (webApp == null)
-                    return null;
+				if (appPool.State == ObjectState.Started) {
+					appPool.Stop();
+				}
 
-                var vdir = webApp.VirtualDirectories.SingleOrDefault(x => x.Path == "/");
-                if (vdir == null)
+				do {
+					Thread.Sleep(500);
+				} while (appPool.State == ObjectState.Stopping);
+			}
+		}
+
+		public WebSiteData GetInfo() {
+			using (var serverManager = new ServerManager()) {
+				var site = serverManager.Sites.SingleOrDefault(x => x.Name == _siteName);
+				if (site == null) {
 					return null;
+				}
 
-                var state = ObjectState.Started;
+				var webApp = site.Applications.SingleOrDefault(x => x.Path == _appPath);
+				if (webApp == null) {
+					return null;
+				}
 
-                // accessing state for WCF AppFabric sites causes com Exception
-                try { state = site.State; } catch { }
+				var vdir = webApp.VirtualDirectories.SingleOrDefault(x => x.Path == "/");
+				if (vdir == null) {
+					return null;
+				}
 
-                return new WebSiteData()
-                           {
-                               SiteStarted = state == ObjectState.Started,
-                               AppPoolStarted = serverManager.ApplicationPools[webApp.ApplicationPoolName].State == ObjectState.Started,
-                               PhysicalPath = vdir.PhysicalPath,
-                               AppPoolName = webApp.ApplicationPoolName
-                           };
-            }
-        }
-    }
+				var state = ObjectState.Started;
+
+				// accessing state for WCF AppFabric sites causes com Exception
+				try {
+					state = site.State;
+				}
+				catch {}
+
+				return new WebSiteData() {
+					SiteStarted = state == ObjectState.Started,
+					AppPoolStarted = serverManager.ApplicationPools[webApp.ApplicationPoolName].State == ObjectState.Started,
+					PhysicalPath = vdir.PhysicalPath,
+					AppPoolName = webApp.ApplicationPoolName
+				};
+			}
+		}
+
+	}
+
 }

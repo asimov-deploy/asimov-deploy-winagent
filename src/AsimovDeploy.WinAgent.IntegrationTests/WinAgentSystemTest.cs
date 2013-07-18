@@ -7,194 +7,176 @@ using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
 using NUnit.Framework;
 
-namespace AsimovDeploy.WinAgent.IntegrationTests
-{
-    [TestFixture]
-    public abstract class WinAgentSystemTest
-    {
-        protected string AgentDir;
-        protected string WorkingDir;
-        protected string DataDir;
-        protected string TempDir;
-        protected string PackagesDir;
-        protected string ScenarioDir;
-        protected int AgentPort = 18342;
-        public static string NodeFrontUrl = "http://localhost:5433/";
-        protected Process AgentProcess;
-        protected AgentHttpClient Agent;
-        protected NodeFrontSimulator NodeFront;
+namespace AsimovDeploy.WinAgent.IntegrationTests {
+
+	[TestFixture]
+	public abstract class WinAgentSystemTest {
+
+		protected string AgentDir;
+		protected string WorkingDir;
+		protected string DataDir;
+		protected string TempDir;
+		protected string PackagesDir;
+		protected string ScenarioDir;
+		protected int AgentPort = 18342;
+		public static string NodeFrontUrl = "http://localhost:5433/";
+		protected Process AgentProcess;
+		protected AgentHttpClient Agent;
+		protected NodeFrontSimulator NodeFront;
 
 
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-            try
-            {
-                ShutDownRunnningAgent();
-                GivenFoldersForScenario();
-                Given();
-            }
-            catch (Exception)
-            {
-                CleanUp();
-                throw;
-            }
-        }
+		[TestFixtureSetUp]
+		public void Setup() {
+			try {
+				ShutDownRunnningAgent();
+				GivenFoldersForScenario();
+				Given();
+			}
+			catch (Exception) {
+				CleanUp();
+				throw;
+			}
+		}
 
-        private void ShutDownRunnningAgent()
-        {
-            while (true)
-            {
-                try
-                {
-                    var agents = Process.GetProcessesByName("AsimovDeploy.WinAgent");
-                    foreach (var process in agents)
-                    {
-                        process.Kill();
-                    }
+		private void ShutDownRunnningAgent() {
+			while (true) {
+				try {
+					var agents = Process.GetProcessesByName("AsimovDeploy.WinAgent");
+					foreach (var process in agents) {
+						process.Kill();
+					}
 
-                    break;
-                }
-                catch (Exception)
-                {
-                    Thread.Sleep(1000);
-                }    
-            }
-        }
+					break;
+				}
+				catch (Exception) {
+					Thread.Sleep(1000);
+				}
+			}
+		}
 
-        [TestFixtureTearDown]
-        public void CleanUp()
-        {
-            try
-            {
-                if (AgentProcess != null && !AgentProcess.HasExited)
-                {
-                    AgentProcess.Kill();
-                }
+		[TestFixtureTearDown]
+		public void CleanUp() {
+			try {
+				if (AgentProcess != null && !AgentProcess.HasExited) {
+					AgentProcess.Kill();
+				}
 
-                NodeFront.Dispose();
-            }
-            catch { }
-            
-        }
+				NodeFront.Dispose();
+			}
+			catch {}
+		}
 
-        public abstract void Given();
+		public abstract void Given();
 
-        public void GivenFoldersForScenario([CallerFilePath] string scenarioSourceFile = "")
-        {
-            ScenarioDir = Path.Combine(new FileInfo(scenarioSourceFile).Directory.FullName);
+		public void GivenFoldersForScenario([CallerFilePath] string scenarioSourceFile = "") {
+			ScenarioDir = Path.Combine(new FileInfo(scenarioSourceFile).Directory.FullName);
 
-            WorkingDir = Environment.CurrentDirectory;
-            AgentDir = Path.Combine(WorkingDir, "Agent");
+			WorkingDir = Environment.CurrentDirectory;
+			AgentDir = Path.Combine(WorkingDir, "Agent");
 
-            if (Directory.Exists(AgentDir))
-                Directory.Delete(AgentDir, true);
+			if (Directory.Exists(AgentDir)) {
+				Directory.Delete(AgentDir, true);
+			}
 
-            Directory.CreateDirectory(AgentDir);
-            
-            DataDir = Path.Combine(WorkingDir, "Data");
-            TempDir = Path.Combine(DataDir, "Temp");
-            PackagesDir = Path.Combine(ScenarioDir, "Packages");
+			Directory.CreateDirectory(AgentDir);
 
-            if (Directory.Exists(DataDir))
-                Directory.Delete(DataDir, true);
+			DataDir = Path.Combine(WorkingDir, "Data");
+			TempDir = Path.Combine(DataDir, "Temp");
+			PackagesDir = Path.Combine(ScenarioDir, "Packages");
 
-            Directory.CreateDirectory(DataDir);
-            Directory.CreateDirectory(TempDir);
-            Directory.CreateDirectory(PackagesDir);
+			if (Directory.Exists(DataDir)) {
+				Directory.Delete(DataDir, true);
+			}
 
-            Debug.WriteLine("WorkingDir = " + WorkingDir);
-            Debug.WriteLine("AgentDir = " + AgentDir);
-            Debug.WriteLine("DataDir = " + DataDir);
-            Debug.WriteLine("TempDir = " + TempDir);
-            Debug.WriteLine("PackagesDir = " + PackagesDir);
-        }
+			Directory.CreateDirectory(DataDir);
+			Directory.CreateDirectory(TempDir);
+			Directory.CreateDirectory(PackagesDir);
 
-        public void CopyAgentToCleanRunFolder()
-        {
-            DirectoryUtil.CopyDirectory(@"..\..\..\AsimovDeploy.WinAgent\bin\Debug", AgentDir);
-        }
+			Debug.WriteLine("WorkingDir = " + WorkingDir);
+			Debug.WriteLine("AgentDir = " + AgentDir);
+			Debug.WriteLine("DataDir = " + DataDir);
+			Debug.WriteLine("TempDir = " + TempDir);
+			Debug.WriteLine("PackagesDir = " + PackagesDir);
+		}
 
-        public void GivenRunningAgent()
-        {
-            CopyAgentToCleanRunFolder();
-            CopyConfigToAgentDir();
+		public void CopyAgentToCleanRunFolder() {
+			DirectoryUtil.CopyDirectory(@"..\..\..\AsimovDeploy.WinAgent\bin\Debug", AgentDir);
+		}
 
-            NodeFront = new NodeFrontSimulator();
-            NodeFront.Start();
+		public void GivenRunningAgent() {
+			CopyAgentToCleanRunFolder();
+			CopyConfigToAgentDir();
 
-            AgentProcess = new Process();
-            AgentProcess.StartInfo.UseShellExecute = false;
-            AgentProcess.StartInfo.WorkingDirectory = AgentDir;
-            AgentProcess.StartInfo.FileName = Path.Combine(AgentDir, "AsimovDeploy.WinAgent.exe");
-            AgentProcess.StartInfo.CreateNoWindow = true;
-            AgentProcess.StartInfo.RedirectStandardError = true;
-            AgentProcess.StartInfo.RedirectStandardOutput = true;
-            AgentProcess.Start();
+			NodeFront = new NodeFrontSimulator();
+			NodeFront.Start();
 
-            RedirectAgentOutputToDebug(AgentProcess.StandardOutput);
-            
-            Thread.Sleep(5000);
+			AgentProcess = new Process();
+			AgentProcess.StartInfo.UseShellExecute = false;
+			AgentProcess.StartInfo.WorkingDirectory = AgentDir;
+			AgentProcess.StartInfo.FileName = Path.Combine(AgentDir, "AsimovDeploy.WinAgent.exe");
+			AgentProcess.StartInfo.CreateNoWindow = true;
+			AgentProcess.StartInfo.RedirectStandardError = true;
+			AgentProcess.StartInfo.RedirectStandardOutput = true;
+			AgentProcess.Start();
 
-            Agent = new AgentHttpClient(AgentPort);
-            
-            Assert.NotNull(Agent.Get("/version"));
-        }
+			RedirectAgentOutputToDebug(AgentProcess.StandardOutput);
 
-        private void CopyConfigToAgentDir()
-        {
-            var sourceConfigDir = Path.Combine(ScenarioDir, "ConfigFiles");
-            var targetDir = Path.Combine(AgentDir, "ConfigFiles");
-            DirectoryUtil.Clean(targetDir);
-            DirectoryUtil.CopyDirectory(sourceConfigDir, targetDir);
-            TransformConfig(targetDir);
-        }
+			Thread.Sleep(5000);
 
-        private void TransformConfig(string configDir)
-        {
-            foreach (var file in Directory.EnumerateFiles(configDir))
-            {
-                var str = File.ReadAllText(file);
-                str = str.Replace("%DATA_FOLDER%", DataDir.Replace(@"\", @"\\"));
-                str = str.Replace("%NODE_FRONT_URL%", NodeFrontUrl);
-                str = str.Replace("%PACKAGES_URI%", new Uri(PackagesDir).AbsoluteUri);
-                str = str.Replace("%AGENT_PORT%", AgentPort.ToString());
-                File.WriteAllText(file, str);
-            }
-        }
+			Agent = new AgentHttpClient(AgentPort);
 
-        private void RedirectAgentOutputToDebug(StreamReader input)
-        {
-            new Thread(a =>
-            {
-                var buffer = new char[1];
-                var str = new StringBuilder();
-                while (input.Read(buffer, 0, 1) > 0)
-                {
-                    str.Append(buffer[0]);
-                    if (buffer[0] == '\n')
-                    {
-                        Debug.Write("[AgentOutput]: " + str);
-                        Debug.Flush();
-                        str.Clear();
-                    }
-                };
+			Assert.NotNull(Agent.Get("/version"));
+		}
 
-                Debug.WriteLine("[AgentOutput]: output ended");
-            }).Start();
-        }
-    }
+		private void CopyConfigToAgentDir() {
+			var sourceConfigDir = Path.Combine(ScenarioDir, "ConfigFiles");
+			var targetDir = Path.Combine(AgentDir, "ConfigFiles");
+			DirectoryUtil.Clean(targetDir);
+			DirectoryUtil.CopyDirectory(sourceConfigDir, targetDir);
+			TransformConfig(targetDir);
+		}
 
-    //[TestFixture]
-    //public class RandomFeatureTest : WinAgentSystemTest
-    //{
-    //    public RandomFeatureTest()
-    //    {
-    //        //GivenAlreadyInstalledWindowsServices();
-    //        //GivenAlreadyInstalledWebSites();
-    //        //GivenPackagesInFolder()
+		private void TransformConfig(string configDir) {
+			foreach (var file in Directory.EnumerateFiles(configDir)) {
+				var str = File.ReadAllText(file);
+				str = str.Replace("%DATA_FOLDER%", DataDir.Replace(@"\", @"\\"));
+				str = str.Replace("%NODE_FRONT_URL%", NodeFrontUrl);
+				str = str.Replace("%PACKAGES_URI%", new Uri(PackagesDir).AbsoluteUri);
+				str = str.Replace("%AGENT_PORT%", AgentPort.ToString());
+				File.WriteAllText(file, str);
+			}
+		}
 
-    //        GivenRunningAgent();
-    //    }
-    //}
+		private void RedirectAgentOutputToDebug(StreamReader input) {
+			new Thread(a => {
+				var buffer = new char[1];
+				var str = new StringBuilder();
+				while (input.Read(buffer, 0, 1) > 0) {
+					str.Append(buffer[0]);
+					if (buffer[0] == '\n') {
+						Debug.Write("[AgentOutput]: " + str);
+						Debug.Flush();
+						str.Clear();
+					}
+				}
+				;
+
+				Debug.WriteLine("[AgentOutput]: output ended");
+			}).Start();
+		}
+
+	}
+
+	//[TestFixture]
+	//public class RandomFeatureTest : WinAgentSystemTest
+	//{
+	//    public RandomFeatureTest()
+	//    {
+	//        //GivenAlreadyInstalledWindowsServices();
+	//        //GivenAlreadyInstalledWebSites();
+	//        //GivenPackagesInFolder()
+
+	//        GivenRunningAgent();
+	//    }
+	//}
 }

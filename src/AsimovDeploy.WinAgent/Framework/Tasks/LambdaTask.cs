@@ -17,27 +17,26 @@
 using System;
 using AsimovDeploy.WinAgent.Framework.Common;
 
-namespace AsimovDeploy.WinAgent.Framework.Tasks
-{
-	public class LambdaTask : AsimovTask
-	{
+namespace AsimovDeploy.WinAgent.Framework.Tasks {
+
+	public class LambdaTask : AsimovTask {
+
 		private Action _action;
 		private string _taskName;
-		
-		public LambdaTask(string taskName, Action action)
-		{
+
+		public LambdaTask(string taskName, Action action) {
 			_taskName = taskName;
 			_action = action;
 		}
-		
-		protected override string GetTaskName()
-		{
+
+		protected override string GetTaskName() {
 			return _taskName;
 		}
-		
-		protected override void Execute()
-		{
+
+		protected override void Execute() {
 			_action();
 		}
+
 	}
+
 }

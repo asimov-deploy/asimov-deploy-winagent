@@ -4,14 +4,12 @@ using AsimovDeploy.WinAgent.Web.Commands;
 using Nancy;
 using Nancy.ModelBinding;
 
-namespace AsimovDeploy.WinAgent.Web.Modules
-{
-	public class UnitActionModule : NancyModule
-	{
-		public UnitActionModule(ITaskExecutor taskExecutor, IAsimovConfig config)
-		{
-			Post["/action"] = _ =>
-			{
+namespace AsimovDeploy.WinAgent.Web.Modules {
+
+	public class UnitActionModule : NancyModule {
+
+		public UnitActionModule(ITaskExecutor taskExecutor, IAsimovConfig config) {
+			Post["/action"] = _ => {
 				var command = this.Bind<UnitActionCommand>();
 				var deployUnit = config.GetUnitByName(command.unitName);
 				var action = deployUnit.Actions[command.actionName];
@@ -19,8 +17,10 @@ namespace AsimovDeploy.WinAgent.Web.Modules
 
 				taskExecutor.AddTask(task);
 
-				return Response.AsJson(new { OK = true });
+				return Response.AsJson(new {OK = true});
 			};
 		}
+
 	}
+
 }

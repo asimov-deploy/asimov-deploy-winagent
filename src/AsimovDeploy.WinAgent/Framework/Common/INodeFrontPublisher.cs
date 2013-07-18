@@ -14,10 +14,12 @@
 * limitations under the License.
 ******************************************************************************/
 
-namespace AsimovDeploy.WinAgent.Framework.Common
-{
-    public interface INodeFrontPublisher
-    {
-        void Notify(string url, object data);
-    }
+namespace AsimovDeploy.WinAgent.Framework.Common {
+
+	public interface INodeFrontPublisher {
+
+		void Notify(string url, object data);
+
+	}
+
 }

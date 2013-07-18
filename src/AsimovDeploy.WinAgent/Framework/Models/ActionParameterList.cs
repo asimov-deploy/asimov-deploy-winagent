@@ -18,13 +18,13 @@ using System.Collections.Generic;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using Newtonsoft.Json;
 
-namespace AsimovDeploy.WinAgent.Framework.Models
-{
-  	[JsonConverter(typeof(AsimovListJsonConverter))]
-	[AsimovListType("Text", typeof(TextActionParameter))]
-	[AsimovListType("Password", typeof(PasswordActionParameter))]
-    public class ActionParameterList : List<ActionParameter>
-    {
+namespace AsimovDeploy.WinAgent.Framework.Models {
 
-    }
+	[JsonConverter(typeof (AsimovListJsonConverter))]
+	[AsimovListType("Text", typeof (TextActionParameter))]
+	[AsimovListType("Password", typeof (PasswordActionParameter))]
+	public class ActionParameterList : List<ActionParameter> {
+
+	}
+
 }

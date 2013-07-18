@@ -22,43 +22,41 @@ using StructureMap;
 using log4net;
 using log4net.Repository.Hierarchy;
 
-namespace AsimovDeploy.WinAgent.Service
-{
-    public class AsimovDeployService : IAsimovDeployService
-    {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(AsimovDeployService));
+namespace AsimovDeploy.WinAgent.Service {
 
-        public void Start()
-        {
-            try
-            {
-                ComponentRegistration.RegisterComponents();
-                ComponentRegistration.ReadAndRegisterConfiguration();
-                AddNodeFrontAppender();
-                ComponentRegistration.StartStartableComponenters();
+	public class AsimovDeployService : IAsimovDeployService {
 
-                var config = ObjectFactory.GetInstance<IAsimovConfig>();
-                Log.InfoFormat("WinAgent Started, Version={0}, ConfigVersion={1}", VersionUtil.GetAgentVersion(), config.ConfigVersion);
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error while starting AsimovDeployService", e);
-                throw;
-            }
-        }
+		private static readonly ILog Log = LogManager.GetLogger(typeof (AsimovDeployService));
 
-        private void AddNodeFrontAppender()
-        {
-            var hierarchy = (Hierarchy)LogManager.GetRepository();
-            var appender = new NodeFrontLogAppender();
-            appender.ActivateOptions();
-            hierarchy.Root.AddAppender(appender);
-        }
+		public void Start() {
+			try {
+				ComponentRegistration.RegisterComponents();
+				ComponentRegistration.ReadAndRegisterConfiguration();
+				AddNodeFrontAppender();
+				ComponentRegistration.StartStartableComponenters();
 
-        public void Stop()
-        {
-            Log.Info("WinAgent Stopping");
-            ComponentRegistration.StopAll();
-        }
-    }
+				var config = ObjectFactory.GetInstance<IAsimovConfig>();
+				Log.InfoFormat("WinAgent Started, Version={0}, ConfigVersion={1}", VersionUtil.GetAgentVersion(),
+				               config.ConfigVersion);
+			}
+			catch (Exception e) {
+				Log.Error("Error while starting AsimovDeployService", e);
+				throw;
+			}
+		}
+
+		private void AddNodeFrontAppender() {
+			var hierarchy = (Hierarchy) LogManager.GetRepository();
+			var appender = new NodeFrontLogAppender();
+			appender.ActivateOptions();
+			hierarchy.Root.AddAppender(appender);
+		}
+
+		public void Stop() {
+			Log.Info("WinAgent Stopping");
+			ComponentRegistration.StopAll();
+		}
+
+	}
+
 }

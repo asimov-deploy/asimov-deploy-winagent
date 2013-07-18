@@ -22,17 +22,16 @@ using AsimovDeploy.WinAgent.Framework.Models.Units;
 using AsimovDeploy.WinAgent.Framework.Tasks;
 using log4net;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
-{
-	public class VerifyUrlsUnitAction : UnitAction
-	{
-		public IList<string> Urls { get; set; }		
-		
-		public override AsimovTask GetTask(DeployUnit unit)
-		{
-			return new VerifySiteTask((WebSiteDeployUnit)unit, Urls.ToArray());
+namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions {
+
+	public class VerifyUrlsUnitAction : UnitAction {
+
+		public IList<string> Urls { get; set; }
+
+		public override AsimovTask GetTask(DeployUnit unit) {
+			return new VerifySiteTask((WebSiteDeployUnit) unit, Urls.ToArray());
 		}
+
 	}
-	
 
 }

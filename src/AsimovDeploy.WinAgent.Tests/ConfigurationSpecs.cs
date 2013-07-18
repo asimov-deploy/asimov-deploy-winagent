@@ -9,102 +9,96 @@ using AsimovDeploy.WinAgent.Framework.Models.Units;
 using NUnit.Framework;
 using Shouldly;
 
-namespace AsimovDeploy.WinAgent.Tests
-{
-    [TestFixture]
-    public class ConfigurationSpecs
-    {
+namespace AsimovDeploy.WinAgent.Tests {
 
-        [Test]
-        public void Can_read_config_and_get_defaults()
-        {
-            var config = ReadConfig("notmatching");
+	[TestFixture]
+	public class ConfigurationSpecs {
 
-            config.Environment.ShouldBe("default");
-            config.NodeFrontUrl.ShouldBe("http://default:3335");
-            config.WebPort.ShouldBe(21233);
-            config.HeartbeatIntervalSeconds.ShouldBe(10);
-            config.TempFolder.ShouldBe("\\Data\\Temp");
-            config.ConfigVersion.ShouldBe(101);
+		[Test]
+		public void Can_read_config_and_get_defaults() {
+			var config = ReadConfig("notmatching");
 
-            var webSite = (WebSiteDeployUnit) config.Units[0];
-            webSite.Name.ShouldBe("DefaultSite");
-            webSite.SiteName.ShouldBe("DeployTestWeb");
-            webSite.SiteUrl.ShouldBe("http://localhost/DefaultSite");
-            webSite.PackageInfo.InternalPath.ShouldBe("DefaultSitePath");
-            webSite.PackageInfo.Source.ShouldBe("Prod");
-            
-           
-            webSite.CleanDeploy.ShouldBe(true);
-        }
+			config.Environment.ShouldBe("default");
+			config.NodeFrontUrl.ShouldBe("http://default:3335");
+			config.WebPort.ShouldBe(21233);
+			config.HeartbeatIntervalSeconds.ShouldBe(10);
+			config.TempFolder.ShouldBe("\\Data\\Temp");
+			config.ConfigVersion.ShouldBe(101);
 
-        [Test]
-        public void can_read_agent_config_with_specific_env()
-        {
-            var config = ReadConfig("testAgent1");
+			var webSite = (WebSiteDeployUnit) config.Units[0];
+			webSite.Name.ShouldBe("DefaultSite");
+			webSite.SiteName.ShouldBe("DeployTestWeb");
+			webSite.SiteUrl.ShouldBe("http://localhost/DefaultSite");
+			webSite.PackageInfo.InternalPath.ShouldBe("DefaultSitePath");
+			webSite.PackageInfo.Source.ShouldBe("Prod");
 
-            config.NodeFrontUrl.ShouldBe("http://overriden:3335");
-        }
 
-        [Test]
-        public void can_read_package_source()
-        {
-            var config = ReadConfig("asd");
+			webSite.CleanDeploy.ShouldBe(true);
+		}
 
-            config.PackageSources.Count.ShouldBe(3);
+		[Test]
+		public void can_read_agent_config_with_specific_env() {
+			var config = ReadConfig("testAgent1");
 
-            var source1 = (FileSystemPackageSource) config.PackageSources[0];
-            source1.Uri.ShouldBe(new Uri("file://test"));
+			config.NodeFrontUrl.ShouldBe("http://overriden:3335");
+		}
 
-            var source2 = (FileSystemPackageSource)config.PackageSources[1];
-            source2.Uri.ShouldBe(new Uri("file://test2"));
+		[Test]
+		public void can_read_package_source() {
+			var config = ReadConfig("asd");
 
-            var source3 = (AsimovWebPackageSource)config.PackageSources[2];
-            source3.Uri.ShouldBe(new Uri("http://asimov"));
-        }
-        
-        [Test]
-        public void can_read_unit_actions()
-        {
-            var config = ReadConfig("asd");
+			config.PackageSources.Count.ShouldBe(3);
 
-            config.Units[0].Actions.Count.ShouldBe(4);
-            
-            config.Units[0].Actions[2].ShouldBeTypeOf<VerifyUrlsUnitAction>();
-            config.Units[0].Actions[3].ShouldBeTypeOf<VerifyCommandUnitAction>();
-            
-            var commandAction = (VerifyCommandUnitAction)config.Units[0].Actions[3];
-            commandAction.ZipPath.ShouldBe("SiteVerify.zip");
-            commandAction.Command.ShouldBe("phantomjs.exe");
-        }
-	
-        [Test]
-        public void env_config_file_can_override_and_add_packages_sources_and_units()
-        {
-            var config = ReadConfig("testAgent1");
-            
-            config.PackageSources.Count.ShouldBe(4);
-            config.Units.Count.ShouldBe(2);
+			var source1 = (FileSystemPackageSource) config.PackageSources[0];
+			source1.Uri.ShouldBe(new Uri("file://test"));
 
-            var packageSource = config.GetPackageSourceFor(config.Units[1]);
-            ((FileSystemPackageSource)packageSource).Uri.ShouldBe(new Uri("file://extra"));
-        }
+			var source2 = (FileSystemPackageSource) config.PackageSources[1];
+			source2.Uri.ShouldBe(new Uri("file://test2"));
 
-        [Test]
-        public void can_have_deploy_unit_with_deploy_parameters()
-        {
-            var config = ReadConfig("deploy-parameters");
-            var unit = config.GetUnitByName("UnitWithParameters");
+			var source3 = (AsimovWebPackageSource) config.PackageSources[2];
+			source3.Uri.ShouldBe(new Uri("http://asimov"));
+		}
 
-            unit.HasDeployParameters.ShouldBe(true);
-            unit.DeployParameters[0].ShouldBeTypeOf<TextActionParameter>();
-            ((TextActionParameter)unit.DeployParameters[0]).Default.ShouldBe("Deploy-Everything");
-        }
+		[Test]
+		public void can_read_unit_actions() {
+			var config = ReadConfig("asd");
 
-       
-        public AsimovConfig ReadConfig(string agentName)
-        {
-            return (AsimovConfig)new ConfigurationReader().Read("ConfigExamples", agentName);
-        }
-    }
+			config.Units[0].Actions.Count.ShouldBe(4);
+
+			config.Units[0].Actions[2].ShouldBeTypeOf<VerifyUrlsUnitAction>();
+			config.Units[0].Actions[3].ShouldBeTypeOf<VerifyCommandUnitAction>();
+
+			var commandAction = (VerifyCommandUnitAction) config.Units[0].Actions[3];
+			commandAction.ZipPath.ShouldBe("SiteVerify.zip");
+			commandAction.Command.ShouldBe("phantomjs.exe");
+		}
+
+		[Test]
+		public void env_config_file_can_override_and_add_packages_sources_and_units() {
+			var config = ReadConfig("testAgent1");
+
+			config.PackageSources.Count.ShouldBe(4);
+			config.Units.Count.ShouldBe(2);
+
+			var packageSource = config.GetPackageSourceFor(config.Units[1]);
+			((FileSystemPackageSource) packageSource).Uri.ShouldBe(new Uri("file://extra"));
+		}
+
+		[Test]
+		public void can_have_deploy_unit_with_deploy_parameters() {
+			var config = ReadConfig("deploy-parameters");
+			var unit = config.GetUnitByName("UnitWithParameters");
+
+			unit.HasDeployParameters.ShouldBe(true);
+			unit.DeployParameters[0].ShouldBeTypeOf<TextActionParameter>();
+			((TextActionParameter) unit.DeployParameters[0]).Default.ShouldBe("Deploy-Everything");
+		}
+
+
+		public AsimovConfig ReadConfig(string agentName) {
+			return (AsimovConfig) new ConfigurationReader().Read("ConfigExamples", agentName);
+		}
+
+	}
+
 }

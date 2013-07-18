@@ -16,19 +16,19 @@
 
 using AsimovDeploy.WinAgent.Framework.Models;
 
-namespace AsimovDeploy.WinAgent.Framework.Events
-{
-    public class UnitStatusChangedEvent : AsimovEvent
-    {
-        public string unitName { get; set; }
-		public string status { get; set; }
-        
-		public UnitStatusChangedEvent(string unitName, UnitStatus status)
-        {
-			this.eventName = "unitStatusChanged";
-            this.unitName = unitName;
-			this.status = status.ToString();
-        }
+namespace AsimovDeploy.WinAgent.Framework.Events {
 
-    }
+	public class UnitStatusChangedEvent : AsimovEvent {
+
+		public string unitName { get; set; }
+		public string status { get; set; }
+
+		public UnitStatusChangedEvent(string unitName, UnitStatus status) {
+			this.eventName = "unitStatusChanged";
+			this.unitName = unitName;
+			this.status = status.ToString();
+		}
+
+	}
+
 }

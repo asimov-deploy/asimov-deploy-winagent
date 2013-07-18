@@ -23,62 +23,56 @@ using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
-namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
-{
-    public class UpdateWindowsService : IDeployStep
-    {
-        private IAsimovConfig _config;
+namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps {
 
-        public UpdateWindowsService(IAsimovConfig config)
-        {
-            _config = config;
-        }
+	public class UpdateWindowsService : IDeployStep {
 
-        public void Execute(DeployContext context)
-        {
-            var deployUnit = (WindowsServiceDeployUnit) context.DeployUnit;
+		private IAsimovConfig _config;
 
-            using (var controller = new ServiceController(deployUnit.ServiceName))
-            {
-                StopService(context, controller);
+		public UpdateWindowsService(IAsimovConfig config) {
+			_config = config;
+		}
 
-                context.PhysicalPath = WindowsServiceUtil.GetWindowsServicePath(deployUnit.ServiceName);
+		public void Execute(DeployContext context) {
+			var deployUnit = (WindowsServiceDeployUnit) context.DeployUnit;
 
-                CleanPhysicalPath(context);
+			using (var controller = new ServiceController(deployUnit.ServiceName)) {
+				StopService(context, controller);
 
-                CopyNewFiles(context);
+				context.PhysicalPath = WindowsServiceUtil.GetWindowsServicePath(deployUnit.ServiceName);
 
-                context.Log.InfoFormat("Starting service {0}", deployUnit.ServiceName);
-                controller.Start();
+				CleanPhysicalPath(context);
 
-                controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(1));
-            }
+				CopyNewFiles(context);
 
-        }
+				context.Log.InfoFormat("Starting service {0}", deployUnit.ServiceName);
+				controller.Start();
 
-        private static void StopService(DeployContext context, ServiceController controller)
-        {
-            context.Log.InfoFormat("Stopping service {0}", controller.ServiceName);
+				controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(1));
+			}
+		}
 
-            if (controller.Status == ServiceControllerStatus.Running)
-                controller.Stop();
+		private static void StopService(DeployContext context, ServiceController controller) {
+			context.Log.InfoFormat("Stopping service {0}", controller.ServiceName);
 
-            controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromMinutes(10));
-            Thread.Sleep(2500);
-        }
+			if (controller.Status == ServiceControllerStatus.Running) {
+				controller.Stop();
+			}
 
-        private void CopyNewFiles(DeployContext context)
-        {
-            context.Log.InfoFormat("Copying new files");
-            DirectoryUtil.CopyDirectory(context.TempFolderWithNewVersionFiles, context.PhysicalPath);
-        }
+			controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromMinutes(10));
+			Thread.Sleep(2500);
+		}
 
-        private void CleanPhysicalPath(DeployContext context)
-        {
-            context.Log.InfoFormat("Cleaning folder {0}", context.PhysicalPath);
-            DirectoryUtil.Clean(context.PhysicalPath);
-        }
+		private void CopyNewFiles(DeployContext context) {
+			context.Log.InfoFormat("Copying new files");
+			DirectoryUtil.CopyDirectory(context.TempFolderWithNewVersionFiles, context.PhysicalPath);
+		}
 
+		private void CleanPhysicalPath(DeployContext context) {
+			context.Log.InfoFormat("Cleaning folder {0}", context.PhysicalPath);
+			DirectoryUtil.Clean(context.PhysicalPath);
+		}
 
-    }
+	}
+
 }

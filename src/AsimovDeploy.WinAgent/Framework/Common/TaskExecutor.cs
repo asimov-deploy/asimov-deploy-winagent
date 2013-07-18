@@ -19,80 +19,74 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using log4net;
 
-namespace AsimovDeploy.WinAgent.Framework.Common
-{
-    public class TaskExecutor : ITaskExecutor, IStartable
-    {
-        private static ILog _log = LogManager.GetLogger(typeof (TaskExecutor));
+namespace AsimovDeploy.WinAgent.Framework.Common {
 
-        private BlockingCollection<AsimovTask> _tasks = new BlockingCollection<AsimovTask>(100);
+	public class TaskExecutor : ITaskExecutor, IStartable {
 
-        private Task _workerTask;
+		private static ILog _log = LogManager.GetLogger(typeof (TaskExecutor));
 
-        public Task<T> AddTask<T>(T task) where T : AsimovTask
-        {
-            var tsc = new TaskCompletionSource<T>();
+		private BlockingCollection<AsimovTask> _tasks = new BlockingCollection<AsimovTask>(100);
 
-            task.Completed += (ex) =>
-            {
-                if (ex != null)
-                    tsc.SetException(ex);
-                else
-                    tsc.SetResult(task);
-            };
+		private Task _workerTask;
 
-            _tasks.Add(task);
+		public Task<T> AddTask<T>(T task) where T : AsimovTask {
+			var tsc = new TaskCompletionSource<T>();
 
-            return tsc.Task;
-        }
+			task.Completed += (ex) => {
+				if (ex != null) {
+					tsc.SetException(ex);
+				}
+				else {
+					tsc.SetResult(task);
+				}
+			};
 
-        public void Start()
-        {
-            _workerTask = Task.Factory.StartNew(() =>
-            {
-                _log.Debug("TaskExecutor started");
+			_tasks.Add(task);
 
-                TaskExecutorLoop();
+			return tsc.Task;
+		}
 
-                _log.Debug("TaskExecutor stopped");
+		public void Start() {
+			_workerTask = Task.Factory.StartNew(() => {
+				_log.Debug("TaskExecutor started");
 
-            }, TaskCreationOptions.LongRunning);
-        }
+				TaskExecutorLoop();
 
-        private void TaskExecutorLoop()
-        {
-            while (!_tasks.IsCompleted)
-            {
-                AsimovTask task = null;
+				_log.Debug("TaskExecutor stopped");
+			}, TaskCreationOptions.LongRunning);
+		}
 
-                try
-                {
-                    task = _tasks.Take();
-                }
-                catch (InvalidOperationException) { }
+		private void TaskExecutorLoop() {
+			while (!_tasks.IsCompleted) {
+				AsimovTask task = null;
 
-                ExecuteTask(task);
-            }
-        }
+				try {
+					task = _tasks.Take();
+				}
+				catch (InvalidOperationException) {}
 
-        private static void ExecuteTask(AsimovTask task)
-        {
-            if (task == null) return;
+				ExecuteTask(task);
+			}
+		}
 
-            try
-            {
-                task.ExecuteTask();
-            }
-            catch(Exception e)
-            {
-                _log.Error("Error executing task.", e);
-            }
-        }
+		private static void ExecuteTask(AsimovTask task) {
+			if (task == null) {
+				return;
+			}
 
-        public void Stop()
-        {
-            _tasks.CompleteAdding();
-            _workerTask.Wait(TimeSpan.FromMinutes(5));
-        }
-    }
+			try {
+				task.ExecuteTask();
+			}
+			catch (Exception e) {
+				_log.Error("Error executing task.", e);
+			}
+		}
+
+		public void Stop() {
+			_tasks.CompleteAdding();
+			_workerTask.Wait(TimeSpan.FromMinutes(5));
+		}
+
+	}
+
 }

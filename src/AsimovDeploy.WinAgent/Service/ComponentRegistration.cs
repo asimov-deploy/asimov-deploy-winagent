@@ -25,74 +25,74 @@ using StructureMap.Graph;
 using StructureMap.TypeRules;
 using log4net;
 
-namespace AsimovDeploy.WinAgent.Service
-{
-    public static class ComponentRegistration
-    {
-         private static readonly ILog Log = LogManager.GetLogger(typeof (ComponentRegistration));
+namespace AsimovDeploy.WinAgent.Service {
 
-         public static void RegisterComponents()
-         {
-             Log.Debug("Registering components...");
+	public static class ComponentRegistration {
 
-             ObjectFactory.Initialize(registry =>
-             {
-                // ReSharper disable ConvertToLambdaExpression
-                registry.Scan(assembly =>
-                {
-                    assembly.TheCallingAssembly();
-                    assembly.WithDefaultConventions();
-                    assembly.ConnectImplementationsToTypesClosing(typeof (IListenTo<>));
-                });
+		private static readonly ILog Log = LogManager.GetLogger(typeof (ComponentRegistration));
 
-                registry.Scan(assembly =>
-                {
-                    assembly.TheCallingAssembly();
-                    assembly.With(new SingletonConvention<IStartable>());
-                });
+		public static void RegisterComponents() {
+			Log.Debug("Registering components...");
 
-                registry.For<ITaskExecutor>().UseSpecial(x => x.ConstructedBy(y => (TaskExecutor)y.GetInstance<IStartable>((typeof(TaskExecutor).Name))));
-                registry.For<INodeFrontPublisher>().UseSpecial(x => x.ConstructedBy(y => (NodeFrontPublisherPublisher)y.GetInstance<IStartable>((typeof(NodeFrontPublisherPublisher).Name))));
+			ObjectFactory.Initialize(registry => {
+				// ReSharper disable ConvertToLambdaExpression
+				registry.Scan(assembly => {
+					assembly.TheCallingAssembly();
+					assembly.WithDefaultConventions();
+					assembly.ConnectImplementationsToTypesClosing(typeof (IListenTo<>));
+				});
 
-             });
-         }
+				registry.Scan(assembly => {
+					assembly.TheCallingAssembly();
+					assembly.With(new SingletonConvention<IStartable>());
+				});
 
-        public static void ReadAndRegisterConfiguration()
-        {
-            var config = new ConfigurationReader().Read("ConfigFiles", Environment.MachineName);
-            ObjectFactory.Configure(x => x.For<IAsimovConfig>().Use(config));
-        }
+				registry.For<ITaskExecutor>()
+				        .UseSpecial(
+					        x => x.ConstructedBy(y => (TaskExecutor) y.GetInstance<IStartable>((typeof (TaskExecutor).Name))));
+				registry.For<INodeFrontPublisher>()
+				        .UseSpecial(
+					        x =>
+					        x.ConstructedBy(
+						        y => (NodeFrontPublisherPublisher) y.GetInstance<IStartable>((typeof (NodeFrontPublisherPublisher).Name))));
+			});
+		}
 
-        public static void StartStartableComponenters()
-        {
-            Log.Debug("Starting startable components...");
+		public static void ReadAndRegisterConfiguration() {
+			var config = new ConfigurationReader().Read("ConfigFiles", Environment.MachineName);
+			ObjectFactory.Configure(x => x.For<IAsimovConfig>().Use(config));
+		}
 
-            foreach (var startable in ObjectFactory.GetAllInstances<IStartable>())
-            {
-                Log.DebugFormat("Starting {0}", startable.GetType().Name);
-                startable.Start();
-            }
-        }
+		public static void StartStartableComponenters() {
+			Log.Debug("Starting startable components...");
 
-        public static void StopAll()
-        {
-            Log.Debug("Stopping all startable components...");
+			foreach (var startable in ObjectFactory.GetAllInstances<IStartable>()) {
+				Log.DebugFormat("Starting {0}", startable.GetType().Name);
+				startable.Start();
+			}
+		}
 
-            foreach (var startable in ObjectFactory.GetAllInstances<IStartable>())
-            {
-                Log.DebugFormat("Stopping {0}", startable.GetType().Name);
-                startable.Stop();
-            }
-        }
-    }
+		public static void StopAll() {
+			Log.Debug("Stopping all startable components...");
 
-    internal class SingletonConvention<TPluginFamily> : IRegistrationConvention
-    {
-        public void Process(Type type, Registry registry)
-        {
-            if (!type.IsConcrete() || !type.CanBeCreated() || !type.AllInterfaces().Contains(typeof(TPluginFamily))) return;
+			foreach (var startable in ObjectFactory.GetAllInstances<IStartable>()) {
+				Log.DebugFormat("Stopping {0}", startable.GetType().Name);
+				startable.Stop();
+			}
+		}
 
-            registry.For(typeof(TPluginFamily)).Singleton().Use(type).Named(type.Name);
-        }
-    }
+	}
+
+	internal class SingletonConvention<TPluginFamily> : IRegistrationConvention {
+
+		public void Process(Type type, Registry registry) {
+			if (!type.IsConcrete() || !type.CanBeCreated() || !type.AllInterfaces().Contains(typeof (TPluginFamily))) {
+				return;
+			}
+
+			registry.For(typeof (TPluginFamily)).Singleton().Use(type).Named(type.Name);
+		}
+
+	}
+
 }

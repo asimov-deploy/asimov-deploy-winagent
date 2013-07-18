@@ -14,11 +14,13 @@
 * limitations under the License.
 ******************************************************************************/
 
-namespace AsimovDeploy.WinAgent.Framework.Common
-{
-    public class NodeFrontMessage
-    {
-        public string Url { get; set; }
-        public object Data { get; set; }
-    }
+namespace AsimovDeploy.WinAgent.Framework.Common {
+
+	public class NodeFrontMessage {
+
+		public string Url { get; set; }
+		public object Data { get; set; }
+
+	}
+
 }

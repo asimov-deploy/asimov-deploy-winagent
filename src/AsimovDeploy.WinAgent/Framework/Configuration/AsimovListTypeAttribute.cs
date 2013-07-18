@@ -20,18 +20,19 @@ using AsimovDeploy.WinAgent.Framework.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace AsimovDeploy.WinAgent.Framework.Configuration
-{
+namespace AsimovDeploy.WinAgent.Framework.Configuration {
+
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-	public class AsimovListTypeAttribute : Attribute
-	{
+	public class AsimovListTypeAttribute : Attribute {
+
 		public string Name { get; set; }
 		public Type Type { get; set; }
-		
-		public AsimovListTypeAttribute(string name, Type type)
-		{
+
+		public AsimovListTypeAttribute(string name, Type type) {
 			Name = name;
 			Type = type;
 		}
+
 	}
+
 }

@@ -21,23 +21,24 @@ using AsimovDeploy.WinAgent.Framework.Models.Units;
 using AsimovDeploy.WinAgent.Framework.Tasks;
 using log4net;
 
-namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
-{
-	public class StopDeployUnitAction : UnitAction
-	{
+namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions {
+
+	public class StopDeployUnitAction : UnitAction {
+
 		private static ILog _log = LogManager.GetLogger(typeof (StopDeployUnitAction));
 
-		public StopDeployUnitAction()
-		{
+		public StopDeployUnitAction() {
 			Name = "Stop";
 		}
 
-		public override AsimovTask GetTask(DeployUnit unit)
-		{
-			if (!(unit is ICanBeStopStarted))
+		public override AsimovTask GetTask(DeployUnit unit) {
+			if (!(unit is ICanBeStopStarted)) {
 				throw new ArgumentException("Action is only supported for deploy units that implement ICanBeStopStarted");
+			}
 
-			return ((ICanBeStopStarted)unit).GetStopTask();
+			return ((ICanBeStopStarted) unit).GetStopTask();
 		}
+
 	}
+
 }

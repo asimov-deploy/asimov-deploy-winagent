@@ -16,19 +16,21 @@
 
 using AsimovDeploy.WinAgent.Framework.Common;
 
-namespace AsimovDeploy.WinAgent.Framework.Models
-{
-    public class DeployUnitInfo
-    {
-        public string Name { get; set; }
-        public string LastDeployed { get; set; }
-        public string Url { get; set; }
+namespace AsimovDeploy.WinAgent.Framework.Models {
 
-        public UnitStatus Status { get; set; }
-        public DeployStatus DeployStatus { get; set; }
+	public class DeployUnitInfo {
 
-        public DeployedVersion Version { get; set; }
+		public string Name { get; set; }
+		public string LastDeployed { get; set; }
+		public string Url { get; set; }
 
-        public bool HasDeployParameters { get; set; }
-    }
+		public UnitStatus Status { get; set; }
+		public DeployStatus DeployStatus { get; set; }
+
+		public DeployedVersion Version { get; set; }
+
+		public bool HasDeployParameters { get; set; }
+
+	}
+
 }
