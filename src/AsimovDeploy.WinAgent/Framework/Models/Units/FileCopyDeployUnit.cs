@@ -25,9 +25,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public string TargetPath { get; set; }
         public bool CleanTargetPath { get; set; }
 
-        public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues)
+        public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user)
         {
-            var task = new DeployTask(this, version, parameterValues);
+            var task = new DeployTask(this, version, parameterValues, user);
             task.AddDeployStep<FileCopyDeployStep>();
             return task;
         }

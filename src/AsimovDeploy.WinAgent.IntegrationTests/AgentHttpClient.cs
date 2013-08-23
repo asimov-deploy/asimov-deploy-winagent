@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -39,9 +40,10 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         public void Post(string url, string apiKey, object data)
         {
             var httpClient = new HttpClient();
+	        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(apiKey);
             var jsonString = JsonConvert.SerializeObject(data);
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            var fullUrl = GetFullAgentUrl(url) + "?apiKey=" + apiKey;
+            var fullUrl = GetFullAgentUrl(url);
             var post = httpClient.PostAsync(fullUrl, content);
             Task.WaitAll(post);
         }

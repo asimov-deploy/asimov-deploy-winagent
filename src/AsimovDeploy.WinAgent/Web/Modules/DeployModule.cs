@@ -32,12 +32,14 @@ namespace AsimovDeploy.WinAgent.Web.Modules
         {
             Post["/deploy/deploy"] = _ =>
             {
+				
                 var command = this.Bind<DeployCommand>();
                 var deployUnit = config.GetUnitByName(command.unitName);
+	            var user = new AsimovUser() { UserId = command.userId, UserName = command.userName };
 
                 var packageSource = config.GetPackageSourceFor(deployUnit);
                 var version = packageSource.GetVersion(command.versionId, deployUnit.PackageInfo);
-                var deployTask = deployUnit.GetDeployTask(version, new ParameterValues(command.parameters));
+                var deployTask = deployUnit.GetDeployTask(version, new ParameterValues(command.parameters), user);
 
                 taskExecutor.AddTask(deployTask);
 

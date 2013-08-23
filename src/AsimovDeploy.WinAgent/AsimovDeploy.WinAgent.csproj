@@ -92,6 +92,7 @@
     <Compile Include="Framework\Deployment\Steps\FileCopyDeployStep.cs" />
     <Compile Include="Framework\Models\ActionParameter.cs" />
     <Compile Include="Framework\Models\ActionParameterList.cs" />
+    <Compile Include="Framework\Models\AsimovUser.cs" />
     <Compile Include="Framework\Models\AsimovVersion.cs" />
     <Compile Include="Framework\Common\DeployedVersion.cs" />
     <Compile Include="Framework\Models\PackageSources\AsimovWebPackageSource.cs" />

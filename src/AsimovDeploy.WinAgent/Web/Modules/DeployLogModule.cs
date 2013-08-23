@@ -41,6 +41,8 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                     commit = x.VersionCommit,
                     branch = x.VersionBranch,
                     status = x.DeployFailed == true ? "DeployFailed" : "Success",
+					userId = x.UserId,
+					userName = x.UserName,
                     position = position++,
                 });
 

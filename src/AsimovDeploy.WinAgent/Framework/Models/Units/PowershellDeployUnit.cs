@@ -25,9 +25,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public string Script { get; set; }
         public string Url { get; set; }
 
-        public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues)
+        public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user)
         {
-            var task = new DeployTask(this, version, parameterValues);
+            var task = new DeployTask(this, version, parameterValues, user);
             task.AddDeployStep<PowerShellDeployStep>();
             return task;
         }

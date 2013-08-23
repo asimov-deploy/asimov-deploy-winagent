@@ -34,16 +34,18 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         private readonly DeployUnit _deployUnit;
         private readonly AsimovVersion _version;
         private readonly ParameterValues _parameterValues;
+	    private readonly AsimovUser _user;
 
-        private IList<Type> _steps = new List<Type>();
+	    private IList<Type> _steps = new List<Type>();
 
-        public DeployTask(DeployUnit deployUnit, AsimovVersion version, ParameterValues parameterValues)
+        public DeployTask(DeployUnit deployUnit, AsimovVersion version, ParameterValues parameterValues, AsimovUser user)
         {
             _deployUnit = deployUnit;
             _version = version;
             _parameterValues = parameterValues;
+	        _user = user;
 
-            AddDeployStep<CleanTempFolder>();
+	        AddDeployStep<CleanTempFolder>();
             AddDeployStep<CopyPackageToTempFolder>();
         }
 
@@ -74,9 +76,9 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
             InDeployContext(context =>
             {
-                context.DeployUnit.StartingDeploy(context.NewVersion, context.LogFileName);
+                context.DeployUnit.StartingDeploy(context.NewVersion, context.LogFileName, _user);
 
-                Log.InfoFormat("Starting deployment of {0}, Version: {1}, {2}", _deployUnit.Name, _version.Number, _parameterValues.GetLogString());
+                Log.InfoFormat("Starting deployment of {0}, Version: {1}, {2} {3}", _deployUnit.Name, _version.Number, _parameterValues.GetLogString(), GetCurrentUserInfo());
 
                 foreach (var stepType in _steps)
                 {
@@ -91,7 +93,16 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
             });
         }
 
-        private bool PasswordIsIncorrect()
+	    private string GetCurrentUserInfo()
+	    {
+			if (_user.UserName != null)
+			{
+				return string.Format("- Triggered by {0}", _user.UserName);	
+			}
+		    return "";
+	    }
+
+	    private bool PasswordIsIncorrect()
         {
             if (!_deployUnit.HasDeployParameters)
                 return false;

@@ -28,5 +28,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         public DateTime DeployTimestamp;
         public string LogFileName;
         public bool DeployFailed;
+		public string UserId { get; set; }
+		public string UserName { get; set; }
     }
 }

@@ -15,17 +15,23 @@
 ******************************************************************************/
 
 using System.IO;
+using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Models;
+using Nancy;
 using Nancy.Bootstrappers.StructureMap;
 using Nancy.Conventions;
 using Nancy.Diagnostics;
+using Nancy.Helpers;
 using Nancy.Responses;
 using StructureMap;
+using log4net;
 
 namespace AsimovDeploy.WinAgent.Web.Setup
 {
     public class CustomNancyBootstrapper : StructureMapNancyBootstrapper
     {
+	    private static ILog Log = LogManager.GetLogger(typeof (CustomNancyBootstrapper));
+
         protected override void ApplicationStartup(IContainer container, Nancy.Bootstrapper.IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
@@ -43,7 +49,7 @@ namespace AsimovDeploy.WinAgent.Web.Setup
             {
                 if (ctx.Request.Method == "POST")
                 {
-                    if (ctx.Request.Query.apiKey != config.ApiKey)
+					if (ctx.Request.Headers.Authorization != config.ApiKey)
                     {
                         return 401;
                     }

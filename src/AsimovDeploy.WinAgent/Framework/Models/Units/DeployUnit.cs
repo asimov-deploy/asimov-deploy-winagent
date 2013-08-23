@@ -45,7 +45,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             Actions = new UnitActionList();
         }
 
-        public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues);
+        public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user);
 
         public virtual DeployUnitInfo GetUnitInfo()
         {
@@ -86,7 +86,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return OnlyOnAgents.Any(x => x == agentName);
         }
 
-        public void StartingDeploy(AsimovVersion newVersion, string logFileName)
+        public void StartingDeploy(AsimovVersion newVersion, string logFileName, AsimovUser user)
         {
             DeployStatus = DeployStatus.Deploying;
             Version = new DeployedVersion()
@@ -98,6 +98,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
                 VersionTimestamp = newVersion.Timestamp,
                 VersionCommit = newVersion.Commit,
                 LogFileName = logFileName,
+				UserId = user.UserId,
+				UserName = user.UserName,
                 DeployFailed = false
             };
 
@@ -107,9 +109,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public void DeployCompleted()
         {
             DeployStatus = DeployStatus.NA;
-            VersionUtil.UpdateVersionLog(DataDirectory, Version);
-            var unitInfo = GetUnitInfo();
-
+            
+			VersionUtil.UpdateVersionLog(DataDirectory, Version);
+            
+			var unitInfo = GetUnitInfo();
             NodeFront.Notify(new DeployCompletedEvent(Name, Version, unitInfo.Status));
         }
 

@@ -15,8 +15,6 @@
 ******************************************************************************/
 
 using System;
-using AsimovDeploy.WinAgent.Framework.Configuration;
-using AsimovDeploy.WinAgent.Framework.Events;
 using AsimovDeploy.WinAgent.Framework.Models;
 using StructureMap;
 using log4net;
@@ -25,6 +23,9 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public abstract class AsimovTask
     {
+	    public string UserId { get; set; }
+		public string UserName { get; set; }
+
         protected ILog Log;
 
         protected AsimovTask()
