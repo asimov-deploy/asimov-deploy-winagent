@@ -32,7 +32,6 @@ namespace AsimovDeploy.WinAgent.Web.Modules
         {
             Post["/deploy/deploy"] = _ =>
             {
-				
                 var command = this.Bind<DeployCommand>();
                 var deployUnit = config.GetUnitByName(command.unitName);
 	            var user = new AsimovUser() { UserId = command.userId, UserName = command.userName };

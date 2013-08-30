@@ -16,8 +16,10 @@
 
 using System.IO;
 using System.Linq;
+using System.Text;
 using AsimovDeploy.WinAgent.Framework.Models;
 using Nancy;
+using Nancy.Responses;
 
 namespace AsimovDeploy.WinAgent.Web.Modules
 {
@@ -61,9 +63,9 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                     return 404;
 
                 var logFile = Path.Combine(deployUnit.DataDirectory, "Logs", specific.LogFileName);
-                using (var fileStream = new StreamReader(logFile))
+                using (var fileStream = new StreamReader(logFile, Encoding.UTF8))
                 {
-                    return Response.AsText(fileStream.ReadToEnd());
+					return new TextResponse(fileStream.ReadToEnd(), "text/plain; charset=utf-8", Encoding.UTF8);
                 }
             };
         }

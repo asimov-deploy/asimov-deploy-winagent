@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Deployment;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
@@ -148,6 +149,8 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
             var logger = (Logger) Log.Logger;
 
             fileAppender = new FileAppender();
+	        fileAppender.Encoding = Encoding.UTF8;
+
             // update file property of appender
             context.LogFileName = string.Format("deploy-{0:yyyy-MM-dd_HH_mm_ss}.log", DateTime.Now);
             fileAppender.File = Path.Combine(context.DeployUnit.DataDirectory, "Logs", context.LogFileName);
