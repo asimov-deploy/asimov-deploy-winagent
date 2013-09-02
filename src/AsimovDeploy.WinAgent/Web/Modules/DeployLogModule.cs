@@ -44,7 +44,7 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                     branch = x.VersionBranch,
                     status = x.DeployFailed == true ? "DeployFailed" : "Success",
 					userId = x.UserId,
-					userName = x.UserName,
+					username = x.UserName,
                     position = position++,
                 });
 
