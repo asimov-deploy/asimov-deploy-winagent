@@ -22,7 +22,7 @@ namespace AsimovDeploy.WinAgentUpdater
         private string _watchFolder;
         private int _port;
         private string _installDir;
-        private const int interval = 30000;
+        private const int interval = 4000;
         
         public void Start()
         {

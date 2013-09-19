@@ -14,18 +14,18 @@
 * limitations under the License.
 ******************************************************************************/
 
+using AsimovDeploy.WinAgent.Web.Contracts;
+
 namespace AsimovDeploy.WinAgent.Framework.Events
 {
-    public class HostLoadBalancerStateChanged : AsimovEvent
+    public class LoadBalancerStateChanged : AsimovEvent
     {
-        public int id { get; set; }
-        public bool enabled { get; set; }
+	    public LoadBalancerStateDTO state;
 
-        public HostLoadBalancerStateChanged(int id, bool enabled)
+        public LoadBalancerStateChanged(LoadBalancerStateDTO state)
         {
             eventName = "loadBalancerStateChanged";
-            this.id = id;
-            this.enabled = enabled;
+	        this.state = state;
         }
     }
 }

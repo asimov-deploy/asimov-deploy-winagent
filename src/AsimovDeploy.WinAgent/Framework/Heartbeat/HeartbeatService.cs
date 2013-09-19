@@ -20,7 +20,9 @@ using System.Text;
 using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Configuration;
+using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models;
+using AsimovDeploy.WinAgent.Web.Contracts;
 using log4net;
 using Newtonsoft.Json;
 
@@ -34,18 +36,23 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
         private readonly int _intervalMs;
         private readonly string _hostControlUrl;
         private readonly IAsimovConfig _config;
+	    private readonly ILoadBalancerService _loadBalancerService;
+		private LoadBalancerStateDTO _previousLoadBalancerState;
 
-        public HeartbeatService(IAsimovConfig config)
+	    public HeartbeatService(IAsimovConfig config, ILoadBalancerService loadBalancerService)
         {
             _config = config;
-            _nodeFrontUri = new Uri(new Uri(config.NodeFrontUrl), "/agent/heartbeat");
+	        _loadBalancerService = loadBalancerService;
+	        _nodeFrontUri = new Uri(new Uri(config.NodeFrontUrl), "/agent/heartbeat");
             _intervalMs = config.HeartbeatIntervalSeconds*1000;
             _hostControlUrl = config.WebControlUrl.ToString();
             _config = config;
             _config.ApiKey = Guid.NewGuid().ToString();
         }
 
-        public void Start()
+	    
+
+	    public void Start()
         {
             _timer = new Timer(TimerTick, null, 0, _intervalMs);
         }
@@ -71,18 +78,24 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 
         private void SendHeartbeat()
         {
-            HttpPostJsonUpdate(_nodeFrontUri, new HeartbeatDTO
-            {
-                name = Environment.MachineName,
-                url = _hostControlUrl,
-                apiKey = _config.ApiKey,
-                version = VersionUtil.GetAgentVersion(),
-                configVersion = _config.ConfigVersion,
-                loadBalancerId = _config.LoadBalancerId
-            });
-        }
+	        var heartBeat = new HeartbeatDTO
+	        {
+		        name = Environment.MachineName,
+		        url = _hostControlUrl,
+		        apiKey = _config.ApiKey,
+		        version = VersionUtil.GetAgentVersion(),
+		        configVersion = _config.ConfigVersion
+	        };
 
-        private static void HttpPostJsonUpdate<T>(Uri uri, T data)
+			if (_config.LoadBalancer != null)
+			{
+				heartBeat.loadBalancerState	= _loadBalancerService.GetCurrentState();
+			}
+
+            HttpPostJsonUpdate(_nodeFrontUri, heartBeat);
+        }
+	    
+	    private static void HttpPostJsonUpdate<T>(Uri uri, T data)
         {
             var webRequest = (HttpWebRequest)WebRequest.Create(uri);
             webRequest.ContentType = "application/json";
@@ -106,15 +119,5 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
                 Log.Warn("Error sending heartbeat to NodeFront", e);
             }
         }
-    }
-
-    public class HeartbeatDTO
-    {
-        public string name;
-        public string url;
-        public string apiKey;
-        public int loadBalancerId;
-        public string version;
-        public int configVersion;
     }
 }

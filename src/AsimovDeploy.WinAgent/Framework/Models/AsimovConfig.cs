@@ -58,6 +58,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public AsimovConfig()
         {
             Units = new DeployUnits();
+	        DataFolder = "Data";
         }
 
         public DeployUnit GetUnitByName(string name)

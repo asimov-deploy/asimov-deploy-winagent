@@ -50,31 +50,34 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         {
             try
             {
-                var fullUrl = new Uri(new Uri(_nodeFrontUrl), message.Url);
+	            var fullUrl = new Uri(new Uri(_nodeFrontUrl), message.Url);
+				
+	            var request = WebRequest.Create(fullUrl) as HttpWebRequest;
+	            request.Method = "POST";
+	            request.ContentType = "application/json";
+	            request.ServicePoint.Expect100Continue = false;
+	            request.Timeout = 30000;
 
-                var request = WebRequest.Create(fullUrl) as HttpWebRequest;
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                request.ServicePoint.Expect100Continue = false;
-                request.Timeout = 3000;
+	            using (var requestStream = request.GetRequestStream())
+	            {
+		            using (var writer = new StreamWriter(requestStream))
+		            {
+			            var serializer = new JsonSerializer();
+			            serializer.NullValueHandling = NullValueHandling.Ignore;
+			            serializer.Serialize(writer, message.Data);
+		            }
+	            }
 
-                using (var requestStream = request.GetRequestStream())
-                {
-                    using (var writer = new StreamWriter(requestStream))
-                    {
-	                    var serializer = new JsonSerializer();
-						serializer.NullValueHandling = NullValueHandling.Ignore;
-	                    serializer.Serialize(writer, message.Data);
-                    }
-                }
-
-                using (var resp = request.GetResponse())
-                {
-                    resp.Close();
-                }
+	            using (var resp = request.GetResponse())
+	            {
+		            resp.Close();
+	            }
 
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+	            Console.Write("Error sending log to nodefront");
+            }
         }
 
         public void Start()

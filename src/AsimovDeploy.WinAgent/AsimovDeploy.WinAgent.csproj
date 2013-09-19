@@ -35,8 +35,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EasyHttp">
+      <HintPath>..\..\packages\EasyHttp.1.6.58.0\lib\net40\EasyHttp.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="JsonFx">
+      <HintPath>..\..\packages\JsonFx.2.0.1209.2802\lib\net40\JsonFx.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
@@ -90,6 +96,10 @@
     <Compile Include="Framework\Configuration\AsimovListJsonConverter.cs" />
     <Compile Include="Framework\Configuration\AsimovListTypeAttribute.cs" />
     <Compile Include="Framework\Deployment\Steps\FileCopyDeployStep.cs" />
+    <Compile Include="Framework\LoadBalancers\LoadBalancerService.cs" />
+    <Compile Include="Web\Contracts\HeartbeatDto.cs" />
+    <Compile Include="Web\Contracts\LoadBalancerStateDto.cs" />
+    <Compile Include="Framework\LoadBalancers\ILoadBalancerService.cs" />
     <Compile Include="Framework\Models\ActionParameter.cs" />
     <Compile Include="Framework\Models\ActionParameterList.cs" />
     <Compile Include="Framework\Models\AsimovUser.cs" />
@@ -143,7 +153,7 @@
     <Compile Include="Framework\Deployment\Steps\UpdateWebSite.cs" />
     <Compile Include="Framework\Deployment\Steps\UpdateWindowsService.cs" />
     <Compile Include="Framework\Events\AsimovEvent.cs" />
-    <Compile Include="Framework\Events\HostLoadBalancerStateChanged.cs" />
+    <Compile Include="Framework\Events\LoadBalancerStateChanged.cs" />
     <Compile Include="Framework\Events\UnitStatusChangedEvent.cs" />
     <Compile Include="Framework\Events\VerifyProgressEvent.cs" />
     <Compile Include="Framework\Heartbeat\HeartbeatService.cs" />
@@ -151,8 +161,7 @@
     <Compile Include="Framework\LoadBalancers\LoadBalancerCommunicationException.cs" />
     <Compile Include="Framework\LoadBalancers\ILoadBalancer.cs" />
     <Compile Include="Framework\LoadBalancers\ILoadBalancerSettings.cs" />
-    <Compile Include="Framework\LoadBalancers\Alteon\AlteonLoadBalancer.cs" />
-    <Compile Include="Framework\Tasks\ChangeLoadBalancerStates.cs" />
+    <Compile Include="Framework\Tasks\ChangeLoadBalancerStateTask.cs" />
     <Compile Include="Framework\Tasks\DeployTask.cs" />
     <Compile Include="Framework\Tasks\LambdaTask.cs" />
     <Compile Include="Framework\Tasks\NoOpTask.cs" />
