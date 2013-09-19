@@ -19,6 +19,8 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 {
 	public interface ILoadBalancerService
 	{
+		bool UseLoadBalanser { get; set; }
+
 		LoadBalancerStateDTO GetCurrentState();
 		void EnableServer();
 		void DisableServer();
