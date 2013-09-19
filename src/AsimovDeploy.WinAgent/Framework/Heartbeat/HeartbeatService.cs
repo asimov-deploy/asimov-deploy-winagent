@@ -87,7 +87,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 		        configVersion = _config.ConfigVersion
 	        };
 
-			if (_config.LoadBalancer != null)
+			if (_config.LoadBalancerAgentUrl != null)
 			{
 				heartBeat.loadBalancerState	= _loadBalancerService.GetCurrentState();
 			}

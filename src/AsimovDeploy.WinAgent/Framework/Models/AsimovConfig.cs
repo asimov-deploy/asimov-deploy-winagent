@@ -31,17 +31,17 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public int HeartbeatIntervalSeconds { get; set; }
         public int WebPort { get; set; }
         public string ApiKey { get; set; }
-        public int LoadBalancerId { get; set; }
         public int ConfigVersion { get; set; }
 
         public string TempFolder { get { return Path.Combine(DataFolder, "Temp"); } }
         public string DataFolder { get; set; }
 
+		public string LoadBalancerAgentUrl { get; set; }
+		public string LoadBalancerServerId { get; set; }
+
         public string NodeFrontUrl { get; set; }
 
         public DeployUnits Units { get; set; }
-
-        public LoadBalancerSettings LoadBalancer { get; set; }
 
         public PackageSourceList PackageSources { get; set; }
 

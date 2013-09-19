@@ -29,15 +29,15 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         string NodeFrontUrl { get;}
         int WebPort { get; }
         string ApiKey { get; set; }
-        int LoadBalancerId { get; }
         int ConfigVersion { get; }
+
+		string LoadBalancerAgentUrl { get; set; }
+		string LoadBalancerServerId { get; set; }
 
         DeployUnits Units { get; }
 
         DeployUnit GetUnitByName(string name);
-
-        LoadBalancerSettings LoadBalancer { get; }
-
+		
         Uri WebControlUrl { get; }
 
         PackageSource GetPackageSourceFor(DeployUnit deployUnit);

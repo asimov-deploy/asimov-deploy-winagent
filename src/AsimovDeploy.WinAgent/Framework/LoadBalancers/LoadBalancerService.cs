@@ -18,7 +18,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 		public LoadBalancerService(IAsimovConfig config)
 		{
 			_config = config;
-			_agentUri = new Uri(config.LoadBalancer.LoadBalancerAgentUrl);
+			_agentUri = new Uri(config.LoadBalancerAgentUrl);
 		}
 
 		public LoadBalancerStateDTO GetCurrentState()
@@ -28,12 +28,12 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 				var http = new HttpClient();
 				var uri = new Uri(_agentUri, "server-status");
 
-				var result = http.Get(uri.ToString(), new { serverId = _config.LoadBalancer.ServerId });
+				var result = http.Get(uri.ToString(), new { serverId = _config.LoadBalancerServerId });
 				dynamic obj = result.DynamicBody;
 
 				return new LoadBalancerStateDTO()
 				{
-					serverId = _config.LoadBalancer.ServerId,
+					serverId = _config.LoadBalancerServerId,
 					connectionCount = (int)obj.connections,
 					enabled = obj.status == "enabled"
 				};
@@ -61,7 +61,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 			var uri = new Uri(_agentUri, "update-status");
 			var data = new InternalUpdateStatusCommand
 			{
-				ServerId = _config.LoadBalancer.ServerId,
+				ServerId = _config.LoadBalancerServerId,
 				Status = status
 			};
 

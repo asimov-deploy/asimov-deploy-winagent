@@ -160,7 +160,6 @@
     <Compile Include="Framework\Events\DeployCompletedEvent.cs" />
     <Compile Include="Framework\LoadBalancers\LoadBalancerCommunicationException.cs" />
     <Compile Include="Framework\LoadBalancers\ILoadBalancer.cs" />
-    <Compile Include="Framework\LoadBalancers\ILoadBalancerSettings.cs" />
     <Compile Include="Framework\Tasks\ChangeLoadBalancerStateTask.cs" />
     <Compile Include="Framework\Tasks\DeployTask.cs" />
     <Compile Include="Framework\Tasks\LambdaTask.cs" />

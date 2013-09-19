@@ -13,7 +13,6 @@
 // * See the License for the specific language governing permissions and
 // * limitations under the License.
 // ******************************************************************************/
-using AsimovDeploy.WinAgent.Framework.Heartbeat;
 using AsimovDeploy.WinAgent.Web.Contracts;
 
 namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
