@@ -33,6 +33,11 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 			this.loadBalancerService = loadBalancerService;
 		}
 
+		protected override string InfoString()
+		{
+			return string.Format("Server name: {0}, action={1}", Config.LoadBalancerServerId, _command.action);
+		}
+
 		protected override void Execute()
 		{
 			if (_command.action == "enable")
