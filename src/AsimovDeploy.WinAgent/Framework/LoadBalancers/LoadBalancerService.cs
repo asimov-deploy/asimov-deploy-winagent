@@ -20,6 +20,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 		public LoadBalancerService(IAsimovConfig config)
 		{
 			_config = config;
+
 			if (config.LoadBalancerAgentUrl != null)
 			{
 				_agentUri = new Uri(config.LoadBalancerAgentUrl);
@@ -34,7 +35,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 				var http = new HttpClient();
 				var uri = new Uri(_agentUri, "server-status");
 
-				var result = http.Get(uri.ToString(), new { serverId = _config.LoadBalancerServerId });
+				var result = http.Get(uri.ToString(), new { name = _config.LoadBalancerServerId });
 				dynamic obj = result.DynamicBody;
 
 				return new LoadBalancerStateDTO()
@@ -67,7 +68,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 			var uri = new Uri(_agentUri, "update-status");
 			var data = new InternalUpdateStatusCommand
 			{
-				ServerId = _config.LoadBalancerServerId,
+				Name = _config.LoadBalancerServerId,
 				Status = status
 			};
 
@@ -80,8 +81,8 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 
 		private class InternalUpdateStatusCommand
 		{
-			[JsonName("serverId")] 
-			public string ServerId { get; set; }
+			[JsonName("name")] 
+			public string Name { get; set; }
 			
 			[JsonName("status")] 
 			public string Status { get; set; }

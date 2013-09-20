@@ -50,8 +50,6 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             _config.ApiKey = Guid.NewGuid().ToString();
         }
 
-	    
-
 	    public void Start()
         {
             _timer = new Timer(TimerTick, null, 0, _intervalMs);
