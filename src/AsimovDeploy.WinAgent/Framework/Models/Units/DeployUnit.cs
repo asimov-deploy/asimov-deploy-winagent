@@ -103,7 +103,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
                 DeployFailed = false
             };
 
-            NodeFront.Notify(new DeployStartedEvent(Name, Version));
+            NotificationPublisher.PublishNotifications(new DeployStartedEvent(Name, Version));
         }
 
         public void DeployCompleted()
@@ -113,7 +113,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 			VersionUtil.UpdateVersionLog(DataDirectory, Version);
             
 			var unitInfo = GetUnitInfo();
-            NodeFront.Notify(new DeployCompletedEvent(Name, Version, unitInfo.Status));
+            NotificationPublisher.PublishNotifications((new DeployCompletedEvent(Name, Version, unitInfo.Status)));
         }
 
         public void DeployFailed()
@@ -123,7 +123,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
             VersionUtil.UpdateVersionLog(DataDirectory, Version);
 
-            NodeFront.Notify(new DeployFailedEvent(Name, Version));
+            NotificationPublisher.PublishNotifications(new DeployFailedEvent(Name, Version));
         }
     }
 }

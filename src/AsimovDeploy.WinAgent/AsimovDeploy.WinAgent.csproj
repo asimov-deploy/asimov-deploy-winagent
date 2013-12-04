@@ -92,7 +92,9 @@
     <Compile Include="Framework\Common\AsimovTask.cs" />
     <Compile Include="Framework\Common\ConsoleOutputParseUtil.cs" />
     <Compile Include="Framework\Common\DateUtils.cs" />
+    <Compile Include="Framework\Common\INotifier.cs" />
     <Compile Include="Framework\Common\NodeFront.cs" />
+    <Compile Include="Framework\Common\NotificationPublisher.cs" />
     <Compile Include="Framework\Configuration\AsimovListJsonConverter.cs" />
     <Compile Include="Framework\Configuration\AsimovListTypeAttribute.cs" />
     <Compile Include="Framework\Deployment\Steps\FileCopyDeployStep.cs" />

@@ -35,7 +35,8 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 	    private readonly string zipPath;
 	    private readonly string command;
 	    private dynamic report;
-	    
+        private readonly NodeFront _nodefront = new NodeFront();
+
 	    public VerifyCommandTask(WebSiteDeployUnit webSiteDeployUnit, string zipPath, string command)
         {
             deployUnit = webSiteDeployUnit;
@@ -49,7 +50,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
             using (var p = new Process())
             {
-				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name) { started = true });
+                _nodefront.Notify(new VerifyProgressEvent(deployUnit.Name) { started = true });
 
                 // Redirect the output stream of the child process.
                 p.StartInfo.UseShellExecute = false;
@@ -74,7 +75,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
                 if (!p.HasExited)
                     p.Kill();
 
-				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name) { completed = true, report = report });
+                _nodefront.Notify(new VerifyProgressEvent(deployUnit.Name) { completed = true, report = report });
             }
         }
 
@@ -138,7 +139,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
 			if (keys.ContainsKey("image"))
 			{
-				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name)
+                _nodefront.Notify(new VerifyProgressEvent(deployUnit.Name)
 				{
 					image = new
 					{
@@ -150,7 +151,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
 			if (keys.ContainsKey("test"))
 			{
-				NodeFront.Notify(new VerifyProgressEvent(deployUnit.Name)
+                _nodefront.Notify(new VerifyProgressEvent(deployUnit.Name)
 				{
 					test = new { pass = keys["pass"] == "true", message = keys["test"] }
 				});

@@ -28,7 +28,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
     {
         private readonly WebSiteDeployUnit _deployUnit;
         private string[] _urls;
-
+        private readonly NodeFront _nodefront = new NodeFront();
         public VerifySiteTask(WebSiteDeployUnit deployUnit, string[] urls)
         {
             _deployUnit = deployUnit;
@@ -48,7 +48,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
                 return;
             }
 
-			NodeFront.Notify(new VerifyProgressEvent(_deployUnit.Name) { started = true });
+            _nodefront.Notify(new VerifyProgressEvent(_deployUnit.Name) { started = true });
 
             foreach (string url in _urls)
             {
@@ -58,7 +58,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
                 }
                 catch (Exception ex)
                 {
-					NodeFront.Notify(new VerifyProgressEvent(_deployUnit.Name)
+                    _nodefront.Notify(new VerifyProgressEvent(_deployUnit.Name)
                     {
                         test = new 
                         {
@@ -71,7 +71,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
                 }
             }
 
-			NodeFront.Notify(new VerifyProgressEvent(_deployUnit.Name) { completed = true });
+            _nodefront.Notify(new VerifyProgressEvent(_deployUnit.Name) { completed = true });
         }
 
         private bool DoWebRequest(string url, string siteUrl)
@@ -83,7 +83,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
             using (var resp = (HttpWebResponse) request.GetResponse())
             {
-				NodeFront.Notify(new VerifyProgressEvent(_deployUnit.Name)
+                _nodefront.Notify(new VerifyProgressEvent(_deployUnit.Name)
                 {
 					test = new 
                     {

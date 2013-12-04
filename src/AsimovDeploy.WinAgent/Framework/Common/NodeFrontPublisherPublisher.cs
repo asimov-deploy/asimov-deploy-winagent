@@ -20,6 +20,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using AsimovDeploy.WinAgent.Framework.Events;
 using AsimovDeploy.WinAgent.Framework.Models;
 using Newtonsoft.Json;
 using StructureMap;
@@ -37,6 +38,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
             var config = ObjectFactory.GetInstance<IAsimovConfig>();
             _nodeFrontUrl = config.NodeFrontUrl;
         }
+
 
         public void Notify(string url, object data)
         {

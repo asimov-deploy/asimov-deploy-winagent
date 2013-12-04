@@ -19,12 +19,17 @@ using StructureMap;
 
 namespace AsimovDeploy.WinAgent.Framework.Common
 {
-    public static class NodeFront
+    public class NodeFront : INotifier 
     {
-         public static void Notify(AsimovEvent evt)
+        public  void Notify(AsimovEvent evt)
+        {
+            Notify("/agent/event", evt);
+        }
+
+        public void Notify(string url, AsimovEvent evt)
          {
              var nodeFront = ObjectFactory.GetInstance<INodeFrontPublisher>();
-             nodeFront.Notify("/agent/event", evt);
+             nodeFront.Notify(url, evt);
          }
     }
 }

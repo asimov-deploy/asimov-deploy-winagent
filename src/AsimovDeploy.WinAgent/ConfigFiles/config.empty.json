@@ -7,6 +7,8 @@
    "HeartbeatIntervalSeconds": 10,
    /* Deploy UI Url  */
    "NodeFrontUrl":            "http://localhost:3333",
+   /* Notifcation Url for externa use  */
+   "WebNotificationUrl":	 "http://localhost:8080",
    /* Used to by the updater to update config files */
    "ConfigVersion":           1,
 

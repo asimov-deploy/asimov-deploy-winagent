@@ -26,7 +26,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 	{
 		private readonly ChangeLoadBalancerStateCommand _command;
 		private readonly ILoadBalancerService loadBalancerService;
-
+        private readonly NodeFront _nodefront = new NodeFront();
 		public ChangeLoadBalancerStateTask(ChangeLoadBalancerStateCommand command, ILoadBalancerService loadBalancerService)
 		{
 			_command = command;
@@ -44,13 +44,13 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 			{
 				loadBalancerService.EnableServer();
 				Thread.Sleep(1000);
-				NodeFront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
+                _nodefront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
 			}
 			else if (_command.action == "disable")
 			{
 				loadBalancerService.DisableServer();
 				Thread.Sleep(1000);
-				NodeFront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
+                _nodefront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
 			}
 			else
 			{

@@ -15,6 +15,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
 		private readonly WindowsServiceDeployUnit _unit;
 		private readonly bool _stop;
+        private readonly NodeFront _nodefront = new NodeFront();
 
 		public StartStopWindowsServiceTask(WindowsServiceDeployUnit unit, bool stop)
 		{
@@ -32,7 +33,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 			var intermediateStatus = _stop ? UnitStatus.Stopping : UnitStatus.Starting;
 			var endStatus = _stop ? UnitStatus.Stopped : UnitStatus.Running;
 
-			NodeFront.Notify(new UnitStatusChangedEvent(_unit.Name, intermediateStatus));
+            _nodefront.Notify(new UnitStatusChangedEvent(_unit.Name, intermediateStatus));
 
 			using (var controller = new ServiceController(_unit.ServiceName))
 			{
@@ -48,7 +49,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 				_log.Error(string.Format("Failed to {0} {1}", (_stop ? "stop" : "start"), _unit.Name));
 			}
 
-			NodeFront.Notify(new UnitStatusChangedEvent(_unit.Name, unitInfo.Status));
+            _nodefront.Notify(new UnitStatusChangedEvent(_unit.Name, unitInfo.Status));
 		}
 
 		private void StartService(ServiceController controller)

@@ -40,6 +40,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 		public string LoadBalancerServerId { get; set; }
 
         public string NodeFrontUrl { get; set; }
+        public string WebNotificationUrl { get; set; }
 
         public DeployUnits Units { get; set; }
 

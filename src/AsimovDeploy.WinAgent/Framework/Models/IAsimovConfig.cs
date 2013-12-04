@@ -27,6 +27,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         int HeartbeatIntervalSeconds { get; }
         string TempFolder { get; }
         string NodeFrontUrl { get;}
+        string WebNotificationUrl { get; set; }
         int WebPort { get; }
         string ApiKey { get; set; }
         int ConfigVersion { get; }
@@ -39,6 +40,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         DeployUnit GetUnitByName(string name);
 		
         Uri WebControlUrl { get; }
+        
 
         PackageSource GetPackageSourceFor(DeployUnit deployUnit);
     }
