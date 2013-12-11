@@ -51,7 +51,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             var serviceManager = new ServiceController(ServiceName);
 
             var unitInfo = base.GetUnitInfo();
-            unitInfo.Url = Url;
+			if (!string.IsNullOrEmpty(Url))
+			{
+				unitInfo.Url = Url.Replace("localhost", HostNameUtil.GetFullHostName());
+			}
 
             try
             {
