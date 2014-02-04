@@ -53,6 +53,7 @@
     <Compile Include="ActionParameters\ParameterValuesTests.cs" />
     <Compile Include="ActionParameters\TextActionParameterTests.cs" />
     <Compile Include="ConfigurationSpecs.cs" />
+    <Compile Include="Packagesource\FileSystemPackageSourceRegexTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\FriendlyAgeSpecs.cs" />
     <Compile Include="VersionLogSpecs.cs" />
