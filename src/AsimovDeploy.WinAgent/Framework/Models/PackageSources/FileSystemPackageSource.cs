@@ -29,7 +29,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
         public FileSystemPackageSource()
         {
-            Pattern = @"v(?<version>\d+\.\d+\.\d+\.\d+)-\[(?<branch>\w*)\]-\[(?<commit>\w*)\]";
+            Pattern = @"v(?<version>\d+\.\d+\.\d+\.\d+)-\[(?<branch>[\w\-]*)\]-\[(?<commit>\w*)\]";
         }
 
         public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo)
