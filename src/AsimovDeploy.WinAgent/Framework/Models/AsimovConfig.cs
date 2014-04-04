@@ -36,8 +36,15 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public string TempFolder { get { return Path.Combine(DataFolder, "Temp"); } }
         public string DataFolder { get; set; }
 
+	    
 		public string LoadBalancerAgentUrl { get; set; }
-		public string LoadBalancerServerId { get; set; }
+
+		private string _loadBalancerServerId;
+	    public string LoadBalancerServerId
+	    {
+		    get { return _loadBalancerServerId ?? System.Environment.MachineName.ToLower(); }
+			set { _loadBalancerServerId = value;  }
+	    }
 
         public string NodeFrontUrl { get; set; }
         public string WebNotificationUrl { get; set; }
