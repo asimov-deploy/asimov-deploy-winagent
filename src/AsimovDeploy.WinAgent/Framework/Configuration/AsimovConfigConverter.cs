@@ -16,6 +16,7 @@
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -81,6 +82,18 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
             var agents = json["Agents"];
             if (agents == null)
                 return null;
+
+	        foreach (JProperty agent in json["Agents"].AsJEnumerable())
+	        {
+		        if (agent.Name.Contains("*"))
+		        {
+			        var regex = new Regex("^" + agent.Name.Replace("*", ".*"));
+			        if (regex.IsMatch(_machineName))
+			        {
+				        return agent;
+			        }
+		        }
+	        }
 
             return json["Agents"][_machineName];
         }
