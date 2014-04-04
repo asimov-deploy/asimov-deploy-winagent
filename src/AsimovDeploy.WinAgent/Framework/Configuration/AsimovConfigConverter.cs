@@ -83,6 +83,11 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
             if (agents == null)
                 return null;
 
+			if (json["Agents"][_machineName] != null)
+			{
+				return json["Agents"][_machineName];
+			}
+
 	        foreach (JProperty agent in json["Agents"].AsJEnumerable())
 	        {
 		        if (agent.Name.Contains("*"))
@@ -90,12 +95,12 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 			        var regex = new Regex("^" + agent.Name.Replace("*", ".*"));
 			        if (regex.IsMatch(_machineName))
 			        {
-				        return agent;
+				        return agent.Value;
 			        }
 		        }
 	        }
 
-            return json["Agents"][_machineName];
+            return null;
         }
 
         public override bool CanConvert(Type objectType)

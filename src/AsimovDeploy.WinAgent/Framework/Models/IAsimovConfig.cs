@@ -15,7 +15,6 @@
 ******************************************************************************/
 
 using System;
-using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
@@ -24,6 +23,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models
     public interface IAsimovConfig
     {
         string Environment { get; }
+		string AgentGroup { get; }
+
         int HeartbeatIntervalSeconds { get; }
         string TempFolder { get; }
         string NodeFrontUrl { get;}

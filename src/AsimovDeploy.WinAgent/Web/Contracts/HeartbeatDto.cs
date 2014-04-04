@@ -3,6 +3,7 @@
 	public class HeartbeatDTO
 	{
 		public string name;
+		public string group;
 		public string url;
 		public string apiKey;
 		public string version;

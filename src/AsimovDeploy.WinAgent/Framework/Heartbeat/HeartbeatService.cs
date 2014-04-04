@@ -82,7 +82,8 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 		        url = _hostControlUrl,
 		        apiKey = _config.ApiKey,
 		        version = VersionUtil.GetAgentVersion(),
-		        configVersion = _config.ConfigVersion
+		        configVersion = _config.ConfigVersion,
+				group = _config.AgentGroup
 	        };
 
 			if (_loadBalancerService.UseLoadBalanser)

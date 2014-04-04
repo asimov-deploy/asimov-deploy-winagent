@@ -15,11 +15,9 @@
 ******************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Common;
-using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
@@ -28,6 +26,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models
     public class AsimovConfig : IAsimovConfig
     {
         public string Environment { get; set; }
+		public string AgentGroup { get; set; }
+
         public int HeartbeatIntervalSeconds { get; set; }
         public int WebPort { get; set; }
         public string ApiKey { get; set; }
@@ -60,6 +60,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         {
             Units = new DeployUnits();
 	        DataFolder = "Data";
+	        AgentGroup = "Asimov";
         }
 
         public DeployUnit GetUnitByName(string name)
