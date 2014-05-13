@@ -39,6 +39,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             return _parameters[parameterName];
         }
 
+        public IDictionary<string, dynamic> GetInternalDictionary()
+        {
+            return _parameters;
+        }
+
         public string GetLogString()
         {
             if (_parameters == null || _parameters.Count == 0)

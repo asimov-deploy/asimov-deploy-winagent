@@ -15,6 +15,8 @@
 ******************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using AsimovDeploy.WinAgent.Framework.Models;
 
 namespace AsimovDeploy.WinAgent.Framework.Common
 {
@@ -30,5 +32,6 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         public bool DeployFailed;
 		public string UserId { get; set; }
 		public string UserName { get; set; }
+        public IDictionary<string, dynamic> Parameters { get; set; }
     }
 }

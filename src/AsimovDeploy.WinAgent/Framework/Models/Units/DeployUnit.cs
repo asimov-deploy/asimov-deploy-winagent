@@ -43,6 +43,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         {
             DeployParameters = new ActionParameterList();
             Actions = new UnitActionList();
+            Actions.Add(new RollbackUnitAction());
         }
 
         public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user);
@@ -86,7 +87,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return OnlyOnAgents.Any(x => x == agentName);
         }
 
-        public void StartingDeploy(AsimovVersion newVersion, string logFileName, AsimovUser user)
+        public void StartingDeploy(AsimovVersion newVersion, string logFileName, AsimovUser user,ParameterValues parameters)
         {
             DeployStatus = DeployStatus.Deploying;
             Version = new DeployedVersion()
@@ -100,7 +101,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
                 LogFileName = logFileName,
 				UserId = user.UserId,
 				UserName = user.UserName,
-                DeployFailed = false
+                DeployFailed = false,
+                Parameters = parameters.GetInternalDictionary()
             };
 
             NotificationPublisher.PublishNotifications(new DeployStartedEvent(Name, Version));

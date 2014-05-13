@@ -100,6 +100,7 @@
     <Compile Include="Framework\Configuration\AsimovListTypeAttribute.cs" />
     <Compile Include="Framework\Deployment\Steps\FileCopyDeployStep.cs" />
     <Compile Include="Framework\LoadBalancers\LoadBalancerService.cs" />
+    <Compile Include="Framework\Models\UnitActions\RollbackUnitAction.cs" />
     <Compile Include="Web\Contracts\HeartbeatDto.cs" />
     <Compile Include="Web\Contracts\LoadBalancerStateDto.cs" />
     <Compile Include="Framework\LoadBalancers\ILoadBalancerService.cs" />
