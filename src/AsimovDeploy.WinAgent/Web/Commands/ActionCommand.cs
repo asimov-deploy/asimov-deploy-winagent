@@ -20,5 +20,7 @@ namespace AsimovDeploy.WinAgent.Web.Commands
     {
         public string unitName { get; set; }
         public string actionName { get;set; }
+        public string userId { get; set; }
+        public string userName { get; set; }
     }
 }

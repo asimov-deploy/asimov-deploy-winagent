@@ -82,7 +82,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
             InDeployContext(context =>
             {
-                context.DeployUnit.StartingDeploy(context.NewVersion, context.LogFileName, _user);
+                context.DeployUnit.StartingDeploy(context.NewVersion, context.LogFileName, _user, _parameterValues);
 
                 Log.InfoFormat("Starting deployment of {0}, Version: {1}, {2} {3}", _deployUnit.Name, _version.Number, _parameterValues.GetLogString(), GetCurrentUserInfo());
 

@@ -15,9 +15,12 @@ namespace AsimovDeploy.WinAgent.Web.Modules
 				var command = this.Bind<UnitActionCommand>();
 				var deployUnit = config.GetUnitByName(command.unitName);
 				var action = deployUnit.Actions[command.actionName];
-				var task = action.GetTask(deployUnit);
+			    var asimovUser = new AsimovUser() {UserId = command.userId, UserName = command.userName};
 
-				taskExecutor.AddTask(task);
+				var task = action.GetTask(deployUnit,asimovUser);
+
+                if(task != null)
+				    taskExecutor.AddTask(task);
 
 				return Response.AsJson(new { OK = true });
 			};
