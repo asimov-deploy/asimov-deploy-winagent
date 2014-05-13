@@ -18,7 +18,7 @@ namespace AsimovDeploy.WinAgent.Tests
         [Test]
         public void Can_read_config_and_get_defaults()
         {
-            var config = ReadConfig("notmatching");
+            var config = ReadConfig("ConfigExamples", "notmatching");
 
             config.Environment.ShouldBe("default");
             config.NodeFrontUrl.ShouldBe("http://default:3335");
@@ -41,7 +41,7 @@ namespace AsimovDeploy.WinAgent.Tests
         [Test]
         public void can_read_agent_config_with_specific_env()
         {
-            var config = ReadConfig("testAgent1");
+            var config = ReadConfig("ConfigExamples", "testAgent1");
 
             config.NodeFrontUrl.ShouldBe("http://overriden:3335");
         }
@@ -49,7 +49,7 @@ namespace AsimovDeploy.WinAgent.Tests
         [Test]
         public void can_read_package_source()
         {
-            var config = ReadConfig("asd");
+            var config = ReadConfig("ConfigExamples", "asd");
 
             config.PackageSources.Count.ShouldBe(3);
 
@@ -66,7 +66,7 @@ namespace AsimovDeploy.WinAgent.Tests
         [Test]
         public void can_read_unit_actions()
         {
-            var config = ReadConfig("asd");
+            var config = ReadConfig("ConfigExamples", "asd");
 
             config.Units[0].Actions.Count.ShouldBe(4);
             
@@ -81,7 +81,7 @@ namespace AsimovDeploy.WinAgent.Tests
         [Test]
         public void env_config_file_can_override_and_add_packages_sources_and_units()
         {
-            var config = ReadConfig("testAgent1");
+            var config = ReadConfig("ConfigExamples", "testAgent1");
             
             config.PackageSources.Count.ShouldBe(4);
             config.Units.Count.ShouldBe(2);
@@ -93,7 +93,7 @@ namespace AsimovDeploy.WinAgent.Tests
         [Test]
         public void can_have_deploy_unit_with_deploy_parameters()
         {
-            var config = ReadConfig("deploy-parameters");
+            var config = ReadConfig("ConfigExamples", "deploy-parameters");
             var unit = config.GetUnitByName("UnitWithParameters");
 
             unit.HasDeployParameters.ShouldBe(true);
@@ -101,10 +101,29 @@ namespace AsimovDeploy.WinAgent.Tests
             ((TextActionParameter)unit.DeployParameters[0]).Default.ShouldBe("Deploy-Everything");
         }
 
-       
-        public AsimovConfig ReadConfig(string agentName)
+        [Test]
+        public void can_read_one_custom_parameter_for_load_balancer_and_return_a_querystring()
         {
-            return (AsimovConfig)new ConfigurationReader().Read("ConfigExamples", agentName);
+            var config = ReadConfig("ConfigExamples", "testAgent1");
+
+            var queryString = config.GetLoadBalancerParametersAsQueryString();
+
+            queryString.ShouldBe("partition=testgroup1");
+        }
+
+        [Test]
+        public void can_read_custom_parameters_for_load_balancer_and_return_a_querystring()
+        {
+            var config = ReadConfig("LoadbalancerConfig", "testAgent1");
+
+            var queryString = config.GetLoadBalancerParametersAsQueryString();
+
+            queryString.ShouldBe("partition=testgroup1&host=a+host");
+        }
+
+        public AsimovConfig ReadConfig(string configDir, string agentName)
+        {
+            return (AsimovConfig)new ConfigurationReader().Read(configDir, agentName);
         }
     }
 }
