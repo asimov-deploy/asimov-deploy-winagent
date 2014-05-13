@@ -14,7 +14,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 			Name = "Start";
 		}
 
-		public override AsimovTask GetTask(DeployUnit unit)
+		public override AsimovTask GetTask(DeployUnit unit, AsimovUser user)
 		{
 			if (!(unit is ICanBeStopStarted))
 				throw new ArgumentException("Action is only supported for deploy units that implement ICanBeStopStarted");

@@ -26,9 +26,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 {
 	public class VerifyUrlsUnitAction : UnitAction
 	{
-		public IList<string> Urls { get; set; }		
-		
-		public override AsimovTask GetTask(DeployUnit unit)
+		public IList<string> Urls { get; set; }
+
+        public override AsimovTask GetTask(DeployUnit unit, AsimovUser user)
 		{
 			return new VerifySiteTask((WebSiteDeployUnit)unit, Urls.ToArray());
 		}
