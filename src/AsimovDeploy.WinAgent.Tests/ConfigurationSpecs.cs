@@ -121,6 +121,25 @@ namespace AsimovDeploy.WinAgent.Tests
             queryString.ShouldBe("partition=testgroup1&host=a+host");
         }
 
+        [Test]
+        public void can_match_agent_names_with_regex_range()
+        {
+            var config1 = ReadConfig("LoadbalancerConfig", "testAgent1");
+            var config2 = ReadConfig("LoadbalancerConfig", "testAgent2");
+            var config5 = ReadConfig("LoadbalancerConfig", "testAgent5");
+            var config6 = ReadConfig("LoadbalancerConfig", "testAgent6");
+
+            var queryString1 = config1.GetLoadBalancerParametersAsQueryString();
+            var queryString2 = config2.GetLoadBalancerParametersAsQueryString();
+            var queryString5 = config5.GetLoadBalancerParametersAsQueryString();
+            var queryString6 = config6.GetLoadBalancerParametersAsQueryString();
+
+            queryString1.ShouldBe("partition=testgroup1&host=a+host");
+            queryString2.ShouldBe("partition=testgroup1&host=a+host");
+            queryString5.ShouldBe("partition=testgroup2&host=a+host");
+            queryString6.ShouldBe("partition=testgroup2&host=a+host");
+        }
+
         public AsimovConfig ReadConfig(string configDir, string agentName)
         {
             return (AsimovConfig)new ConfigurationReader().Read(configDir, agentName);
