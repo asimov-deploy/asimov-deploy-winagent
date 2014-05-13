@@ -37,7 +37,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         private readonly ParameterValues _parameterValues;
 	    private readonly AsimovUser _user;
 
-	    private IList<Type> _steps = new List<Type>();
+	    private IList<Func<IDeployStep>> _steps = new List<Func<IDeployStep>>();
 
         public DeployTask(DeployUnit deployUnit, AsimovVersion version, ParameterValues parameterValues, AsimovUser user)
         {
@@ -52,7 +52,12 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
         public void AddDeployStep<T>() where T : IDeployStep
         {
-            _steps.Add(typeof(T));
+            _steps.Add(() => ObjectFactory.GetInstance(typeof(T)) as IDeployStep);
+        }
+        
+        public void AddDeployStep(IDeployStep step) 
+        {
+            _steps.Add(() => step);
         }
 
         protected virtual DeployContext CreateDeployContext()
@@ -81,10 +86,10 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
                 Log.InfoFormat("Starting deployment of {0}, Version: {1}, {2} {3}", _deployUnit.Name, _version.Number, _parameterValues.GetLogString(), GetCurrentUserInfo());
 
-                foreach (var stepType in _steps)
+                foreach (var stepFunc in _steps)
                 {
-                    Log.InfoFormat("Executing deploy step: {0}", stepType.Name);
-                    var step = ObjectFactory.GetInstance(stepType) as IDeployStep;
+                    var step = stepFunc();
+                    Log.InfoFormat("Executing deploy step: {0}", step.GetType().Name);
                     step.Execute(context);
                 }
 

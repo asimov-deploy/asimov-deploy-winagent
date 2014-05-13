@@ -14,7 +14,9 @@
 * limitations under the License.
 ******************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
 using AsimovDeploy.WinAgent.Framework.Models.UnitActions;
@@ -40,6 +42,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         {
             var task = new DeployTask(this, version, parameterValues, user);
             task.AddDeployStep<UpdateWebSite>();
+            foreach (var action in Actions.OfType<VerifyCommandUnitAction>())
+            {
+                task.AddDeployStep(new ExecuteUnitAction(action));
+            }
             return task;
         }
         
