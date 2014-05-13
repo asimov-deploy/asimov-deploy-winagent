@@ -44,11 +44,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             task.AddDeployStep<UpdateWebSite>();
             foreach (var action in Actions.OfType<VerifyCommandUnitAction>())
             {
-                task.AddDeployStep(new ExecuteUnitAction(action));
+                task.AddDeployStep(new ExecuteUnitAction(action, user));
             }
             return task;
         }
-        
+
         public virtual IWebServer GetWebServer()
         {
             return new IIS7WebServer(SiteName, SiteUrl);
