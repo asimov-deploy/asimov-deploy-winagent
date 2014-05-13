@@ -61,12 +61,12 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
                     DeployStatus = DeployStatus.DeployFailed;
                 }
             }
-			
-			if (!Version.DeployFailed)
-			{
-				deployUnitInfo.LastDeployed = string.Format("Deployed {0}", DateUtils.GetFriendlyAge(Version.DeployTimestamp));	
-			}
-			
+
+            if (!Version.DeployFailed)
+            {
+                deployUnitInfo.LastDeployed = string.Format("Deployed by {0} {1}", Version.UserName, DateUtils.GetFriendlyAge(Version.DeployTimestamp));
+            }
+
             deployUnitInfo.Version = Version;
             deployUnitInfo.DeployStatus = DeployStatus;
 
