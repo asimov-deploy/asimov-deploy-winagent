@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.Net;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Web.Contracts;
@@ -35,7 +37,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 				var http = new HttpClient();
 				var uri = new Uri(_agentUri, "server-status");
 
-				var result = http.Get(uri.ToString(), new { name = _config.LoadBalancerServerId });
+                var result = http.Get(string.Format("{0}?name={1}&{2}", uri, _config.LoadBalancerServerId, _config.GetLoadBalancerParametersAsQueryString()));
 				dynamic obj = result.DynamicBody;
 
 				return new LoadBalancerStateDTO()
@@ -66,26 +68,21 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 		{
 			var http = new HttpClient();
 			var uri = new Uri(_agentUri, "update-status");
-			var data = new InternalUpdateStatusCommand
-			{
-				Name = _config.LoadBalancerServerId,
-				Status = status
-			};
+
+		    var data = new ExpandoObject() as IDictionary<string, object>;
+		    data.Add("name", _config.LoadBalancerServerId);
+            data.Add("status", status);
+
+		    foreach (var parameter in _config.LoadBalancerParameters)
+		    {
+		        data.Add(parameter.Key.ToLower(), parameter.Value);
+		    }
 
 			var result = http.Post(uri.ToString(), data, HttpContentTypes.ApplicationJson);
 			if (result.StatusCode != HttpStatusCode.OK)
 			{
 				throw new LoadBalancerCommunicationException("Failed to enable server in load balancer, response: " + result.RawText);
 			}
-		}
-
-		private class InternalUpdateStatusCommand
-		{
-			[JsonName("name")] 
-			public string Name { get; set; }
-			
-			[JsonName("status")] 
-			public string Status { get; set; }
 		}
 	}
 }

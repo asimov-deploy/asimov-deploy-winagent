@@ -1,0 +1,41 @@
+﻿{
+    "WebPort": 21233,   
+    "HeartbeatIntervalSeconds": 10,
+    "DataFolder": "\\Data", 
+    "ConfigVersion": 101,
+    "nodeFrontUrl": "http://default:3335",
+    "Environment": "default",
+
+    "PackageSources":  {
+        "Default":  { "Type": "FileSystem", "Uri": "file://test"    },
+        "Prod":     { "Type": "FileSystem", "Uri": "file://test2"   },
+        "Asimov":   { "Type": "AsimovWeb",  "Uri": "http://asimov"  },
+    },
+
+    "LoadBalancerAgentUrl": "http://localhost:3450",
+
+    "Units": [
+        {
+            "Name": "DefaultSite",
+            "Type": "WebSite",                                      
+            "SiteName": "DeployTestWeb",
+            "UnitPackagePath": "DefaultSitePath",
+            "CleanDeploy": true,
+
+            "PackageInfo": { Source: "Prod", InternalPath: "DefaultSitePath" },
+        
+            "Actions": {
+                "verify1": { "Type": "VerifyUrls" },
+                "verify2": { "Type": "VerifyCommand", "ZipPath": "SiteVerify.zip", "Command": "phantomjs.exe" }
+            },
+
+            "SiteUrl": "http://localhost/DefaultSite",
+        }
+    ],
+    
+    "Agents": { 
+        "testagent[1-3]": { "Environment" : "test1", "LoadBalancerParameters": { "Partition": "testgroup1", "Host": "a host" } },
+        "testagent[4-6]": { "Environment" : "test2", "LoadBalancerParameters": { "Partition": "testgroup2", "Host": "a host" } },
+        "deploy-parameters": { "Environment" : "deploy-parameters" }
+    }   
+}

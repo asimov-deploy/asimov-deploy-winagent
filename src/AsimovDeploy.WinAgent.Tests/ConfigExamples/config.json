@@ -12,6 +12,8 @@
 		"Asimov":	{ "Type": "AsimovWeb",  "Uri": "http://asimov"	},
 	},
 
+	"LoadBalancerAgentUrl": "http://localhost:3450",
+
 	"Units": [
 		{
 			"Name": "DefaultSite",
@@ -32,7 +34,7 @@
 	],
 	
 	"Agents": { 
-		"testagent1": { "Environment" : "test1" },
+		"testagent1": { "Environment" : "test1", "LoadBalancerParameters": { "Partition": "testgroup1" } },
 		"testagent2": { "Environment" : "test2" },
 		"deploy-parameters": { "Environment" : "deploy-parameters" }
 	}	

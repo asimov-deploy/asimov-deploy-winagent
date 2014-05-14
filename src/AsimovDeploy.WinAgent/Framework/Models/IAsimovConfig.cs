@@ -15,6 +15,7 @@
 ******************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
@@ -41,8 +42,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         DeployUnit GetUnitByName(string name);
 		
         Uri WebControlUrl { get; }
-        
+        Dictionary<string, string> LoadBalancerParameters { get; set; }
 
         PackageSource GetPackageSourceFor(DeployUnit deployUnit);
+        string GetLoadBalancerParametersAsQueryString();
     }
 }

@@ -15,11 +15,13 @@
 ******************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
+using Nancy.Helpers;
 
 namespace AsimovDeploy.WinAgent.Framework.Models
 {
@@ -35,7 +37,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
         public string TempFolder { get { return Path.Combine(DataFolder, "Temp"); } }
         public string DataFolder { get; set; }
-
 	    
 		public string LoadBalancerAgentUrl { get; set; }
 
@@ -57,6 +58,15 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         {
             get { return new Uri(string.Format("http://{0}:{1}", HostNameUtil.GetFullHostName(), WebPort)); }
         }
+        public Dictionary<string, string> LoadBalancerParameters { get; set; }
+
+        public string GetLoadBalancerParametersAsQueryString()
+        {
+            if (LoadBalancerParameters.Count == 0)
+                return "";
+
+            return string.Join("&", LoadBalancerParameters.Select(p => string.Format("{0}={1}", HttpUtility.UrlEncode(p.Key.ToLower()), HttpUtility.UrlEncode(p.Value.ToLower()))));
+        }
 
         public PackageSource GetPackageSourceFor(DeployUnit deployUnit)
         {
@@ -68,6 +78,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             Units = new DeployUnits();
 	        DataFolder = "Data";
 	        AgentGroup = "Asimov";
+            LoadBalancerParameters = new Dictionary<string, string>();
         }
 
         public DeployUnit GetUnitByName(string name)

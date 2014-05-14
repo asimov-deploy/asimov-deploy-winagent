@@ -98,6 +98,15 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 				        return agent.Value;
 			        }
 		        }
+
+	            if (agent.Name.Contains("[") && agent.Name.Contains("]"))
+	            {
+                    var regex = new Regex("^" + agent.Name);
+                    if (regex.IsMatch(_machineName))
+                    {
+                        return agent.Value;
+                    }
+	            }
 	        }
 
             return null;
