@@ -125,12 +125,12 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
         private void ParseVerifyCommandOutput(string line)
         {
+			Log.Debug(line);
+
 			if (line.StartsWith("##asimov-deploy"))
 			{
 				HandleAssimovMessage(line);
 			}
-
-	        Log.Debug(line);
         }
 
 		private void HandleAssimovMessage(string line)
