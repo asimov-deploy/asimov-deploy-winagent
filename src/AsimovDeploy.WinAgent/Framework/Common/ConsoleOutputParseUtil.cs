@@ -15,8 +15,6 @@
 // ******************************************************************************/
 
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AsimovDeploy.WinAgent.Framework.Common
@@ -30,7 +28,15 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 			
 			foreach (Match match in Regex.Matches(within, "(\\w+)='([^\']+)\'|([^\\s]+)"))
 			{
-				dictionary.Add(match.Groups[1].Value, match.Groups[2].Value);
+				if (dictionary.ContainsKey(match.Groups[1].Value))
+				{
+					dictionary["test"] = "failed to parse verify output";
+					dictionary["pass"] = "false";
+				}
+				else
+				{
+					dictionary[match.Groups[1].Value] = match.Groups[2].Value;	
+				}
 			}
 
 			return dictionary;
