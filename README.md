@@ -22,7 +22,7 @@ Asimov Deploy consists of two major components the [asimov deploy web ui](https:
 * Automatic update of deploy agent config
 
 ## Bugs and Feedback
-For bugs, questions and discussions please use the [Github Issues](https://github.com/asimov-deploy/issues).
+For bugs, questions and discussions please use the [Github Issues](https://github.com/asimov-deploy/asimov-deploy-winagent/issues).
 
 ## LICENSE
 Copyright 2013 Ebay Inc.
