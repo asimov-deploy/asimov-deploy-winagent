@@ -51,7 +51,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 
             var self = GetSelf(json);
             if (self != null)
-            {
+            {   
                 serializer.Populate(self.CreateReader(), config);
             }
             else
@@ -59,21 +59,27 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                 Log.ErrorFormat("Could not find agent specific config / environment for: {0}", _machineName);
             }
 
-            var envConfigFile = Path.Combine(_configDir, string.Format("config.{0}.json", config.Environment));
+            var environments = config.Environment.Split(',');
 
-            if (!File.Exists(envConfigFile))
-                return config;
-
-            Log.DebugFormat("Loading config file {0}", envConfigFile);
-
-            using (var envReader = new StreamReader(envConfigFile))
+            foreach (var environment in environments)
             {
-                using (var envJsonReader = new JsonTextReader(envReader))
-                {
-                    serializer.Populate(envJsonReader, config);
-                }
-            }
+                var envConfigFile = Path.Combine(_configDir, string.Format("config.{0}.json", environment));
 
+                if (!File.Exists(envConfigFile))
+                    return config;
+
+                Log.DebugFormat("Loading config file {0}", envConfigFile);
+
+                using (var envReader = new StreamReader(envConfigFile))
+                {
+                    using (var envJsonReader = new JsonTextReader(envReader))
+                    {
+                        serializer.Populate(envJsonReader, config);
+                    }
+                }
+
+            }
+            
             return config;
         }
 
