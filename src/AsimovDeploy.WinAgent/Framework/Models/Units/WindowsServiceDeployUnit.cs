@@ -14,6 +14,7 @@
 * limitations under the License.
 ******************************************************************************/
 
+using System.Linq;
 using System.ServiceProcess;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
@@ -43,6 +44,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         {
             var task = new DeployTask(this, version, parameterValues, user);
             task.AddDeployStep<UpdateWindowsService>();
+            foreach (var action in Actions.OfType<CommandUnitAction>())
+            {
+                task.AddDeployStep(new ExecuteUnitAction(action, user));
+            }
             return task;
         }
 

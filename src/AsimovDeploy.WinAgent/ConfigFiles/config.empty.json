@@ -22,7 +22,7 @@
          "Type": "WindowsService",
 
          "PackageInfo": { "Source": "Builds" }
-      }
+      ,
    ]
 
 }

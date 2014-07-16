@@ -101,7 +101,10 @@
     <Compile Include="Framework\Deployment\Steps\FileCopyDeployStep.cs" />
     <Compile Include="Framework\LoadBalancers\LoadBalancerService.cs" />
     <Compile Include="Framework\Deployment\Steps\ExecuteUnitAction.cs" />
+    <Compile Include="Framework\Models\UnitActions\CommandUnitAction.cs" />
     <Compile Include="Framework\Models\UnitActions\RollbackUnitAction.cs" />
+    <Compile Include="Framework\Tasks\CommandTask.cs" />
+    <Compile Include="Framework\Tasks\LaunchCommandAsProcess.cs" />
     <Compile Include="Web\Contracts\HeartbeatDto.cs" />
     <Compile Include="Web\Contracts\LoadBalancerStateDto.cs" />
     <Compile Include="Framework\LoadBalancers\ILoadBalancerService.cs" />

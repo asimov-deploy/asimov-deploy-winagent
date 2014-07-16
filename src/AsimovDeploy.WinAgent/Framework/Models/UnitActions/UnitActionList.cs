@@ -24,7 +24,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 	[JsonConverter(typeof(AsimovListJsonConverter))]
 	[AsimovListType("VerifyUrls", typeof(VerifyUrlsUnitAction))]
 	[AsimovListType("VerifyCommand", typeof(VerifyCommandUnitAction))]
-	public class UnitActionList : List<UnitAction>
+    [AsimovListType("Command", typeof(CommandUnitAction))]
+    public class UnitActionList : List<UnitAction>
 	{
 		public UnitAction this[string name] 
 		{

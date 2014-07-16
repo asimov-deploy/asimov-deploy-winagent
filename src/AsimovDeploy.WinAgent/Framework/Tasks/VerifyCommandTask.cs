@@ -29,6 +29,10 @@ using Ionic.Zip;
 
 namespace AsimovDeploy.WinAgent.Framework.Tasks
 {
+    public class EventArgsForCommand : EventArgs
+    {
+        public string OutputData { get; internal set; }
+    }
     public class VerifyCommandTask : AsimovTask
     {
         private readonly WebSiteDeployUnit deployUnit;
