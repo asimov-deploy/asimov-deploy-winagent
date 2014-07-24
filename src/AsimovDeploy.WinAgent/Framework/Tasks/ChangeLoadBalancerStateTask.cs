@@ -49,7 +49,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 			else if (_command.action == "disable")
 			{
 				loadBalancerService.DisableServer();
-				Thread.Sleep(1000);
+				Thread.Sleep(3000);
                 _nodefront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
 			}
 			else
