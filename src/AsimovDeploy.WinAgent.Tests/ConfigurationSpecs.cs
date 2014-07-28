@@ -68,12 +68,12 @@ namespace AsimovDeploy.WinAgent.Tests
         {
             var config = ReadConfig("ConfigExamples", "asd");
 
-            config.Units[0].Actions.Count.ShouldBe(4);
+            config.Units[0].Actions.Count.ShouldBe(5);
             
-            config.Units[0].Actions[2].ShouldBeTypeOf<VerifyUrlsUnitAction>();
-            config.Units[0].Actions[3].ShouldBeTypeOf<VerifyCommandUnitAction>();
+            config.Units[0].Actions[3].ShouldBeTypeOf<VerifyUrlsUnitAction>();
+            config.Units[0].Actions[4].ShouldBeTypeOf<VerifyCommandUnitAction>();
             
-            var commandAction = (VerifyCommandUnitAction)config.Units[0].Actions[3];
+            var commandAction = (VerifyCommandUnitAction)config.Units[0].Actions[4];
             commandAction.ZipPath.ShouldBe("SiteVerify.zip");
             commandAction.Command.ShouldBe("phantomjs.exe");
         }

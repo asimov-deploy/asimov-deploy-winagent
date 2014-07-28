@@ -31,7 +31,7 @@ namespace AsimovDeploy.WinAgent.Web.Modules
             Post["/loadbalancer/change"] = _ =>
             {
                 var command = this.Bind<ChangeLoadBalancerStateCommand>();
-                taskExecutor.AddTask(new ChangeLoadBalancerStateTask(command, loadBalancerService));
+                taskExecutor.AddTask(new ChangeLoadBalancerStateTask(command, loadBalancerService, new NodeFront()));
                 return "OK";
             };
         }

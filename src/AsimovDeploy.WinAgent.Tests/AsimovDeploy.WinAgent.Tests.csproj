@@ -55,6 +55,7 @@
     <Compile Include="ConfigurationSpecs.cs" />
     <Compile Include="Packagesource\FileSystemPackageSourceRegexTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tasks\ChangeLoadBalancerStateTaskSpecs.cs" />
     <Compile Include="Utils\FriendlyAgeSpecs.cs" />
     <Compile Include="VersionLogSpecs.cs" />
   </ItemGroup>

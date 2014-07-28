@@ -14,6 +14,7 @@
 * limitations under the License.
 ******************************************************************************/
 
+using System;
 using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Events;
@@ -26,11 +27,14 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 	{
 		private readonly ChangeLoadBalancerStateCommand _command;
 		private readonly ILoadBalancerService loadBalancerService;
-        private readonly NodeFront _nodefront = new NodeFront();
-		public ChangeLoadBalancerStateTask(ChangeLoadBalancerStateCommand command, ILoadBalancerService loadBalancerService)
+		private readonly INotifier _nodefront;
+		protected TimeSpan SecondsToWait = TimeSpan.FromSeconds(10);
+
+		public ChangeLoadBalancerStateTask(ChangeLoadBalancerStateCommand command, ILoadBalancerService loadBalancerService, INotifier nodeFront)
 		{
 			_command = command;
 			this.loadBalancerService = loadBalancerService;
+			_nodefront = nodeFront;
 		}
 
 		protected override string InfoString()
@@ -44,17 +48,42 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 			{
 				loadBalancerService.EnableServer();
 				Thread.Sleep(1000);
-                _nodefront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
+				_nodefront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
 			}
 			else if (_command.action == "disable")
 			{
 				loadBalancerService.DisableServer();
-				Thread.Sleep(3000);
-                _nodefront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
+
+				try
+				{
+					WaitUntilDisabled(SecondsToWait);
+				}
+				catch (TimeoutException)
+				{
+                    Log.Error("Timeout: The load balancer disable action is taking longer than " + SecondsToWait.Seconds + " seconds.");
+					return;
+				}
+
+				_nodefront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
 			}
 			else
 			{
 				Log.Error("Invalid load balancer action: " + _command.action);
+			}
+		}
+
+		private void WaitUntilDisabled(TimeSpan secondsToWait)
+		{
+			int waitedSeconds = 0;
+			while (loadBalancerService.GetCurrentState().enabled)
+			{
+				if (waitedSeconds >= secondsToWait.Seconds)
+				{
+					throw new TimeoutException();
+				}
+
+				waitedSeconds++;
+				Thread.Sleep(1000);
 			}
 		}
 	}
