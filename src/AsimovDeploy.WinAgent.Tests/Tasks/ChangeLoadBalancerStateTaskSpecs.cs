@@ -1,7 +1,7 @@
-﻿using System;
-using AsimovDeploy.WinAgent.Framework.Common;
+﻿using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Events;
 using AsimovDeploy.WinAgent.Framework.LoadBalancers;
+using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Tasks;
 using AsimovDeploy.WinAgent.Web.Commands;
 using AsimovDeploy.WinAgent.Web.Contracts;
@@ -42,7 +42,7 @@ namespace AsimovDeploy.WinAgent.Tests.Tasks
 		public void should_timeout_after_timeout_period_and_not_send_notification()
 		{
 			_loadBalancerService.StartState = true;
-			_changeLoadBalancerStateTask.SecondsToWaitBeforeTimeout = TimeSpan.FromSeconds(1);
+			_changeLoadBalancerStateTask.SecondsToWaitBeforeTimeout = 1;
 
 			_changeLoadBalancerStateTask.ExecuteDisableAction();
 
@@ -54,7 +54,7 @@ namespace AsimovDeploy.WinAgent.Tests.Tasks
 		{
 			_loadBalancerService.StartState = true;
 			_loadBalancerService.NumberOfSecondsThatActionTakesToComplete = 1;
-			_changeLoadBalancerStateTask.SecondsToWaitBeforeTimeout = TimeSpan.FromSeconds(10);
+			_changeLoadBalancerStateTask.SecondsToWaitBeforeTimeout = 10;
 
 			_changeLoadBalancerStateTask.ExecuteDisableAction();
 
@@ -64,8 +64,11 @@ namespace AsimovDeploy.WinAgent.Tests.Tasks
 
 	public class TestChangeLoadBalancerStateTask : ChangeLoadBalancerStateTask
 	{
+		private readonly IAsimovConfig _config;
+
 		public TestChangeLoadBalancerStateTask(ChangeLoadBalancerStateCommand command, ILoadBalancerService loadBalancerService, INotifier nodeFront) : base(command, loadBalancerService, nodeFront)
 		{
+			_config = new AsimovConfig();
 		}
 
 		public void ExecuteDisableAction()
@@ -73,9 +76,14 @@ namespace AsimovDeploy.WinAgent.Tests.Tasks
 			Execute();
 		}
 
-		public TimeSpan SecondsToWaitBeforeTimeout
+		public int SecondsToWaitBeforeTimeout
 		{
-			set { SecondsToWait = value; }
+			set { Config.LoadBalancerTimeout = value; }
+		}
+
+		protected override IAsimovConfig Config
+		{
+			get { return _config; }
 		}
 	}
 	public class FakeNotifier : INotifier

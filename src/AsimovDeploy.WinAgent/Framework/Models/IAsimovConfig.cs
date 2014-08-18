@@ -36,6 +36,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
 		string LoadBalancerAgentUrl { get; set; }
 		string LoadBalancerServerId { get; set; }
+		int LoadBalancerTimeout { get; set; }
 
         DeployUnits Units { get; }
 

@@ -28,7 +28,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 		private readonly ChangeLoadBalancerStateCommand _command;
 		private readonly ILoadBalancerService loadBalancerService;
 		private readonly INotifier _nodefront;
-		protected TimeSpan SecondsToWait = TimeSpan.FromSeconds(10);
+		protected TimeSpan SecondsToWait;
 
 		public ChangeLoadBalancerStateTask(ChangeLoadBalancerStateCommand command, ILoadBalancerService loadBalancerService, INotifier nodeFront)
 		{
@@ -52,17 +52,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 			}
 			else if (_command.action == "disable")
 			{
-				loadBalancerService.DisableServer();
-
-				try
-				{
-					WaitUntilDisabled(SecondsToWait);
-				}
-				catch (TimeoutException)
-				{
-                    Log.Error("Timeout: The load balancer disable action is taking longer than " + SecondsToWait.Seconds + " seconds.");
-					return;
-				}
+				if (!TryToDisableServer()) return;
 
 				_nodefront.Notify(new LoadBalancerStateChanged(loadBalancerService.GetCurrentState()));
 			}
@@ -70,6 +60,25 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 			{
 				Log.Error("Invalid load balancer action: " + _command.action);
 			}
+		}
+
+		private bool TryToDisableServer()
+		{
+			SecondsToWait = TimeSpan.FromSeconds(Config.LoadBalancerTimeout);
+
+			loadBalancerService.DisableServer();
+
+			try
+			{
+				WaitUntilDisabled(SecondsToWait);
+			}
+			catch (TimeoutException)
+			{
+				Log.Error("Timeout: The load balancer disable action is taking longer than " + SecondsToWait.Seconds +
+						  " seconds.");
+				return false;
+			}
+			return true;
 		}
 
 		private void WaitUntilDisabled(TimeSpan secondsToWait)

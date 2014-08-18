@@ -47,6 +47,13 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 			set { _loadBalancerServerId = value;  }
 	    }
 
+        private int _loadBalancerTimeout;
+        public int LoadBalancerTimeout
+        {
+            get { return _loadBalancerTimeout > 0 ? _loadBalancerTimeout : 30; } 
+            set { _loadBalancerTimeout = value; }
+        }
+
         public string NodeFrontUrl { get; set; }
         public string WebNotificationUrl { get; set; }
 

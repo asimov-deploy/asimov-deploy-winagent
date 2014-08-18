@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
@@ -119,6 +117,16 @@ namespace AsimovDeploy.WinAgent.Tests
             var queryString = config.GetLoadBalancerParametersAsQueryString();
 
             queryString.ShouldBe("partition=testgroup1&host=a+host");
+        }
+
+        [Test]
+        public void can_get_default_timeout_for_load_balancer()
+        {
+            var config = ReadConfig("LoadbalancerConfig", "testAgent1");
+
+            var timeout = config.LoadBalancerTimeout;
+
+            timeout.ShouldBe(30);
         }
 
         [Test]
