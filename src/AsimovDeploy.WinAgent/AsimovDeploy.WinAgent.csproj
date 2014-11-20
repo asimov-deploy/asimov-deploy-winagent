@@ -89,6 +89,9 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <None Include="ConfigFiles\config.latest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="Framework\Common\AsimovTask.cs" />
     <Compile Include="Framework\Common\ConsoleOutputParseUtil.cs" />
     <Compile Include="Framework\Common\DateUtils.cs" />
@@ -211,7 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ConfigFiles\config.empty.json">
+    <None Include="ConfigFiles\config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

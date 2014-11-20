@@ -1,0 +1,32 @@
+﻿{
+    "NodeFrontUrl": "http://localhost:3333",
+
+    "Units": [
+        {
+            "Name": "Latest Admin",
+            "Type": "WebSite",
+            "SiteName": "latest1.dn.se",
+            "UnitPackagePath": "DefaultSitePath",
+            "CleanDeploy": true,
+
+            "PackageInfo": {
+                "Source": "Latest",
+                "InternalPath": "" /* path within zip to extract */
+            },
+            "SiteUrl": "http://latest1.dn.se"
+        },
+        {
+            "Name": "Latest WWW",
+            "Type": "WebSite",
+            "SiteName": "latest2.dn.se",
+            "UnitPackagePath": "DefaultSitePath",
+            "CleanDeploy": true,
+
+            "PackageInfo": {
+                "Source": "Latest",
+                "InternalPath": "" /* path within zip to extract */
+            },
+            "SiteUrl": "http://latest2.dn.se"
+        }
+    ]
+}
