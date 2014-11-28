@@ -3,27 +3,27 @@
 
     "Units": [
         {
-            "Name": "Latest Admin",
+            "Name": "xyz",
             "Type": "WebSite",
             "SiteName": "latest1.dn.se",
             "UnitPackagePath": "DefaultSitePath",
             "CleanDeploy": true,
 
             "PackageInfo": {
-                "Source": "Latest",
+                "Source": "pelle",
                 "InternalPath": "" /* path within zip to extract */
             },
             "SiteUrl": "http://latest1.dn.se"
         },
         {
-            "Name": "Latest WWW",
+            "Name": "xxyy",
             "Type": "WebSite",
             "SiteName": "latest2.dn.se",
             "UnitPackagePath": "DefaultSitePath",
             "CleanDeploy": true,
 
             "PackageInfo": {
-                "Source": "Latest",
+                "Source": "olle",
                 "InternalPath": "" /* path within zip to extract */
             },
             "SiteUrl": "http://latest2.dn.se"

@@ -1,0 +1,31 @@
+﻿{
+    "NodeFrontUrl": "http://192.168.123.93:3333",
+    "Units": [
+        {
+            "Name": "latest-app.dn.se",
+            "Type": "WebSite",
+            "SiteName": "latest-app.dn.se",
+            "UnitPackagePath": "DefaultSitePath",
+            "CleanDeploy": true,
+
+            "PackageInfo": {
+                "Source": "latest-app-source",
+                "InternalPath": "" /* path within zip to extract */
+            },
+            "SiteUrl": "http://latest-app.dn.se"
+        },
+        {
+            "Name": "latest-admin.dn.se",
+            "Type": "WebSite",
+            "SiteName": "latest-admin.dn.se",
+            "UnitPackagePath": "DefaultSitePath",
+            "CleanDeploy": true,
+
+            "PackageInfo": {
+                "Source": "latest-admin-source",
+                "InternalPath": "" /* path within zip to extract */
+            },
+            "SiteUrl": "http://latest-admin.dn.se"
+        }
+    ]
+}

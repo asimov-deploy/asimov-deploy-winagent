@@ -15,6 +15,10 @@
 ******************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
@@ -38,17 +42,35 @@ namespace AsimovDeploy.WinAgent.Web.Setup
         {
             var uri1 = _config.WebControlUrl;
             var uri2 = new Uri(string.Format("http://localhost:{0}", _config.WebPort));
-
-            _nancyHost = new NancyHost(new CustomNancyBootstrapper(), uri1, uri2);
+            var uris = new List<Uri>()
+            {
+                uri1,
+                uri2
+            };
+            
+            GetLocalIpAddress().ToList().ForEach(r=>uris.Add(new Uri(string.Format("http://{0}:{1}", r, _config.WebPort))));
+            
+            _nancyHost = new NancyHost(new CustomNancyBootstrapper(), uris.ToArray());
             _nancyHost.Start();
 
             _log.DebugFormat("Web server started on port {0}", _config.WebPort);
+        }
+
+        private IEnumerable<string> GetLocalIpAddress()
+        {
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    yield return ip.ToString();
+                }
+            }
         }
 
         public void Stop()
         {
             _nancyHost.Stop();
         }
-
     }
 }

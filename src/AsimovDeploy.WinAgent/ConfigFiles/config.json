@@ -3,17 +3,26 @@
     "HeartbeatIntervalSeconds": 10,
     "DataFolder": "\\Data",
     "ConfigVersion": 1,
-    "nodeFrontUrl": "http://localhost:3333",
+    "nodeFrontUrl": "http://192.168.123.93:3333",
     "Environment": "default",
 
     "PackageSources": {
-        "Latest": { "Type": "AsimovWeb", "Uri": "http://deploy-packages:3344/img" }
+        "latest-app-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/app/latest" },
+        "latest-img-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/img/latest" },
+        "latest-admin-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/admin/latest" },
+        "prod-app-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/app/prod" },
+        "prod-img-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/img/prod" },
+        "prod-admin-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/admin/prod" }
     },
 
     "LoadBalancerAgentUrl": null,
 
     "Agents": {
-        "dnw872hl12": { "Environment": "latest", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } }
+        "dn-app-ci-*": { "Environment": "latest-app", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } },
+        "dn-img-ci-*": { "Environment": "latest-img", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } },
+        "dn-app-pr-*": { "Environment": "prod-app", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } },
+        "dn-img-pr-*": { "Environment": "prod-img", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } },
+        "dn-adm-pr-*": { "Environment": "prod-adm", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } }
     }
 }
     

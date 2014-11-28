@@ -1,0 +1,18 @@
+﻿{
+    "NodeFrontUrl": "http://192.168.123.93:3333",
+    "Units": [
+        {
+            "Name": "prod-app.dn.se",
+            "Type": "WebSite",
+            "SiteName": "prod-app.dn.se",
+            "UnitPackagePath": "DefaultSitePath",
+            "CleanDeploy": true,
+
+            "PackageInfo": {
+                "Source": "prod-app-source",
+                "InternalPath": "" /* path within zip to extract */
+            },
+            "SiteUrl": "http://prod-app.dn.se"
+        }
+    ]
+}
