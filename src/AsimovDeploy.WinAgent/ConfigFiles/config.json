@@ -15,14 +15,14 @@
         "prod-admin-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/admin/prod" }
     },
 
-    "LoadBalancerAgentUrl": null,
+    "LoadBalancerAgentUrl": "http://dev.dn-wea.se/Loadbalancer/",    
 
-    "Agents": {
-        "dn-app-ci-*": { "Environment": "latest-app", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } },
-        "dn-img-ci-*": { "Environment": "latest-img", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } },
-        "dn-app-pr-*": { "Environment": "prod-app", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } },
-        "dn-img-pr-*": { "Environment": "prod-img", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } },
-        "dn-adm-pr-*": { "Environment": "prod-adm", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } }
+    "Agents": {        
+        "dn-app-ci-*": { "Environment": "latest-app", "LoadBalancerParameters": { "Port": "80" } },
+        "dn-img-ci-*": { "Environment": "latest-img", "LoadBalancerParameters": { "Port": "80" } },
+        "dn-app-pr-*": { "Environment": "prod-app", "LoadBalancerParameters": { "Port": "80" } },
+        "dn-img-pr-*": { "Environment": "prod-img", "LoadBalancerParameters": { "Port": "80" } },
+        "dn-adm-pr-*": { "Environment": "prod-adm", "LoadBalancerParameters": { "Port": "80" } }
     }
 }
     

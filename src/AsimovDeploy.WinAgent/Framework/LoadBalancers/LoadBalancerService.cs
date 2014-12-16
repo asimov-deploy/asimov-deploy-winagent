@@ -15,7 +15,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 		private static ILog _log = LogManager.GetLogger(typeof (LoadBalancerService));
 
 		private readonly IAsimovConfig _config;
-		private Uri _agentUri;
+		private Uri loadbalancerAgentUri;
 		
 		public bool UseLoadBalanser { get; set; }
 
@@ -25,7 +25,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 
 			if (config.LoadBalancerAgentUrl != null)
 			{
-				_agentUri = new Uri(config.LoadBalancerAgentUrl);
+				loadbalancerAgentUri = new Uri(config.LoadBalancerAgentUrl);
 				UseLoadBalanser = true;
 			}
 		}
@@ -35,16 +35,16 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 			try
 			{
 				var http = new HttpClient();
-				var uri = new Uri(_agentUri, "server-status");
+				var uri = new Uri(loadbalancerAgentUri, "ServerStatus");
 
-                var result = http.Get(string.Format("{0}?name={1}&{2}", uri, _config.LoadBalancerServerId, _config.GetLoadBalancerParametersAsQueryString()));
+                var result = http.Get(string.Format("{0}?server={1}&{2}", uri, _config.LoadBalancerServerId, _config.GetLoadBalancerParametersAsQueryString()));
 				dynamic obj = result.DynamicBody;
 
 				return new LoadBalancerStateDTO()
 				{
 					serverId = _config.LoadBalancerServerId,
-					connectionCount = (int)obj.connections,
-					enabled = obj.status == "enabled"
+					connectionCount = 0, //Todo: get number of connections from web
+					enabled = obj.Status == "active"
 				};
 			}
 			catch (Exception ex)
@@ -67,10 +67,10 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 		private void ChangeServerStatus(string status)
 		{
 			var http = new HttpClient();
-			var uri = new Uri(_agentUri, "update-status");
+			var uri = new Uri(loadbalancerAgentUri, "UpdateStatus");
 
 		    var data = new ExpandoObject() as IDictionary<string, object>;
-		    data.Add("name", _config.LoadBalancerServerId);
+		    data.Add("server", _config.LoadBalancerServerId);
             data.Add("status", status);
 
 		    foreach (var parameter in _config.LoadBalancerParameters)
