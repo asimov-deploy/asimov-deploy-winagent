@@ -95,6 +95,7 @@
     <Compile Include="Framework\Common\INotifier.cs" />
     <Compile Include="Framework\Common\NodeFront.cs" />
     <Compile Include="Framework\Common\NotificationPublisher.cs" />
+    <Compile Include="Framework\Common\Streams.cs" />
     <Compile Include="Framework\Common\WebNotificationPublisher.cs" />
     <Compile Include="Framework\Configuration\AsimovListJsonConverter.cs" />
     <Compile Include="Framework\Configuration\AsimovListTypeAttribute.cs" />
@@ -102,9 +103,11 @@
     <Compile Include="Framework\LoadBalancers\LoadBalancerService.cs" />
     <Compile Include="Framework\Deployment\Steps\ExecuteUnitAction.cs" />
     <Compile Include="Framework\Models\UnitActions\CommandUnitAction.cs" />
+    <Compile Include="Framework\Models\UnitActions\PowerShellUnitAction.cs" />
     <Compile Include="Framework\Models\UnitActions\RollbackUnitAction.cs" />
     <Compile Include="Framework\Tasks\CommandTask.cs" />
     <Compile Include="Framework\Tasks\LaunchCommandAsProcess.cs" />
+    <Compile Include="Framework\Tasks\PowerShellCommand.cs" />
     <Compile Include="Web\Contracts\HeartbeatDto.cs" />
     <Compile Include="Web\Contracts\LoadBalancerStateDto.cs" />
     <Compile Include="Framework\LoadBalancers\ILoadBalancerService.cs" />

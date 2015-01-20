@@ -20,14 +20,15 @@ using AsimovDeploy.WinAgent.Framework.Tasks;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 {
-	public class VerifyCommandUnitAction : UnitAction
-	{
-		public string ZipPath { get; set; }
-		public string Command { get; set; }
+    public class VerifyCommandUnitAction : UnitAction
+    {
+        public string ZipPath { get; set; }
+        public string Command { get; set; }
 
         public override AsimovTask GetTask(DeployUnit unit, AsimovUser user)
-		{
-			return new VerifyCommandTask((WebSiteDeployUnit)unit, ZipPath, Command);
-		}
-	}
+        {
+            return new VerifyCommandTask((WebSiteDeployUnit)unit, ZipPath, Command);
+        }
+    }
 }
+

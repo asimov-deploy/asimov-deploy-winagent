@@ -21,18 +21,19 @@ using Newtonsoft.Json;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 {
-	[JsonConverter(typeof(AsimovListJsonConverter))]
-	[AsimovListType("VerifyUrls", typeof(VerifyUrlsUnitAction))]
-	[AsimovListType("VerifyCommand", typeof(VerifyCommandUnitAction))]
+    [JsonConverter(typeof(AsimovListJsonConverter))]
+    [AsimovListType("VerifyUrls", typeof(VerifyUrlsUnitAction))]
+    [AsimovListType("VerifyCommand", typeof(VerifyCommandUnitAction))]
     [AsimovListType("Command", typeof(CommandUnitAction))]
+    [AsimovListType("PowerShell", typeof(PowerShellUnitAction))]
     public class UnitActionList : List<UnitAction>
-	{
-		public UnitAction this[string name] 
-		{
-			get 
-			{
-				return this.SingleOrDefault(x => x.Name == name);
-			}
-		}
-	}
+    {
+        public UnitAction this[string name]
+        {
+            get
+            {
+                return this.SingleOrDefault(x => x.Name == name);
+            }
+        }
+    }
 }

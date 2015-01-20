@@ -18,7 +18,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Threading;
+using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
@@ -51,8 +51,8 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
                 p.Start();
 
-                Redirect(p.StandardOutput, str => context.Log.Info(str));
-                Redirect(p.StandardError, str => context.Log.Info(str));
+                p.StandardOutput.RedirectOutput(str => context.Log.Info(str));
+                p.StandardError.RedirectOutput(str => context.Log.Info(str));
 
                 p.WaitForExit((int)TimeSpan.FromMinutes(40).TotalMilliseconds);
 
@@ -80,24 +80,6 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
                 fs.Write(script);
             }
-        }
-
-        private void Redirect(StreamReader input, Action<string> logAction)
-        {
-            new Thread(a =>
-            {
-                var buffer = new char[1];
-                var str = new StringBuilder();
-                while (input.Read(buffer, 0, 1) > 0)
-                {
-                    str.Append(buffer[0]);
-                    if (buffer[0] == '\n')
-                    {
-                        logAction(str.ToString());
-                        str.Clear();
-                    }
-                };
-            }).Start();
         }
     }
 }
