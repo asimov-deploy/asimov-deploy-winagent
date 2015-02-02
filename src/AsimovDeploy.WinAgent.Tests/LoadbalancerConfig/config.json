@@ -13,6 +13,7 @@
     },
 
     "LoadBalancerAgentUrl": "http://localhost:3450",
+    "LoadBalancerTimeout":  30,
 
     "Units": [
         {
