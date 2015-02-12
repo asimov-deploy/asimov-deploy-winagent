@@ -8,9 +8,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
     {
         public string Arguments { get; set; }
 
-        public override AsimovTask GetTask(DeployUnit unit, AsimovUser user)
+        public override AsimovTask GetTask(DeployUnit unit, AsimovUser user, string correlationId)
         {
-            return new PowershellCommandTask(Arguments);
+            return new PowershellCommandTask(Arguments, correlationId);
         }
     }
 }

@@ -40,9 +40,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 			Actions.Add(new StopDeployUnitAction() { Sort = 11 });
 	    }
 
-        public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user)
+        public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
         {
-            var task = new DeployTask(this, version, parameterValues, user);
+            var task = new DeployTask(this, version, parameterValues, user, correlationId);
             task.AddDeployStep<UpdateWindowsService>();
             foreach (var action in Actions.OfType<CommandUnitAction>())
             {

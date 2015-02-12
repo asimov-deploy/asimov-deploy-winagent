@@ -17,7 +17,7 @@ namespace AsimovDeploy.WinAgent.Web.Modules
 				var action = deployUnit.Actions[command.actionName];
 			    var asimovUser = new AsimovUser() {UserId = command.userId, UserName = command.userName};
 
-				var task = action.GetTask(deployUnit,asimovUser);
+				var task = action.GetTask(deployUnit,asimovUser, command.correlationId);
 
                 if(task != null)
 				    taskExecutor.AddTask(task);

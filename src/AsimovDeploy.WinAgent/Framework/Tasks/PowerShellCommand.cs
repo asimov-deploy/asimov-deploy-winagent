@@ -8,10 +8,12 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
     public class PowershellCommandTask : AsimovTask
     {
         private readonly string _arguments;
+        private readonly string _correlationId;
 
-        public PowershellCommandTask(string arguments)
+        public PowershellCommandTask(string arguments, string correlationId)
         {
             _arguments = arguments;
+            _correlationId = correlationId;
         }
 
         protected override void Execute()

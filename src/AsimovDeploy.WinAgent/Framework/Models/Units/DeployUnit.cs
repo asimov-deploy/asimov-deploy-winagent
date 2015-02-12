@@ -46,7 +46,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             Actions.Add(new RollbackUnitAction());
         }
 
-        public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user);
+        public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId);
 
         public virtual DeployUnitInfo GetUnitInfo()
         {
@@ -87,7 +87,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return OnlyOnAgents.Any(x => x == agentName);
         }
 
-        public void StartingDeploy(AsimovVersion newVersion, string logFileName, AsimovUser user,ParameterValues parameters)
+        public void StartingDeploy(AsimovVersion newVersion, string logFileName, AsimovUser user, string correlationId, ParameterValues parameters)
         {
             DeployStatus = DeployStatus.Deploying;
             Version = new DeployedVersion()

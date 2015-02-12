@@ -16,9 +16,7 @@
 
 using System;
 using AsimovDeploy.WinAgent.Framework.Common;
-using AsimovDeploy.WinAgent.Framework.Events;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
-using AsimovDeploy.WinAgent.Framework.Tasks;
 using log4net;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
@@ -32,7 +30,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 			Name = "Stop";
 		}
 
-        public override AsimovTask GetTask(DeployUnit unit, AsimovUser user)
+        public override AsimovTask GetTask(DeployUnit unit, AsimovUser user, string correlationId)
 		{
 			if (!(unit is ICanBeStopStarted))
 				throw new ArgumentException("Action is only supported for deploy units that implement ICanBeStopStarted");

@@ -37,5 +37,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment
         public ILog Log { get; set; }
 
         public string LogFileName { get; set; }
+
+        public string CorrelationId { get; set; }
     }
 }

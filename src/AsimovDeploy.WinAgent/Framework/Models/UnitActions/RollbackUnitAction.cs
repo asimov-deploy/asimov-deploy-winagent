@@ -31,7 +31,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
             base.Name = "Rollback";
         }
 
-        public override AsimovTask GetTask(DeployUnit unit, AsimovUser user)
+        public override AsimovTask GetTask(DeployUnit unit, AsimovUser user, string correlationId)
         {
 
             var previousversion = unit.GetDeployedVersions().Skip(1).FirstOrDefault(x => x.DeployFailed == false);
@@ -45,7 +45,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 
             var packageSource = config.GetPackageSourceFor(unit);
             var version = packageSource.GetVersion(previousversion.VersionId, unit.PackageInfo);
-            return unit.GetDeployTask(version, new ParameterValues(previousversion.Parameters), user);
+            return unit.GetDeployTask(version, new ParameterValues(previousversion.Parameters), user, correlationId);
 
         }
     }

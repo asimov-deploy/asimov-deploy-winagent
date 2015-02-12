@@ -28,11 +28,13 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
     {
         private readonly WebSiteDeployUnit _deployUnit;
         private string[] _urls;
+        private readonly string _correlationId;
         private readonly NodeFront _nodefront = new NodeFront();
-        public VerifySiteTask(WebSiteDeployUnit deployUnit, string[] urls)
+        public VerifySiteTask(WebSiteDeployUnit deployUnit, string[] urls, string correlationId)
         {
             _deployUnit = deployUnit;
             _urls = urls;
+            _correlationId = correlationId;
         }
 
 		protected override string InfoString()

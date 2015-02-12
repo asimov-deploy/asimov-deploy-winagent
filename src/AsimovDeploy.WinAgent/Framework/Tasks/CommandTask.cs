@@ -1,10 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Threading;
-using AsimovDeploy.WinAgent.Framework.Common;
-using AsimovDeploy.WinAgent.Framework.Events;
+﻿using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
 namespace AsimovDeploy.WinAgent.Framework.Tasks
@@ -13,11 +7,13 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
     {
         private readonly DeployUnit deployUnit;
         private readonly string command;
-     
-        public CommandTask(DeployUnit deployUnit, string command)
+        private readonly string correlationId;
+
+        public CommandTask(DeployUnit deployUnit, string command, string correlationId)
         {
             this.deployUnit = deployUnit;
             this.command = command;
+            this.correlationId = correlationId;
         }
 
         protected override void Execute()
