@@ -7,7 +7,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 {
 	public class StartDeployUnitAction : UnitAction
 	{
-		private static ILog _log = LogManager.GetLogger(typeof(StopDeployUnitAction));
+        private static ILog _log = LogManager.GetLogger(typeof(StartDeployUnitAction));
 
 		public StartDeployUnitAction()
 		{
