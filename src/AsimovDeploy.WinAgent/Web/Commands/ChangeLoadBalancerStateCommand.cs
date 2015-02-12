@@ -18,6 +18,7 @@ namespace AsimovDeploy.WinAgent.Web.Commands
 {
     public class ChangeLoadBalancerStateCommand
     {
-	    public string action;
+        public string correlationId { get; set; }
+        public string action;
     }
 }
