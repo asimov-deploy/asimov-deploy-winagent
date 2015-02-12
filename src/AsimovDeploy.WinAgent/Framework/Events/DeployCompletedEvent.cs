@@ -31,6 +31,7 @@ namespace AsimovDeploy.WinAgent.Framework.Events
         public DeployCompletedEvent(string unitName, DeployedVersion version, UnitStatus status)
         {
             eventName = "deployCompleted";
+            this.correlationId = version.CorrelationId;
             this.unitName = unitName;
             this.version = version.VersionNumber;
             this.branch = version.VersionBranch;
@@ -51,6 +52,7 @@ namespace AsimovDeploy.WinAgent.Framework.Events
         public DeployFailedEvent(string unitName, DeployedVersion version)
         {
             eventName = "deployFailed";
+            this.correlationId = version.CorrelationId;
             this.unitName = unitName;
             this.version = version.VersionNumber;
             this.branch = version.VersionBranch;
@@ -69,6 +71,7 @@ namespace AsimovDeploy.WinAgent.Framework.Events
 
         public DeployStartedEvent(string unitName, DeployedVersion version)
         {
+            this.correlationId = version.CorrelationId;
             this.eventName = "deployStarted";
             this.unitName = unitName;
             this.version = version.VersionNumber;

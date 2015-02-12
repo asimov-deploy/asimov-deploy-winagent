@@ -102,6 +102,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 				UserId = user.UserId,
 				UserName = user.UserName,
                 DeployFailed = false,
+                CorrelationId = correlationId,
                 Parameters = parameters.GetInternalDictionary()
             };
 
