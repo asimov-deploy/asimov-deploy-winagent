@@ -163,6 +163,8 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
             context.LogFileName = string.Format("deploy-{0:yyyy-MM-dd_HH_mm_ss}.log", DateTime.Now);
             fileAppender.File = Path.Combine(context.DeployUnit.DataDirectory, "Logs", context.LogFileName);
             // add the layout
+            //log4net.LogicalThreadContext.Properties["correlationId"] = _correlationId;
+            //var patternLayout = new PatternLayout("%date{HH:mm:ss} [%-5level]  %m %property{correlationId}%n");
             var patternLayout = new PatternLayout("%date{HH:mm:ss} [%-5level]  %m%n");
             fileAppender.Layout = patternLayout;
             // add the filter for the log source

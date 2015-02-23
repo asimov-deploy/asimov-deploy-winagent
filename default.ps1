@@ -13,6 +13,8 @@ properties {
 	$build = "10"
 }
 
+include .\teamcity.ps1
+
 task default -depends Release
 
 task Clean {
@@ -23,7 +25,7 @@ task Init -depends Clean {
 	$script:version = "$version.$build"
 	$script:commit = $commit.substring(0,7)
 
-	Write-Host "##teamcity[buildNumber '$script:version']"
+	TeamCity-SetBuildNumber $script:version
 
 	exec { git update-index --assume-unchanged "$base_dir\src\SharedAssemblyInfo.cs" }
 	(Get-Content "$base_dir\src\SharedAssemblyInfo.cs") |
@@ -94,6 +96,13 @@ task CreateOutputDirectories {
 	New-Item $build_dir\packages\AsimovDeploy.WinAgent -Type directory | Out-Null
 	New-Item $build_dir\packages\AsimovDeploy.WinAgentUpdater -Type directory | Out-Null
 	New-Item $build_dir\drop -Type directory | Out-Null
+}
+
+task PublishArtifact {
+	Write-Host "Publish artifacts"
+
+	#Get-Childitem
+	#Copy-Item "$build_dir\packages\*.zip" "$drop_folder\$script:version" -Force -ErrorAction SilentlyContinue
 }
 
 task CopyToDropFolder {
