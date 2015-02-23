@@ -101,8 +101,12 @@ task CreateOutputDirectories {
 task PublishArtifact {
 	Write-Host "Publish artifacts"
 
-	#Get-Childitem
-	#Copy-Item "$build_dir\packages\*.zip" "$drop_folder\$script:version" -Force -ErrorAction SilentlyContinue
+	Get-Childitem "$build_dir\packages\AsimovDeploy.WinAgentUpdater-*.zip" | Foreach-Object {
+		TeamCity-PublishArtifact $_.FullName
+	}
+	Get-Childitem "$build_dir\packages\AsimovDeploy.WinAgent-*.zip" | Foreach-Object {
+		TeamCity-PublishArtifact $_.FullName
+	}
 }
 
 task CopyToDropFolder {
@@ -118,6 +122,6 @@ task DoRelease -depends Compile, `
 	CopyAsimovDeployWinAgentUpdater, `
 	CopyAsimovDeployWinAgent, `
 	CreateDistributionPackage, `
-	CopyToDropFolder {
+	PublishArtifact {
 	Write-Host "Done building AsimovDeploy"
 }
