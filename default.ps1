@@ -7,7 +7,7 @@ properties {
 	$tools_dir = "$base_dir\tools"
 	$configuration = "Debug"
 	$drop_folder = "$base_dir\build_artifacts\drop"
-	$version = "0.6"
+	$version = "0.7"
 	$commit = "1234567"
 	$branch = "master"
 	$build = "10"
