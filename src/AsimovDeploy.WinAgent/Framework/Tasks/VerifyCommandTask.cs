@@ -38,14 +38,16 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         private readonly WebSiteDeployUnit deployUnit;
 	    private readonly string zipPath;
 	    private readonly string command;
-	    private dynamic report;
+        private readonly string correlationId;
+        private dynamic report;
         private readonly NodeFront _nodefront = new NodeFront();
 
-	    public VerifyCommandTask(WebSiteDeployUnit webSiteDeployUnit, string zipPath, string command)
+	    public VerifyCommandTask(WebSiteDeployUnit webSiteDeployUnit, string zipPath, string command, string correlationId)
         {
             deployUnit = webSiteDeployUnit;
             this.zipPath = zipPath;
             this.command = command;
+	        this.correlationId = correlationId;
         }
 
         protected override void Execute()

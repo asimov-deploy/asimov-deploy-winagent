@@ -20,6 +20,7 @@ namespace AsimovDeploy.WinAgent.Framework.Events
 {
     public class AsimovEvent
     {
+        public string correlationId { get; set; }
         public string eventName { get; set; }
         public string agentName { get; set; }
 

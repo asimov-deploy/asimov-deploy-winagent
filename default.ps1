@@ -7,11 +7,13 @@ properties {
 	$tools_dir = "$base_dir\tools"
 	$configuration = "Debug"
 	$drop_folder = "$base_dir\build_artifacts\drop"
-	$version = "0.6"
+	$version = "0.7"
 	$commit = "1234567"
 	$branch = "master"
 	$build = "10"
 }
+
+include .\teamcity.ps1
 
 task default -depends Release
 
@@ -23,7 +25,7 @@ task Init -depends Clean {
 	$script:version = "$version.$build"
 	$script:commit = $commit.substring(0,7)
 
-	Write-Host "##teamcity[buildNumber '$script:version']"
+	TeamCity-SetBuildNumber $script:version
 
 	exec { git update-index --assume-unchanged "$base_dir\src\SharedAssemblyInfo.cs" }
 	(Get-Content "$base_dir\src\SharedAssemblyInfo.cs") |
@@ -96,6 +98,17 @@ task CreateOutputDirectories {
 	New-Item $build_dir\drop -Type directory | Out-Null
 }
 
+task PublishArtifact {
+	Write-Host "Publish artifacts"
+
+	Get-Childitem "$build_dir\packages\AsimovDeploy.WinAgentUpdater-*.zip" | Foreach-Object {
+		TeamCity-PublishArtifact $_.FullName
+	}
+	Get-Childitem "$build_dir\packages\AsimovDeploy.WinAgent-*.zip" | Foreach-Object {
+		TeamCity-PublishArtifact $_.FullName
+	}
+}
+
 task CopyToDropFolder {
 	Write-Host "Copying to drop folder $drop_folder"
 
@@ -109,6 +122,6 @@ task DoRelease -depends Compile, `
 	CopyAsimovDeployWinAgentUpdater, `
 	CopyAsimovDeployWinAgent, `
 	CreateDistributionPackage, `
-	CopyToDropFolder {
+	PublishArtifact {
 	Write-Host "Done building AsimovDeploy"
 }

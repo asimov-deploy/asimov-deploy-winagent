@@ -18,6 +18,7 @@ namespace AsimovDeploy.WinAgent.Web.Commands
 {
     public class UnitActionCommand
     {
+        public string correlationId { get; set; }
         public string unitName { get; set; }
         public string actionName { get;set; }
         public string userId { get; set; }

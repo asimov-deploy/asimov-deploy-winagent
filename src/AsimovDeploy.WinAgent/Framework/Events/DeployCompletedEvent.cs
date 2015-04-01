@@ -25,18 +25,19 @@ namespace AsimovDeploy.WinAgent.Framework.Events
         public string version { get; set; }
         public string branch { get; set; }
         public string status { get; set; }
-		public string userId { get; set; }
-		public string userName { get; set; }
+        public string userId { get; set; }
+        public string userName { get; set; }
 
         public DeployCompletedEvent(string unitName, DeployedVersion version, UnitStatus status)
         {
             eventName = "deployCompleted";
+            this.correlationId = version.CorrelationId;
             this.unitName = unitName;
             this.version = version.VersionNumber;
             this.branch = version.VersionBranch;
             this.status = status.ToString();
-	        this.userId = version.UserId;
-	        this.userName = version.UserName;
+            this.userId = version.UserId;
+            this.userName = version.UserName;
         }
     }
 
@@ -45,17 +46,18 @@ namespace AsimovDeploy.WinAgent.Framework.Events
         public string unitName { get; set; }
         public string version { get; set; }
         public string branch { get; set; }
-		public string userId { get; set; }
-		public string userName { get; set; }
+        public string userId { get; set; }
+        public string userName { get; set; }
 
         public DeployFailedEvent(string unitName, DeployedVersion version)
         {
             eventName = "deployFailed";
+            this.correlationId = version.CorrelationId;
             this.unitName = unitName;
             this.version = version.VersionNumber;
             this.branch = version.VersionBranch;
-	        this.userId = version.UserId;
-	        this.userName = version.UserName;
+            this.userId = version.UserId;
+            this.userName = version.UserName;
         }
     }
 
@@ -69,6 +71,7 @@ namespace AsimovDeploy.WinAgent.Framework.Events
 
         public DeployStartedEvent(string unitName, DeployedVersion version)
         {
+            this.correlationId = version.CorrelationId;
             this.eventName = "deployStarted";
             this.unitName = unitName;
             this.version = version.VersionNumber;

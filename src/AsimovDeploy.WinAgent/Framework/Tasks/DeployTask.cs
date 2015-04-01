@@ -36,17 +36,19 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         private readonly AsimovVersion _version;
         private readonly ParameterValues _parameterValues;
 	    private readonly AsimovUser _user;
+        private readonly string _correlationId;
 
-	    private IList<Func<IDeployStep>> _steps = new List<Func<IDeployStep>>();
+        private IList<Func<IDeployStep>> _steps = new List<Func<IDeployStep>>();
 
-        public DeployTask(DeployUnit deployUnit, AsimovVersion version, ParameterValues parameterValues, AsimovUser user)
+        public DeployTask(DeployUnit deployUnit, AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
         {
             _deployUnit = deployUnit;
             _version = version;
             _parameterValues = parameterValues;
 	        _user = user;
+            _correlationId = correlationId;
 
-	        AddDeployStep<CleanTempFolder>();
+            AddDeployStep<CleanTempFolder>();
             AddDeployStep<CopyPackageToTempFolder>();
         }
 
@@ -67,7 +69,8 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
                     DeployUnit = _deployUnit,
                     Log = Log,
                     NewVersion = _version,
-                    ParameterValues = _parameterValues
+                    ParameterValues = _parameterValues,
+                    CorrelationId = _correlationId
                 };
         }
 
@@ -82,7 +85,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
             InDeployContext(context =>
             {
-                context.DeployUnit.StartingDeploy(context.NewVersion, context.LogFileName, _user, _parameterValues);
+                context.DeployUnit.StartingDeploy(context.NewVersion, context.LogFileName, _user, _correlationId, _parameterValues);
 
                 Log.InfoFormat("Starting deployment of {0}, Version: {1}, {2} {3}", _deployUnit.Name, _version.Number, _parameterValues.GetLogString(), GetCurrentUserInfo());
 
@@ -160,6 +163,8 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
             context.LogFileName = string.Format("deploy-{0:yyyy-MM-dd_HH_mm_ss}.log", DateTime.Now);
             fileAppender.File = Path.Combine(context.DeployUnit.DataDirectory, "Logs", context.LogFileName);
             // add the layout
+            //log4net.LogicalThreadContext.Properties["correlationId"] = _correlationId;
+            //var patternLayout = new PatternLayout("%date{HH:mm:ss} [%-5level]  %m %property{correlationId}%n");
             var patternLayout = new PatternLayout("%date{HH:mm:ss} [%-5level]  %m%n");
             fileAppender.Layout = patternLayout;
             // add the filter for the log source

@@ -196,7 +196,7 @@
     <Compile Include="Service\IAsimovDeployService.cs" />
     <Compile Include="Web\Commands\DeployCommand.cs" />
     <Compile Include="Web\Commands\ChangeLoadBalancerStateCommand.cs" />
-    <Compile Include="Web\Commands\ActionCommand.cs" />
+    <Compile Include="Web\Commands\UnitActionCommand.cs" />
     <Compile Include="Web\Contracts\DeployUnitInfoDTO.cs" />
     <Compile Include="Web\Modules\DeployLogModule.cs" />
     <Compile Include="Web\Modules\DeployUnitModule.cs" />

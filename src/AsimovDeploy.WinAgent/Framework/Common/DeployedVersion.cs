@@ -33,5 +33,6 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 		public string UserId { get; set; }
 		public string UserName { get; set; }
         public IDictionary<string, dynamic> Parameters { get; set; }
+        public string CorrelationId { get; set; }
     }
 }

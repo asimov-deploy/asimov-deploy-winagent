@@ -24,6 +24,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 		public string Name { get; set; }
 		public int Sort { get; set; }
 		
-		public abstract AsimovTask GetTask(DeployUnit unit,AsimovUser user);
+		public abstract AsimovTask GetTask(DeployUnit unit,AsimovUser user, string correlationId);
 	}
 }

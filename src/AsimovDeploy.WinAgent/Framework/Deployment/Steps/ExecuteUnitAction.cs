@@ -16,7 +16,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
         public void Execute(DeployContext context)
         {
-            action.GetTask(context.DeployUnit, user).ExecuteTask();
+            action.GetTask(context.DeployUnit, user, context.CorrelationId).ExecuteTask();
         }
     }
 }

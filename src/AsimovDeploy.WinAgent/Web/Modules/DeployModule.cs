@@ -38,7 +38,7 @@ namespace AsimovDeploy.WinAgent.Web.Modules
 
                 var packageSource = config.GetPackageSourceFor(deployUnit);
                 var version = packageSource.GetVersion(command.versionId, deployUnit.PackageInfo);
-                var deployTask = deployUnit.GetDeployTask(version, new ParameterValues(command.parameters), user);
+                var deployTask = deployUnit.GetDeployTask(version, new ParameterValues(command.parameters), user, command.correlationId);
 
                 taskExecutor.AddTask(deployTask);
 
