@@ -117,6 +117,16 @@ task CopyToDropFolder {
 	Copy-Item "$build_dir\packages\*.zip" "$drop_folder\$script:version" -Force -ErrorAction SilentlyContinue
 }
 
+task CopyToDropFolderProd {
+	Write-Host "Copying to drop folder $drop_folder"
+
+	if (-not(Test-Path "$drop_folder")) {
+		New-Item "$drop_folder" -Type directory | Out-Null
+	}
+
+	Copy-Item "$build_dir\packages\*.zip" "$drop_folder" -Force -ErrorAction SilentlyContinue
+}
+
 task DoRelease -depends Compile, `
 	CreateOutputDirectories, `
 	CopyAsimovDeployWinAgentUpdater, `
