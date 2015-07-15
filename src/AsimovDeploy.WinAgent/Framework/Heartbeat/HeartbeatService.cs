@@ -19,7 +19,6 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
-using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Web.Contracts;
@@ -93,8 +92,8 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 
             HttpPostJsonUpdate(_nodeFrontUri, heartBeat);
         }
-	    
-	    private static void HttpPostJsonUpdate<T>(Uri uri, T data)
+        
+        private static void HttpPostJsonUpdate<T>(Uri uri, T data)
         {
             var webRequest = (HttpWebRequest)WebRequest.Create(uri);
             webRequest.ContentType = "application/json";
@@ -105,12 +104,14 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 
             var parameters = JsonConvert.SerializeObject(data);
             var bytes = Encoding.UTF8.GetBytes(parameters);
+
+            Log.DebugFormat("Sending heartbeat: {0}", parameters);
             try
             {
                 webRequest.ContentLength = bytes.Length;
                 using (var os = webRequest.GetRequestStream())
                 {
-					os.Write(bytes, 0, bytes.Length);    
+                    os.Write(bytes, 0, bytes.Length);
                 }
             }
             catch (WebException e)
