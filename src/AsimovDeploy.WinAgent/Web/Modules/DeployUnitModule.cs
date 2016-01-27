@@ -32,9 +32,9 @@ namespace AsimovDeploy.WinAgent.Web.Modules
 				return Response.AsJson(units);
 			};
 
-			Get["/units/list/{agentGroup}"] = urlArgs =>
+			Get["/units/list/{group}"] = urlArgs =>
 			{
-				var units = GetDeployUnits(config, (string)urlArgs.agentGroup);
+				var units = GetDeployUnits(config, (string)urlArgs.group);
 				return Response.AsJson(units);
 			};
 
