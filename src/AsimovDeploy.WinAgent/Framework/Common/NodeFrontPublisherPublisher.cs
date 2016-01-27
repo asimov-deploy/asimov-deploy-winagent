@@ -76,7 +76,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 	            }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 	            Console.Write("Error sending log to nodefront");
             }
