@@ -27,30 +27,40 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 {
     public class AsimovConfig : IAsimovConfig
     {
+        private string _loadBalancerServerId;
+
+        private int _loadBalancerTimeout;
+
+        public AsimovConfig()
+        {
+            Units = new DeployUnits();
+            DataFolder = "Data";
+            AgentGroup = "Asimov";
+            LoadBalancerParameters = new Dictionary<string, string>();
+        }
+
+        public string DataFolder { get; set; }
+
+        public PackageSourceList PackageSources { get; set; }
         public string Environment { get; set; }
-		public string AgentGroup { get; set; }
+        public string AgentGroup { get; set; }
 
         public int HeartbeatIntervalSeconds { get; set; }
         public int WebPort { get; set; }
         public string ApiKey { get; set; }
         public int ConfigVersion { get; set; }
 
-        public string TempFolder { get { return Path.Combine(DataFolder, "Temp"); } }
-        public string DataFolder { get; set; }
-	    
-		public string LoadBalancerAgentUrl { get; set; }
+        public string TempFolder => Path.Combine(DataFolder, "Temp");
 
-		private string _loadBalancerServerId;
-	    public string LoadBalancerServerId
-	    {
-		    get { return _loadBalancerServerId ?? System.Environment.MachineName.ToLower(); }
-			set { _loadBalancerServerId = value;  }
-	    }
-
-        private int _loadBalancerTimeout;
+        public string LoadBalancerAgentUrl { get; set; }
+        public string LoadBalancerServerId
+        {
+            get { return _loadBalancerServerId ?? System.Environment.MachineName.ToLower(); }
+            set { _loadBalancerServerId = value; }
+        }
         public int LoadBalancerTimeout
         {
-            get { return _loadBalancerTimeout > 0 ? _loadBalancerTimeout : 30; } 
+            get { return _loadBalancerTimeout > 0 ? _loadBalancerTimeout : 30; }
             set { _loadBalancerTimeout = value; }
         }
 
@@ -59,12 +69,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
         public DeployUnits Units { get; set; }
 
-        public PackageSourceList PackageSources { get; set; }
-
-        public Uri WebControlUrl
-        {
-            get { return new Uri(string.Format("http://{0}:{1}", HostNameUtil.GetFullHostName(), WebPort)); }
-        }
+        public Uri WebControlUrl => new Uri($"http://{HostNameUtil.GetFullHostName()}:{WebPort}");
         public Dictionary<string, string> LoadBalancerParameters { get; set; }
 
         public string GetLoadBalancerParametersAsQueryString()
@@ -72,25 +77,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             if (LoadBalancerParameters.Count == 0)
                 return "";
 
-            return string.Join("&", LoadBalancerParameters.Select(p => string.Format("{0}={1}", HttpUtility.UrlEncode(p.Key.ToLower()), HttpUtility.UrlEncode(p.Value.ToLower()))));
+            return string.Join("&", LoadBalancerParameters.Select(p => $"{HttpUtility.UrlEncode(p.Key.ToLower())}={HttpUtility.UrlEncode(p.Value.ToLower())}"));
         }
 
-        public PackageSource GetPackageSourceFor(DeployUnit deployUnit)
-        {
-            return PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
-        }
+        public PackageSource GetPackageSourceFor(DeployUnit deployUnit) => PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
 
-        public AsimovConfig()
-        {
-            Units = new DeployUnits();
-	        DataFolder = "Data";
-	        AgentGroup = "Asimov";
-            LoadBalancerParameters = new Dictionary<string, string>();
-        }
-
-        public DeployUnit GetUnitByName(string name)
-        {
-            return Units.Single(x => x.Name == name);
-        }
+        public DeployUnit GetUnitByName(string name) => Units.Single(x => x.Name == name);
     }
 }

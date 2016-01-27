@@ -73,14 +73,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return unitInfo;
         }
 
-	    public AsimovTask GetStopTask()
-	    {
-		    return new StartStopWindowsServiceTask(this, stop: true);
-	    }
+	    public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);
 
-	    public AsimovTask GetStartTask()
-	    {
-			return new StartStopWindowsServiceTask(this, stop: false);
-	    }
+        public AsimovTask GetStartTask() => new StartStopWindowsServiceTask(this, stop: false);
     }
 }

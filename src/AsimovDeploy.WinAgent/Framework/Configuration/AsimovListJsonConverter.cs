@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -49,21 +50,12 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 	    
 		private IDictionary<string, Type> GetTypesForList(Type objectType)
 		{
-			var typeLookup = new Dictionary<string, Type>();
-			var attributes = objectType.GetCustomAttributes(typeof(AsimovListTypeAttribute), false);
-			
-			foreach (AsimovListTypeAttribute attr in attributes)
-			{
-				typeLookup.Add(attr.Name, attr.Type);
-			}
-			
-			return typeLookup;
+		    var attributes = objectType.GetCustomAttributes(typeof(AsimovListTypeAttribute), false);
+
+		    return attributes.Cast<AsimovListTypeAttribute>().ToDictionary(attr => attr.Name, attr => attr.Type);
 		}
 	
-	    public override bool CanConvert(Type objectType)
-	    {
-	        return false;
-	    }
+	    public override bool CanConvert(Type objectType) => false;
 	}
 	
 

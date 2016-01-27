@@ -16,7 +16,6 @@
 
 using System;
 using System.Collections.Generic;
-using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -25,16 +24,18 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 {
     public class DeployUnitConverter : JsonConverter
     {
-        public static IDictionary<string, Type> _deployUnitLookup;
+        public static IDictionary<string, Type> DeployUnitLookup;
 
         static DeployUnitConverter()
         {
-            _deployUnitLookup = new Dictionary<string, Type>();
-            _deployUnitLookup.Add("WebSite", typeof(WebSiteDeployUnit));
-            _deployUnitLookup.Add("IIS6WebSite", typeof(IIS6WebSiteDeployUnit));
-            _deployUnitLookup.Add("WindowsService", typeof(WindowsServiceDeployUnit));
-            _deployUnitLookup.Add("PowerShell", typeof(PowerShellDeployUnit));
-            _deployUnitLookup.Add("FileCopy", typeof(FileCopyDeployUnit));
+            DeployUnitLookup = new Dictionary<string, Type>
+            {
+                { "WebSite", typeof(WebSiteDeployUnit) },
+                { "IIS6WebSite", typeof(IIS6WebSiteDeployUnit) },
+                { "WindowsService", typeof(WindowsServiceDeployUnit) },
+                { "PowerShell", typeof(PowerShellDeployUnit) },
+                { "FileCopy", typeof(FileCopyDeployUnit) }
+            };
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) { }
@@ -46,21 +47,16 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
             foreach (JObject jsonUnit in JArray.Load(reader))
             {
                 var type = jsonUnit.Property("Type");
-                var deployUnitType = _deployUnitLookup[type.Value.ToString()];
-                var deployUnit = (DeployUnit) serializer.Deserialize(jsonUnit.CreateReader(), deployUnitType);
+                var deployUnitType = DeployUnitLookup[type.Value.ToString()];
+                var deployUnit = (DeployUnit)serializer.Deserialize(jsonUnit.CreateReader(), deployUnitType);
 
                 if (deployUnit.IsValidForAgent(Environment.MachineName.ToLower()))
-                {
                     list.Add(deployUnit);
-                }
             }
 
             return existingValue;
         }
 
-        public override bool CanConvert(Type objectType)
-        {
-            return false;
-        }
+        public override bool CanConvert(Type objectType) => false;
     }
 }
