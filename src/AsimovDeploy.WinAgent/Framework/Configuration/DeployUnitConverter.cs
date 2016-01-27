@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Environment = System.Environment;
 
 namespace AsimovDeploy.WinAgent.Framework.Configuration
 {

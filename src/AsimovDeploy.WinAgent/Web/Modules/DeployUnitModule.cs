@@ -14,9 +14,7 @@
 * limitations under the License.
 ******************************************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Web.Contracts;
@@ -28,38 +26,19 @@ namespace AsimovDeploy.WinAgent.Web.Modules
     {
         public DeployUnitModule(IAsimovConfig config)
         {
-            Get["/units/list"] = _ =>
-            {
-                var units = new List<DeployUnitInfoDTO>();
+			Get["/units/list"] = _ =>
+			{
+				var units = GetDeployUnits(config);
+				return Response.AsJson(units);
+			};
 
-                foreach (var deployUnit in config.Units)
-                {
-                    var unitInfo = deployUnit.GetUnitInfo();
-                    var unitInfoDto = new DeployUnitInfoDTO();
-                    unitInfoDto.name = unitInfo.Name;
-                    unitInfoDto.lastDeployed = unitInfo.LastDeployed;
+			Get["/units/list/{agentGroup}"] = urlArgs =>
+			{
+				var units = GetDeployUnits(config, (string)urlArgs.agentGroup);
+				return Response.AsJson(units);
+			};
 
-                    if (unitInfo.DeployStatus != DeployStatus.NA)
-                    {
-                        unitInfoDto.status = unitInfo.DeployStatus.ToString();
-                        unitInfoDto.lastDeployed = "";
-                    }
-                    else
-                        unitInfoDto.status = unitInfo.Status.ToString();
-
-                    unitInfoDto.url = unitInfo.Url;
-                    unitInfoDto.version = unitInfo.Version.VersionNumber;
-                    unitInfoDto.branch = unitInfo.Version.VersionBranch;
-                    unitInfoDto.hasDeployParameters = unitInfo.HasDeployParameters;
-					unitInfoDto.actions = deployUnit.Actions.OrderBy(x => x.Sort).Select(x => x.Name).ToArray();
-
-                    units.Add(unitInfoDto);
-                }
-
-                return Response.AsJson(units);
-            };
-
-            Get["/units/deploy-parameters/{unitName}"] = urlArgs =>
+			Get["/units/deploy-parameters/{unitName}"] = urlArgs =>
             {
                 var deployUnit = config.GetUnitByName((string)urlArgs.unitName);
                 if (deployUnit == null)
@@ -72,5 +51,37 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                 return Response.AsJson(parameters);
             };
         }
+
+	    private static List<DeployUnitInfoDTO> GetDeployUnits(IAsimovConfig config, string agentGroup = null)
+	    {
+		    var units = new List<DeployUnitInfoDTO>();
+
+		    foreach (var deployUnit in config.GetUnitsByGroup(agentGroup))
+		    {
+			    var unitInfo = deployUnit.GetUnitInfo();
+			    var unitInfoDto = new DeployUnitInfoDTO
+			    {
+				    name = unitInfo.Name,
+				    lastDeployed = unitInfo.LastDeployed
+			    };
+
+			    if (unitInfo.DeployStatus != DeployStatus.NA)
+			    {
+				    unitInfoDto.status = unitInfo.DeployStatus.ToString();
+				    unitInfoDto.lastDeployed = "";
+			    }
+			    else
+				    unitInfoDto.status = unitInfo.Status.ToString();
+
+			    unitInfoDto.url = unitInfo.Url;
+			    unitInfoDto.version = unitInfo.Version.VersionNumber;
+			    unitInfoDto.branch = unitInfo.Version.VersionBranch;
+			    unitInfoDto.hasDeployParameters = unitInfo.HasDeployParameters;
+			    unitInfoDto.actions = deployUnit.Actions.OrderBy(x => x.Sort).Select(x => x.Name).ToArray();
+
+			    units.Add(unitInfoDto);
+		    }
+		    return units;
+	    }
     }
 }

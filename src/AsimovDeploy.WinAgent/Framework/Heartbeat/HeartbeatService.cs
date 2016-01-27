@@ -15,11 +15,12 @@
 ******************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
-using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Web.Contracts;
@@ -32,7 +33,6 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(HeartbeatService));
         private Timer _timer;
-        private readonly Uri _nodeFrontUri;
         private readonly int _intervalMs;
         private readonly string _hostControlUrl;
         private readonly IAsimovConfig _config;
@@ -43,7 +43,6 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
         {
             _config = config;
 	        _loadBalancerService = loadBalancerService;
-	        _nodeFrontUri = new Uri(new Uri(config.NodeFrontUrl), "/agent/heartbeat");
             _intervalMs = config.HeartbeatIntervalSeconds*1000;
             _hostControlUrl = config.WebControlUrl.ToString();
             _config = config;
@@ -60,6 +59,11 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             _timer.Dispose();
         }
 
+	    private Uri GetHeartbeatUri(string nodeFrontUrl)
+	    {
+		    return new Uri(new Uri(nodeFrontUrl), "/agent/heartbeat");
+		}
+
         private void TimerTick(object state)
         {
             _timer.Change(Timeout.Infinite, Timeout.Infinite);
@@ -74,26 +78,49 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             }
         }
 
-        private void SendHeartbeat()
+	    private void SendHeartbeat()
         {
-	        var heartBeat = new HeartbeatDTO
+	        foreach (var dto in GetHeartbeatDtos())
 	        {
-		        name = Environment.MachineName,
-		        url = _hostControlUrl,
-		        apiKey = _config.ApiKey,
-		        version = VersionUtil.GetAgentVersion(),
-		        configVersion = _config.ConfigVersion,
-				group = _config.AgentGroup
-	        };
-
-			if (_loadBalancerService.UseLoadBalanser)
-			{
-				heartBeat.loadBalancerState	= _loadBalancerService.GetCurrentState();
+				HttpPostJsonUpdate(dto.Key, dto.Value);
 			}
+		}
 
-            HttpPostJsonUpdate(_nodeFrontUri, heartBeat);
-        }
-	    
+	    private IEnumerable<KeyValuePair<Uri, HeartbeatDTO>> GetHeartbeatDtos()
+	    {
+		    if (!_config.Environments.Any())
+		    {
+			    return new[]
+			    {
+				    new KeyValuePair<Uri, HeartbeatDTO>(
+					    GetHeartbeatUri(_config.NodeFrontUrl),
+					    new HeartbeatDTO
+					    {
+						    name = Environment.MachineName,
+						    url = _hostControlUrl,
+						    apiKey = _config.ApiKey,
+						    version = VersionUtil.GetAgentVersion(),
+						    configVersion = _config.ConfigVersion,
+						    @group = _config.AgentGroup,
+						    loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
+					    })
+			    };
+		    }
+
+		    return
+			    _config.Environments.Select(
+				    env => new KeyValuePair<Uri, HeartbeatDTO>(GetHeartbeatUri(env.NodeFrontUrl), new HeartbeatDTO
+				    {
+					    name = Environment.MachineName,
+					    url = _hostControlUrl,
+					    apiKey = _config.ApiKey,
+					    version = VersionUtil.GetAgentVersion(),
+					    configVersion = _config.ConfigVersion,
+					    @group = env.AgentGroup,
+					    loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
+				    }));
+	    }
+
 	    private static void HttpPostJsonUpdate<T>(Uri uri, T data)
         {
             var webRequest = (HttpWebRequest)WebRequest.Create(uri);

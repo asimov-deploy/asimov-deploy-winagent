@@ -21,6 +21,7 @@ using AsimovDeploy.WinAgent.Framework.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using log4net;
+using Environment = AsimovDeploy.WinAgent.Framework.Models.Units.Environment;
 
 namespace AsimovDeploy.WinAgent.Framework.Configuration
 {
@@ -56,26 +57,34 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 
             foreach (var environment in environments)
             {
-                var envConfigFile = Path.Combine(_configDir, $"config.{environment}.json");
+                var envConfigFile = Path.Combine(_configDir, $"config.{environment.Trim()}.json");
 
                 if (!File.Exists(envConfigFile))
                     return config;
 
                 Log.DebugFormat("Loading config file {0}", envConfigFile);
+				PopulateFromFile(envConfigFile, serializer, config);
 
-                using (var envReader = new StreamReader(envConfigFile))
-                {
-                    using (var envJsonReader = new JsonTextReader(envReader))
-                    {
-                        serializer.Populate(envJsonReader, config);
-                    }
-                }
-            }
+				var env = new Environment();
+				PopulateFromFile(envConfigFile, serializer, env);
+				config.Environments.Add(env);
+			}
 
             return config;
         }
 
-        private JToken GetSelf(JObject json)
+	    private void PopulateFromFile(string filename, JsonSerializer serializer, object target)
+	    {
+			using (var envReader = new StreamReader(filename))
+			{
+				using (var envJsonReader = new JsonTextReader(envReader))
+				{
+					serializer.Populate(envJsonReader, target);
+				}
+			}
+		}
+
+		private JToken GetSelf(JObject json)
         {
             var agents = json["Agents"];
             if (agents == null)

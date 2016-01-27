@@ -1,5 +1,6 @@
 ﻿{
 	"NodeFrontUrl": "http://overriden:3335",
+    "AgentGroup": "Other Group",
 
 	"PackageSources": {
 		"Extra": { "Type": "FileSystem", "Uri": "file://extra" }

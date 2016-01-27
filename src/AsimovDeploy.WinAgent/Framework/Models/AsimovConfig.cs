@@ -22,6 +22,7 @@ using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 using Nancy.Helpers;
+using Environment = AsimovDeploy.WinAgent.Framework.Models.Units.Environment;
 
 namespace AsimovDeploy.WinAgent.Framework.Models
 {
@@ -33,19 +34,17 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
         public AsimovConfig()
         {
-            Units = new DeployUnits();
             DataFolder = "Data";
-            AgentGroup = "Asimov";
-            LoadBalancerParameters = new Dictionary<string, string>();
+	        LoadBalancerParameters = new Dictionary<string, string>();
         }
 
         public string DataFolder { get; set; }
 
         public PackageSourceList PackageSources { get; set; }
         public string Environment { get; set; }
-        public string AgentGroup { get; set; }
+		public string AgentGroup { get; set; }
 
-        public int HeartbeatIntervalSeconds { get; set; }
+		public int HeartbeatIntervalSeconds { get; set; }
         public int WebPort { get; set; }
         public string ApiKey { get; set; }
         public int ConfigVersion { get; set; }
@@ -67,9 +66,16 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public string NodeFrontUrl { get; set; }
         public string WebNotificationUrl { get; set; }
 
-        public DeployUnits Units { get; set; }
+		public DeployUnits Units { get; set; } = new DeployUnits();
+		public List<Environment> Environments { get; set; } = new List<Environment>();
 
-        public Uri WebControlUrl => new Uri($"http://{HostNameUtil.GetFullHostName()}:{WebPort}");
+	    public DeployUnits GetUnitsByGroup(string agentGroup = null)
+	    {
+			if (!string.IsNullOrWhiteSpace(agentGroup) && !Environments.Any(a => a.AgentGroup == agentGroup)) return new DeployUnits();
+			return string.IsNullOrWhiteSpace(agentGroup) ? Units : Environments.First(a => a.AgentGroup == agentGroup).Units;
+		}
+
+		public Uri WebControlUrl => new Uri($"http://{HostNameUtil.GetFullHostName()}:{WebPort}");
         public Dictionary<string, string> LoadBalancerParameters { get; set; }
 
         public string GetLoadBalancerParametersAsQueryString()
@@ -80,8 +86,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             return string.Join("&", LoadBalancerParameters.Select(p => $"{HttpUtility.UrlEncode(p.Key.ToLower())}={HttpUtility.UrlEncode(p.Value.ToLower())}"));
         }
 
-        public PackageSource GetPackageSourceFor(DeployUnit deployUnit) => PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
+        public PackageSource GetPackageSourceFor(DeployUnit deployUnit)
+        {
+			return PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
+        }
 
-        public DeployUnit GetUnitByName(string name) => Units.Single(x => x.Name == name);
+	    public DeployUnit GetUnitByName(string name) => Units.Single(x => x.Name == name);
     }
 }
