@@ -105,7 +105,7 @@
     <Compile Include="Framework\Models\UnitActions\CommandUnitAction.cs" />
     <Compile Include="Framework\Models\UnitActions\PowerShellUnitAction.cs" />
     <Compile Include="Framework\Models\UnitActions\RollbackUnitAction.cs" />
-    <Compile Include="Framework\Models\Units\Environment.cs" />
+    <Compile Include="Framework\Models\Units\DeployEnvironment.cs" />
     <Compile Include="Framework\Tasks\CommandTask.cs" />
     <Compile Include="Framework\Tasks\LaunchCommandAsProcess.cs" />
     <Compile Include="Framework\Tasks\PowerShellCommand.cs" />

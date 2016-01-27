@@ -18,10 +18,10 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Models;
+using AsimovDeploy.WinAgent.Framework.Models.Units;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using log4net;
-using Environment = AsimovDeploy.WinAgent.Framework.Models.Units.Environment;
 
 namespace AsimovDeploy.WinAgent.Framework.Configuration
 {
@@ -65,7 +65,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                 Log.DebugFormat("Loading config file {0}", envConfigFile);
 				PopulateFromFile(envConfigFile, serializer, config);
 
-				var env = new Environment();
+				var env = new DeployEnvironment();
 				PopulateFromFile(envConfigFile, serializer, env);
 				config.Environments.Add(env);
 			}

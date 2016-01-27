@@ -18,7 +18,6 @@ using System;
 using System.Collections.Generic;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
-using Environment = AsimovDeploy.WinAgent.Framework.Models.Units.Environment;
 
 namespace AsimovDeploy.WinAgent.Framework.Models
 {
@@ -39,7 +38,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 		string LoadBalancerServerId { get; set; }
 		int LoadBalancerTimeout { get; set; }
 
-		List<Environment> Environments { get; set; }
+		List<DeployEnvironment> Environments { get; set; }
 		DeployUnits Units { get; set; }
 		DeployUnit GetUnitByName(string name);
 		DeployUnits GetUnitsByGroup(string agentGroup = null);
