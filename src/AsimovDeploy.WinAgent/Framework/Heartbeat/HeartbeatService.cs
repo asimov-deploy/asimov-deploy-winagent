@@ -142,7 +142,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             }
             catch (WebException e)
             {
-                Log.Warn($"Error sending heartbeat to NodeFront ({uri})", e);
+                Log.Warn($"Error sending heartbeat to NodeFront ({uri}) data: {parameters}", e);
             }
         }
     }
