@@ -22,7 +22,6 @@ using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 using Nancy.Helpers;
-using Environment = AsimovDeploy.WinAgent.Framework.Models.Units.Environment;
 
 namespace AsimovDeploy.WinAgent.Framework.Models
 {
@@ -67,7 +66,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public string WebNotificationUrl { get; set; }
 
 		public DeployUnits Units { get; set; } = new DeployUnits();
-		public List<Environment> Environments { get; set; } = new List<Environment>();
+		public List<DeployEnvironment> Environments { get; set; } = new List<DeployEnvironment>();
 
 	    public DeployUnits GetUnitsByGroup(string agentGroup = null)
 	    {

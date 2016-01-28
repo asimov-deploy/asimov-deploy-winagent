@@ -48,7 +48,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.Write("Error sending event from webnotification publisher");
             }
