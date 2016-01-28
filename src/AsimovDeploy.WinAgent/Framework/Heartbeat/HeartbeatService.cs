@@ -122,8 +122,9 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 	    }
 
 	    private static void HttpPostJsonUpdate<T>(Uri uri, T data)
-        {
-            var webRequest = (HttpWebRequest)WebRequest.Create(uri);
+	    {
+		    return;
+			var webRequest = (HttpWebRequest)WebRequest.Create(uri);
             webRequest.ContentType = "application/json";
             webRequest.Method = "POST";
             webRequest.KeepAlive = true;
