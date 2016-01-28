@@ -139,6 +139,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
                 {
 					os.Write(bytes, 0, bytes.Length);    
                 }
+				webRequest.GetResponse().Close();
             }
             catch (WebException e)
             {
