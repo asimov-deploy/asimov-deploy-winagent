@@ -102,7 +102,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 
             return
                 _config.Environments.Select(
-                    env => new KeyValuePair<Uri, HeartbeatDTO>(GetHeartbeatUri(env.NodeFrontUrl), new HeartbeatDTO
+                    env => new KeyValuePair<Uri, HeartbeatDTO>(GetHeartbeatUri(_config.NodeFrontUrl), new HeartbeatDTO
                     {
                         name = Environment.MachineName,
                         url = _hostControlUrl,
