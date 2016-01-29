@@ -50,20 +50,11 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             _config.ApiKey = Guid.NewGuid().ToString();
         }
 
-        public void Start()
-        {
-            _timer = new Timer(TimerTick, null, 0, _intervalMs);
-        }
+        public void Start() => _timer = new Timer(TimerTick, null, 0, _intervalMs);
 
-        public void Stop()
-        {
-            _timer.Dispose();
-        }
+        public void Stop() => _timer.Dispose();
 
-        private Uri GetHeartbeatUri(string nodeFrontUrl)
-        {
-            return new Uri(new Uri(nodeFrontUrl), "/agent/heartbeat");
-        }
+        private Uri GetHeartbeatUri(string nodeFrontUrl) => new Uri(new Uri(nodeFrontUrl), "/agent/heartbeat");
 
         private void TimerTick(object state)
         {
@@ -71,7 +62,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 
             try
             {
-                SendHeartbeat();
+                SendHeartbeats();
             }
             finally
             {
@@ -79,11 +70,12 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             }
         }
 
-        private void SendHeartbeat()
+        private void SendHeartbeats()
         {
             foreach (var dto in GetHeartbeatDtos())
             {
-                Task.Run(() => HttpPostJsonUpdate(dto.Key, dto.Value));
+                HttpPostJsonUpdate(dto.Key, dto.Value);
+                Thread.Sleep(500);
             }
         }
 
