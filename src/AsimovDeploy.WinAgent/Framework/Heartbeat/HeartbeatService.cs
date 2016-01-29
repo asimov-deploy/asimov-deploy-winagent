@@ -75,7 +75,6 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             foreach (var dto in GetHeartbeatDtos())
             {
                 HttpPostJsonUpdate(dto.Key, dto.Value);
-                Thread.Sleep(500);
             }
         }
 
@@ -121,7 +120,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             request.Method = "POST";
             request.Accept = "application/json";
             request.ProtocolVersion = HttpVersion.Version11;
-            request.KeepAlive = true;
+            request.KeepAlive = false;
             request.Timeout = 5000;
             request.Accept = "*/*";
             request.ReadWriteTimeout = 5000;
