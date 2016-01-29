@@ -60,7 +60,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                 var envConfigFile = Path.Combine(_configDir, $"config.{environment.Trim()}.json");
 
                 if (!File.Exists(envConfigFile))
-                    return config;
+                    continue;
 
                 Log.DebugFormat("Loading config file {0}", envConfigFile);
 				PopulateFromFile(envConfigFile, serializer, config);
