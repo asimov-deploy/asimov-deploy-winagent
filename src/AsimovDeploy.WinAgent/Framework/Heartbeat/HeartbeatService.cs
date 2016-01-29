@@ -82,9 +82,9 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
         {
 	        foreach (var dto in GetHeartbeatDtos())
 	        {
-				HttpPostJsonUpdate(dto.Key, dto.Value);
-			}
-		}
+	            HttpPostJsonUpdate(dto.Key, dto.Value);
+	        }
+        }
 
 	    private IEnumerable<KeyValuePair<Uri, HeartbeatDTO>> GetHeartbeatDtos()
 	    {
@@ -123,22 +123,27 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 
 	    private static void HttpPostJsonUpdate<T>(Uri uri, T data)
         {
-            var webRequest = (HttpWebRequest)WebRequest.Create(uri);
-            webRequest.ContentType = "application/json";
-            webRequest.Method = "POST";
-            webRequest.KeepAlive = true;
-            webRequest.Timeout = 5000;
-            webRequest.ReadWriteTimeout = 5000;
-
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+            request.ContentType = "application/json";
+            request.Method = "POST";
+            request.Accept = "application/json";
+            request.ProtocolVersion = HttpVersion.Version11;
+            request.KeepAlive = true;
+            request.Timeout = 5000;
+            request.Accept = "*/*";
+            request.ReadWriteTimeout = 5000;
+          
             var parameters = JsonConvert.SerializeObject(data);
             var bytes = Encoding.UTF8.GetBytes(parameters);
             try
             {
-                webRequest.ContentLength = bytes.Length;
-                using (var os = webRequest.GetRequestStream())
+                request.ContentLength = bytes.Length;
+                using (var os = request.GetRequestStream())
                 {
 					os.Write(bytes, 0, bytes.Length);    
                 }
+                var response = (HttpWebResponse)request.GetResponse();
+
             }
             catch (WebException e)
             {
