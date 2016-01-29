@@ -20,6 +20,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models;
@@ -36,20 +37,20 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
         private readonly int _intervalMs;
         private readonly string _hostControlUrl;
         private readonly IAsimovConfig _config;
-	    private readonly ILoadBalancerService _loadBalancerService;
-		private LoadBalancerStateDTO _previousLoadBalancerState;
+        private readonly ILoadBalancerService _loadBalancerService;
+        private LoadBalancerStateDTO _previousLoadBalancerState;
 
-	    public HeartbeatService(IAsimovConfig config, ILoadBalancerService loadBalancerService)
+        public HeartbeatService(IAsimovConfig config, ILoadBalancerService loadBalancerService)
         {
             _config = config;
-	        _loadBalancerService = loadBalancerService;
-            _intervalMs = config.HeartbeatIntervalSeconds*1000;
+            _loadBalancerService = loadBalancerService;
+            _intervalMs = config.HeartbeatIntervalSeconds * 1000;
             _hostControlUrl = config.WebControlUrl.ToString();
             _config = config;
             _config.ApiKey = Guid.NewGuid().ToString();
         }
 
-	    public void Start()
+        public void Start()
         {
             _timer = new Timer(TimerTick, null, 0, _intervalMs);
         }
@@ -59,10 +60,10 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             _timer.Dispose();
         }
 
-	    private Uri GetHeartbeatUri(string nodeFrontUrl)
-	    {
-		    return new Uri(new Uri(nodeFrontUrl), "/agent/heartbeat");
-		}
+        private Uri GetHeartbeatUri(string nodeFrontUrl)
+        {
+            return new Uri(new Uri(nodeFrontUrl), "/agent/heartbeat");
+        }
 
         private void TimerTick(object state)
         {
@@ -78,50 +79,50 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             }
         }
 
-	    private void SendHeartbeat()
+        private void SendHeartbeat()
         {
-	        foreach (var dto in GetHeartbeatDtos())
-	        {
-	            HttpPostJsonUpdate(dto.Key, dto.Value);
-	        }
+            foreach (var dto in GetHeartbeatDtos())
+            {
+                Task.Run(() => HttpPostJsonUpdate(dto.Key, dto.Value));
+            }
         }
 
-	    private IEnumerable<KeyValuePair<Uri, HeartbeatDTO>> GetHeartbeatDtos()
-	    {
-		    if (!_config.Environments.Any())
-		    {
-			    return new[]
-			    {
-				    new KeyValuePair<Uri, HeartbeatDTO>(
-					    GetHeartbeatUri(_config.NodeFrontUrl),
-					    new HeartbeatDTO
-					    {
-						    name = Environment.MachineName,
-						    url = _hostControlUrl,
-						    apiKey = _config.ApiKey,
-						    version = VersionUtil.GetAgentVersion(),
-						    configVersion = _config.ConfigVersion,
-						    @group = _config.AgentGroup,
-						    loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
-					    })
-			    };
-		    }
+        private IEnumerable<KeyValuePair<Uri, HeartbeatDTO>> GetHeartbeatDtos()
+        {
+            if (!_config.Environments.Any())
+            {
+                return new[]
+                {
+                    new KeyValuePair<Uri, HeartbeatDTO>(
+                        GetHeartbeatUri(_config.NodeFrontUrl),
+                        new HeartbeatDTO
+                        {
+                            name = Environment.MachineName,
+                            url = _hostControlUrl,
+                            apiKey = _config.ApiKey,
+                            version = VersionUtil.GetAgentVersion(),
+                            configVersion = _config.ConfigVersion,
+                            @group = _config.AgentGroup,
+                            loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
+                        })
+                };
+            }
 
-		    return
-			    _config.Environments.Select(
-				    env => new KeyValuePair<Uri, HeartbeatDTO>(GetHeartbeatUri(env.NodeFrontUrl), new HeartbeatDTO
-				    {
-					    name = Environment.MachineName,
-					    url = _hostControlUrl,
-					    apiKey = _config.ApiKey,
-					    version = VersionUtil.GetAgentVersion(),
-					    configVersion = _config.ConfigVersion,
-					    @group = env.AgentGroup,
-					    loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
-				    }));
-	    }
+            return
+                _config.Environments.Select(
+                    env => new KeyValuePair<Uri, HeartbeatDTO>(GetHeartbeatUri(env.NodeFrontUrl), new HeartbeatDTO
+                    {
+                        name = Environment.MachineName,
+                        url = _hostControlUrl,
+                        apiKey = _config.ApiKey,
+                        version = VersionUtil.GetAgentVersion(),
+                        configVersion = _config.ConfigVersion,
+                        @group = env.AgentGroup,
+                        loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
+                    }));
+        }
 
-	    private static void HttpPostJsonUpdate<T>(Uri uri, T data)
+        private static void HttpPostJsonUpdate<T>(Uri uri, T data)
         {
             var request = (HttpWebRequest)WebRequest.Create(uri);
             request.ContentType = "application/json";
@@ -132,7 +133,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             request.Timeout = 5000;
             request.Accept = "*/*";
             request.ReadWriteTimeout = 5000;
-          
+
             var parameters = JsonConvert.SerializeObject(data);
             var bytes = Encoding.UTF8.GetBytes(parameters);
             try
@@ -140,7 +141,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
                 request.ContentLength = bytes.Length;
                 using (var os = request.GetRequestStream())
                 {
-					os.Write(bytes, 0, bytes.Length);    
+                    os.Write(bytes, 0, bytes.Length);
                 }
                 var response = (HttpWebResponse)request.GetResponse();
 
