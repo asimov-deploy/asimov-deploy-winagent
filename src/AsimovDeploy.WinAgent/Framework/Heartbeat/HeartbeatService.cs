@@ -15,9 +15,12 @@
 ******************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models;
@@ -31,33 +34,27 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(HeartbeatService));
         private Timer _timer;
-        private readonly Uri _nodeFrontUri;
         private readonly int _intervalMs;
         private readonly string _hostControlUrl;
         private readonly IAsimovConfig _config;
-	    private readonly ILoadBalancerService _loadBalancerService;
-		private LoadBalancerStateDTO _previousLoadBalancerState;
+        private readonly ILoadBalancerService _loadBalancerService;
+        private LoadBalancerStateDTO _previousLoadBalancerState;
 
-	    public HeartbeatService(IAsimovConfig config, ILoadBalancerService loadBalancerService)
+        public HeartbeatService(IAsimovConfig config, ILoadBalancerService loadBalancerService)
         {
             _config = config;
-	        _loadBalancerService = loadBalancerService;
-	        _nodeFrontUri = new Uri(new Uri(config.NodeFrontUrl), "/agent/heartbeat");
-            _intervalMs = config.HeartbeatIntervalSeconds*1000;
+            _loadBalancerService = loadBalancerService;
+            _intervalMs = config.HeartbeatIntervalSeconds * 1000;
             _hostControlUrl = config.WebControlUrl.ToString();
             _config = config;
             _config.ApiKey = Guid.NewGuid().ToString();
         }
 
-	    public void Start()
-        {
-            _timer = new Timer(TimerTick, null, 0, _intervalMs);
-        }
+        public void Start() => _timer = new Timer(TimerTick, null, 0, _intervalMs);
 
-        public void Stop()
-        {
-            _timer.Dispose();
-        }
+        public void Stop() => _timer.Dispose();
+
+        private Uri GetHeartbeatUri(string nodeFrontUrl) => new Uri(new Uri(nodeFrontUrl), "/agent/heartbeat");
 
         private void TimerTick(object state)
         {
@@ -65,7 +62,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 
             try
             {
-                SendHeartbeat();
+                SendHeartbeats();
             }
             finally
             {
@@ -73,46 +70,72 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             }
         }
 
-        private void SendHeartbeat()
+        private void SendHeartbeats()
         {
-	        var heartBeat = new HeartbeatDTO
-	        {
-		        name = Environment.MachineName,
-		        url = _hostControlUrl,
-		        apiKey = _config.ApiKey,
-		        version = VersionUtil.GetAgentVersion(),
-		        configVersion = _config.ConfigVersion,
-				group = _config.AgentGroup
-	        };
-
-			if (_loadBalancerService.UseLoadBalanser)
-			{
-				heartBeat.loadBalancerState	= _loadBalancerService.GetCurrentState();
-			}
-
-            HttpPostJsonUpdate(_nodeFrontUri, heartBeat);
+            foreach (var dto in GetHeartbeatDtos())
+            {
+                HttpPostJsonUpdate(dto.Key, dto.Value);
+            }
         }
-        
+
+        private IEnumerable<KeyValuePair<Uri, HeartbeatDTO>> GetHeartbeatDtos()
+        {
+            if (!_config.Environments.Any())
+            {
+                return new[]
+                {
+                    new KeyValuePair<Uri, HeartbeatDTO>(
+                        GetHeartbeatUri(_config.NodeFrontUrl),
+                        new HeartbeatDTO
+                        {
+                            name = Environment.MachineName,
+                            url = _hostControlUrl,
+                            apiKey = _config.ApiKey,
+                            version = VersionUtil.GetAgentVersion(),
+                            configVersion = _config.ConfigVersion,
+                            @group = _config.AgentGroup,
+                            loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
+                        })
+                };
+            }
+
+            return
+                _config.Environments.Select(
+                    env => new KeyValuePair<Uri, HeartbeatDTO>(GetHeartbeatUri(_config.NodeFrontUrl), new HeartbeatDTO
+                    {
+                        name = Environment.MachineName,
+                        url = _hostControlUrl,
+                        apiKey = _config.ApiKey,
+                        version = VersionUtil.GetAgentVersion(),
+                        configVersion = _config.ConfigVersion,
+                        @group = env.AgentGroup,
+                        loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
+                    }));
+        }
+
         private static void HttpPostJsonUpdate<T>(Uri uri, T data)
         {
-            var webRequest = (HttpWebRequest)WebRequest.Create(uri);
-            webRequest.ContentType = "application/json";
-            webRequest.Method = "POST";
-            webRequest.KeepAlive = true;
-            webRequest.Timeout = 5000;
-            webRequest.ReadWriteTimeout = 5000;
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+            request.ContentType = "application/json";
+            request.Method = "POST";
+            request.Accept = "application/json";
+            request.ProtocolVersion = HttpVersion.Version11;
+            request.KeepAlive = false;
+            request.Timeout = 5000;
+            request.Accept = "*/*";
+            request.ReadWriteTimeout = 5000;
 
             var parameters = JsonConvert.SerializeObject(data);
             var bytes = Encoding.UTF8.GetBytes(parameters);
-
-            Log.DebugFormat("Sending heartbeat: {0}", parameters);
             try
             {
-                webRequest.ContentLength = bytes.Length;
-                using (var os = webRequest.GetRequestStream())
+                request.ContentLength = bytes.Length;
+                using (var os = request.GetRequestStream())
                 {
                     os.Write(bytes, 0, bytes.Length);
                 }
+                ((HttpWebResponse)request.GetResponse()).Close();
+
             }
             catch (WebException e)
             {

@@ -47,7 +47,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                                 {
                                     data = JObject.Parse(str);
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
                                 }
                                 

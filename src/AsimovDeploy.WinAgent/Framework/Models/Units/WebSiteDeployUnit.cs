@@ -14,8 +14,6 @@
 * limitations under the License.
 ******************************************************************************/
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
@@ -34,8 +32,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public WebSiteDeployUnit()
         {
             CleanDeploy = true; // default to true
-			Actions.Add(new StartDeployUnitAction() { Sort = 10 });
-			Actions.Add(new StopDeployUnitAction() { Sort = 11 });
+			Actions.Add(new StartDeployUnitAction { Sort = 10 });
+			Actions.Add(new StopDeployUnitAction { Sort = 11 });
         }
 
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
@@ -49,12 +47,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return task;
         }
 
-        public virtual IWebServer GetWebServer()
-        {
-            return new IIS7WebServer(SiteName, SiteUrl);
-        }
+        public virtual IWebServer GetWebServer() => new IIS7WebServer(SiteName, SiteUrl);
 
-        public override DeployUnitInfo GetUnitInfo()
+	    public override DeployUnitInfo GetUnitInfo()
         {
             var siteInfo = base.GetUnitInfo();
 
@@ -62,7 +57,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             if (siteData == null)
             {
                 siteInfo.Status = UnitStatus.NotFound;
-                siteInfo.Version = new DeployedVersion() { VersionNumber = "0.0.0.0" };
+                siteInfo.Version = new DeployedVersion { VersionNumber = "0.0.0.0" };
                 return siteInfo;
             }
 
@@ -72,14 +67,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return siteInfo;
         }
 
-		public AsimovTask GetStopTask()
-		{
-			return new StartStopWebApplicationTask(this, stop: true);
-		}
+		public AsimovTask GetStopTask() => new StartStopWebApplicationTask(this, stop: true);
 
-		public AsimovTask GetStartTask()
-		{
-			return new StartStopWebApplicationTask(this, stop: false);
-		}
+	    public AsimovTask GetStartTask() => new StartStopWebApplicationTask(this, stop: false);
     }
 }

@@ -24,9 +24,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models
     public interface IAsimovConfig
     {
         string Environment { get; }
-		string AgentGroup { get; }
+		string AgentGroup { get; set; }
 
-        int HeartbeatIntervalSeconds { get; }
+		int HeartbeatIntervalSeconds { get; }
         string TempFolder { get; }
         string NodeFrontUrl { get;}
         string WebNotificationUrl { get; set; }
@@ -38,14 +38,16 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 		string LoadBalancerServerId { get; set; }
 		int LoadBalancerTimeout { get; set; }
 
-        DeployUnits Units { get; }
+		List<DeployEnvironment> Environments { get; set; }
+		DeployUnits Units { get; set; }
+		DeployUnit GetUnitByName(string name);
+		DeployUnits GetUnitsByGroup(string agentGroup = null);
 
-        DeployUnit GetUnitByName(string name);
-		
-        Uri WebControlUrl { get; }
+		Uri WebControlUrl { get; }
         Dictionary<string, string> LoadBalancerParameters { get; set; }
 
         PackageSource GetPackageSourceFor(DeployUnit deployUnit);
         string GetLoadBalancerParametersAsQueryString();
+
     }
 }
