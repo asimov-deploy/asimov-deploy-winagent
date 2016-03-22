@@ -1,0 +1,21 @@
+﻿{
+    "WebPort": "%AGENT_PORT%",
+    "DataFolder": "%DATA_FOLDER%",
+    "HeartbeatIntervalSeconds": 10,
+    "NodeFrontUrl": "%NODE_FRONT_URL%",
+    "Environment": "dev",
+    "ConfigVersion": 1,
+    "PackageSources": {
+        "Test": {
+            "Type": "FileSystem",
+            "Uri": "%PACKAGES_URI%"
+        }
+    },
+
+    "Agents": {
+        "%MACHINE_NAME%*": { "Environment": "interesting, other-environment" },
+        "testagent2": { "Environment": "test2" },
+        "testagent3": { "Environment": "test1" },
+        "deploy-parameters": { "Environment": "deploy-parameters" }
+    }
+}
