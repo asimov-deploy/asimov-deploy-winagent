@@ -44,9 +44,7 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                 if (deployUnit == null)
                     return 404;
 
-                var parameters = new List<dynamic>();
-                foreach (var deployParameter in deployUnit.DeployParameters)
-                    parameters.Add(deployParameter.GetDescriptor());
+                var parameters = deployUnit.DeployParameters.Select(deployParameter => deployParameter.GetDescriptor()).ToList();
 
                 return Response.AsJson(parameters);
             };

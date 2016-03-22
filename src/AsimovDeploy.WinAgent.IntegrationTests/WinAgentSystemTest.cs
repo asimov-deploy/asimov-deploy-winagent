@@ -24,7 +24,6 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         protected AgentHttpClient Agent;
         protected NodeFrontSimulator NodeFront;
 
-
         [TestFixtureSetUp]
         public void Setup()
         {
@@ -58,7 +57,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                 catch (Exception)
                 {
                     Thread.Sleep(1000);
-                }    
+                }
             }
         }
 
@@ -75,7 +74,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                 NodeFront.Dispose();
             }
             catch { }
-            
+
         }
 
         public abstract void Given();
@@ -91,7 +90,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                 Directory.Delete(AgentDir, true);
 
             Directory.CreateDirectory(AgentDir);
-            
+
             DataDir = Path.Combine(WorkingDir, "Data");
             TempDir = Path.Combine(DataDir, "Temp");
             PackagesDir = Path.Combine(ScenarioDir, "Packages");
@@ -133,11 +132,11 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
             AgentProcess.Start();
 
             RedirectAgentOutputToDebug(AgentProcess.StandardOutput);
-            
+
             Thread.Sleep(5000);
 
             Agent = new AgentHttpClient(AgentPort);
-            
+
             Assert.NotNull(Agent.Get("/version"));
         }
 
@@ -159,6 +158,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                 str = str.Replace("%NODE_FRONT_URL%", NodeFrontUrl);
                 str = str.Replace("%PACKAGES_URI%", new Uri(PackagesDir).AbsoluteUri);
                 str = str.Replace("%AGENT_PORT%", AgentPort.ToString());
+                str = str.Replace("%MACHINE_NAME%", Environment.MachineName.ToLower());
                 File.WriteAllText(file, str);
             }
         }

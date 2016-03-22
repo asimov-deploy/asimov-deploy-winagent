@@ -19,6 +19,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         public T Get<T>(string url)
         {
             var httpClient = new HttpClient();
+            
             var result = httpClient.GetAsync($"http://localhost:{_port}{url}");
             var strTask = result.Result.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(strTask.Result);
