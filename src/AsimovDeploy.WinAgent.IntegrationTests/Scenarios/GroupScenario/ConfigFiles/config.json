@@ -13,7 +13,7 @@
     },
 
     "Agents": {
-        "%MACHINE_NAME%*": { "Environment": "interesting, other-environment" },
+        "%MACHINE_NAME%": { "Environment": "interesting, other-environment" },
         "testagent2": { "Environment": "test2" },
         "testagent3": { "Environment": "test1" },
         "deploy-parameters": { "Environment": "deploy-parameters" }

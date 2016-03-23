@@ -22,6 +22,13 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GroupScenario
         }
 
         [Test]
+        public void can_get_deploy_units_by_group_other_name()
+        {
+            var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list/Other Group");
+            units.Count.ShouldBe(1);
+        }
+
+        [Test]
         public void can_get_all_deploy_units_when_no_group_name_specified()
         {
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
