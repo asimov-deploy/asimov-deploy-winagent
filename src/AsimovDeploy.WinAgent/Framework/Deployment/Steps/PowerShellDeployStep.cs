@@ -21,6 +21,7 @@ using System.Text;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
+using Environment = System.Environment;
 
 namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 {

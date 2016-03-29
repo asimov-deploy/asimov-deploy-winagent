@@ -15,6 +15,7 @@
 ******************************************************************************/
 
 using System.IO;
+using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Models;
 using Newtonsoft.Json;
 
@@ -38,7 +39,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                      CreateDirectoryIfNotExists(config.TempFolder);
                      CreateDirectoryIfNotExists(unitsDataBaseDir);
                      
-                     foreach (var deployUnit in config.Units)
+                     foreach (var deployUnit in config.Units.Concat(config.Environments.SelectMany(a => a.Units)))
                      {
                          var unitDataDir = Path.Combine(unitsDataBaseDir, deployUnit.Name);
                          deployUnit.DataDirectory = unitDataDir;
@@ -53,7 +54,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 
         private void CreateDirectoryIfNotExists(string directory)
         {
-            if (Directory.Exists(directory))
+			if (Directory.Exists(directory))
                 return;
 
             Directory.CreateDirectory(directory);

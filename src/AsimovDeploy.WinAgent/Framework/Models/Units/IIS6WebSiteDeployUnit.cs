@@ -20,9 +20,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
     public class IIS6WebSiteDeployUnit : WebSiteDeployUnit
     {
-        public override IWebServer GetWebServer()
-        {
-            return new IIS6WebServer(SiteName);
-        }
+        public override IWebServer GetWebServer() => new IIS6WebServer(SiteName);
     }
 }

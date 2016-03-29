@@ -19,7 +19,8 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         public T Get<T>(string url)
         {
             var httpClient = new HttpClient();
-            var result = httpClient.GetAsync(string.Format("http://localhost:{0}{1}", _port, url));
+            
+            var result = httpClient.GetAsync($"http://localhost:{_port}{url}");
             var strTask = result.Result.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(strTask.Result);
         }
@@ -32,10 +33,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
             return JObject.Parse(strTask.Result);
         }
 
-        private string GetFullAgentUrl(string url)
-        {
-            return string.Format("http://localhost:{0}{1}", _port, url);
-        }
+        private string GetFullAgentUrl(string url) => $"http://localhost:{_port}{url}";
 
         public void Post(string url, string apiKey, object data)
         {

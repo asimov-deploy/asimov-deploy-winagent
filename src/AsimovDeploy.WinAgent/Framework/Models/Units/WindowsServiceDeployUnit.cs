@@ -56,10 +56,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             var serviceManager = new ServiceController(ServiceName);
 
             var unitInfo = base.GetUnitInfo();
-			if (!string.IsNullOrEmpty(Url))
-			{
-				unitInfo.Url = Url.Replace("localhost", HostNameUtil.GetFullHostName());
-			}
+            if (!string.IsNullOrEmpty(Url))
+                unitInfo.Url = Url.Replace("localhost", HostNameUtil.GetFullHostName());
 
             try
             {
@@ -73,14 +71,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return unitInfo;
         }
 
-	    public AsimovTask GetStopTask()
-	    {
-		    return new StartStopWindowsServiceTask(this, stop: true);
-	    }
+	    public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);
 
-	    public AsimovTask GetStartTask()
-	    {
-			return new StartStopWindowsServiceTask(this, stop: false);
-	    }
+        public AsimovTask GetStartTask() => new StartStopWindowsServiceTask(this, stop: false);
     }
 }

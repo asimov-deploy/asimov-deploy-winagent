@@ -26,47 +26,41 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
     public abstract class DeployUnit
     {
-        public string Name { get; set; }
-        public PackageInfo PackageInfo { get; set; }
-        public string DataDirectory { get; set; }
-      
-        public DeployStatus DeployStatus { get; protected set; }
-        public DeployedVersion Version { get; protected set; }
-        public string[] OnlyOnAgents { get; set; }
-      
-        public UnitActionList Actions { get;set; }
-        
-        public ActionParameterList DeployParameters { get; protected set; }
-        public bool HasDeployParameters { get { return DeployParameters.Count > 0; } }
-
         protected DeployUnit()
         {
             DeployParameters = new ActionParameterList();
-            Actions = new UnitActionList();
-            Actions.Add(new RollbackUnitAction());
+            Actions = new UnitActionList {new RollbackUnitAction()};
         }
+
+        public string Name { get; set; }
+        public PackageInfo PackageInfo { get; set; }
+        public string DataDirectory { get; set; }
+        public DeployStatus DeployStatus { get; protected set; }
+        public DeployedVersion Version { get; protected set; }
+        public string[] OnlyOnAgents { get; set; }
+        public UnitActionList Actions { get; set; }
+        public ActionParameterList DeployParameters { get; protected set; }
+        public bool HasDeployParameters => DeployParameters.Count > 0;
 
         public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId);
 
         public virtual DeployUnitInfo GetUnitInfo()
         {
-            var deployUnitInfo = new DeployUnitInfo();
-            deployUnitInfo.Name = Name;
-            deployUnitInfo.HasDeployParameters = HasDeployParameters;
+            var deployUnitInfo = new DeployUnitInfo
+            {
+                Name = Name,
+                HasDeployParameters = HasDeployParameters
+            };
 
             if (Version == null)
             {
                 Version = VersionUtil.GetCurrentVersion(DataDirectory);
                 if (Version.DeployFailed)
-                {
                     DeployStatus = DeployStatus.DeployFailed;
-                }
             }
 
             if (!Version.DeployFailed)
-            {
-                deployUnitInfo.LastDeployed = string.Format("Deployed by {0} {1}", Version.UserName, DateUtils.GetFriendlyAge(Version.DeployTimestamp));
-            }
+                deployUnitInfo.LastDeployed = $"Deployed by {Version.UserName} {DateUtils.GetFriendlyAge(Version.DeployTimestamp)}";
 
             deployUnitInfo.Version = Version;
             deployUnitInfo.DeployStatus = DeployStatus;
@@ -74,23 +68,14 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return deployUnitInfo;
         }
 
-        public IList<DeployedVersion> GetDeployedVersions()
-        {
-            return VersionUtil.ReadVersionLog(DataDirectory);
-        }
+        public IList<DeployedVersion> GetDeployedVersions() => VersionUtil.ReadVersionLog(DataDirectory);
 
-        public bool IsValidForAgent(string agentName)
-        {
-            if (OnlyOnAgents == null)
-                return true;
-
-            return OnlyOnAgents.Any(x => x == agentName);
-        }
+        public bool IsValidForAgent(string agentName) => OnlyOnAgents?.Any(x => x == agentName) ?? true;
 
         public void StartingDeploy(AsimovVersion newVersion, string logFileName, AsimovUser user, string correlationId, ParameterValues parameters)
         {
             DeployStatus = DeployStatus.Deploying;
-            Version = new DeployedVersion()
+            Version = new DeployedVersion
             {
                 DeployTimestamp = DateTime.Now,
                 VersionId = newVersion.Id,
@@ -99,8 +84,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
                 VersionTimestamp = newVersion.Timestamp,
                 VersionCommit = newVersion.Commit,
                 LogFileName = logFileName,
-				UserId = user.UserId,
-				UserName = user.UserName,
+                UserId = user.UserId,
+                UserName = user.UserName,
                 DeployFailed = false,
                 CorrelationId = correlationId,
                 Parameters = parameters.GetInternalDictionary()
@@ -112,11 +97,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public void DeployCompleted()
         {
             DeployStatus = DeployStatus.NA;
-            
-			VersionUtil.UpdateVersionLog(DataDirectory, Version);
-            
-			var unitInfo = GetUnitInfo();
-            NotificationPublisher.PublishNotifications((new DeployCompletedEvent(Name, Version, unitInfo.Status)));
+
+            VersionUtil.UpdateVersionLog(DataDirectory, Version);
+
+            var unitInfo = GetUnitInfo();
+            NotificationPublisher.PublishNotifications(new DeployCompletedEvent(Name, Version, unitInfo.Status));
         }
 
         public void DeployFailed()

@@ -25,6 +25,4 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
     {
 
     }
-
-
 }

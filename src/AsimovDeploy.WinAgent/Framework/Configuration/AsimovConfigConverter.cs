@@ -18,6 +18,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Models;
+using AsimovDeploy.WinAgent.Framework.Models.Units;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using log4net;
@@ -26,7 +27,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 {
     public class AsimovConfigConverter : JsonConverter
     {
-        private static ILog Log = LogManager.GetLogger(typeof (AsimovConfigConverter));
+        private static ILog Log = LogManager.GetLogger(typeof(AsimovConfigConverter));
 
         private readonly string _configDir;
         private readonly string _machineName;
@@ -37,90 +38,87 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
             _machineName = machineName.ToLower();
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-
-        }
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) { }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JObject json = JObject.Load(reader);
+            var json = JObject.Load(reader);
 
             var config = new AsimovConfig();
             serializer.Populate(json.CreateReader(), config);
 
             var self = GetSelf(json);
             if (self != null)
-            {   
                 serializer.Populate(self.CreateReader(), config);
-            }
             else
-            {
                 Log.ErrorFormat("Could not find agent specific config / environment for: {0}", _machineName);
-            }
 
             var environments = config.Environment.Split(',');
 
             foreach (var environment in environments)
             {
-                var envConfigFile = Path.Combine(_configDir, string.Format("config.{0}.json", environment));
+                var envConfigFile = Path.Combine(_configDir, $"config.{environment.Trim()}.json");
 
                 if (!File.Exists(envConfigFile))
-                    return config;
+                    continue;
 
                 Log.DebugFormat("Loading config file {0}", envConfigFile);
+				PopulateFromFile(envConfigFile, serializer, config);
 
-                using (var envReader = new StreamReader(envConfigFile))
-                {
-                    using (var envJsonReader = new JsonTextReader(envReader))
-                    {
-                        serializer.Populate(envJsonReader, config);
-                    }
-                }
+				var env = new DeployEnvironment();
+				PopulateFromFile(envConfigFile, serializer, env);
+				config.Environments.Add(env);
+			}
 
-            }
-            
             return config;
         }
 
-        private JToken GetSelf(JObject json)
+	    private void PopulateFromFile(string filename, JsonSerializer serializer, object target)
+	    {
+			using (var envReader = new StreamReader(filename))
+			{
+				using (var envJsonReader = new JsonTextReader(envReader))
+				{
+					serializer.Populate(envJsonReader, target);
+				}
+			}
+		}
+
+		private JToken GetSelf(JObject json)
         {
             var agents = json["Agents"];
             if (agents == null)
                 return null;
 
-			if (json["Agents"][_machineName] != null)
-			{
-				return json["Agents"][_machineName];
-			}
+            if (json["Agents"][_machineName] != null)
+            {
+                return json["Agents"][_machineName];
+            }
 
-	        foreach (JProperty agent in json["Agents"].AsJEnumerable())
-	        {
-		        if (agent.Name.Contains("*"))
-		        {
-			        var regex = new Regex("^" + agent.Name.Replace("*", ".*"));
-			        if (regex.IsMatch(_machineName))
-			        {
-				        return agent.Value;
-			        }
-		        }
+            foreach (JProperty agent in json["Agents"].AsJEnumerable())
+            {
+                if (agent.Name.Contains("*"))
+                {
+                    var regex = new Regex("^" + agent.Name.Replace("*", ".*"));
+                    if (regex.IsMatch(_machineName))
+                    {
+                        return agent.Value;
+                    }
+                }
 
-	            if (agent.Name.Contains("[") && agent.Name.Contains("]"))
-	            {
+                if (agent.Name.Contains("[") && agent.Name.Contains("]"))
+                {
                     var regex = new Regex("^" + agent.Name);
                     if (regex.IsMatch(_machineName))
                     {
                         return agent.Value;
                     }
-	            }
-	        }
+                }
+            }
 
             return null;
         }
 
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof (AsimovConfig);
-        }
+        public override bool CanConvert(Type objectType) => objectType == typeof(AsimovConfig);
     }
 }
