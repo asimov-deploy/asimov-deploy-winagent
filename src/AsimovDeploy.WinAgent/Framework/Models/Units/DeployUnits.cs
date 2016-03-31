@@ -23,6 +23,12 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
     [JsonConverter(typeof(DeployUnitConverter))]
     public class DeployUnits : List<DeployUnit>
     {
+        public DeployUnits()
+        {
+        }
 
+        public DeployUnits(IEnumerable<DeployUnit> collection) : base(collection)
+        {
+        }
     }
 }

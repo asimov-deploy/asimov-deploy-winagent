@@ -14,10 +14,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         public static void PublishNotifications(AsimovEvent evt)
         {
             foreach (var publisher in Publishers)
-            {
                 publisher.Notify(evt);
-            }
-
         }
 
     }
