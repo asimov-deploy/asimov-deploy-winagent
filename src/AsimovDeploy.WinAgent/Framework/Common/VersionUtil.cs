@@ -39,14 +39,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         public static string ExtractVersionFromString(string str)
         {
             var match = Regex.Match(str, @"(v\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})");
-            if (match.Success)
-            {
-                return match.Groups[0].Value;
-            }
-            else
-            {
-                return null;
-            }
+            return match.Success ? match.Groups[0].Value : null;
         }
 
         public static void UpdateVersionLog(string inDirectory, DeployedVersion version)

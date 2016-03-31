@@ -34,16 +34,16 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public AsimovConfig()
         {
             DataFolder = "Data";
-	        LoadBalancerParameters = new Dictionary<string, string>();
+            LoadBalancerParameters = new Dictionary<string, string>();
         }
 
         public string DataFolder { get; set; }
 
         public PackageSourceList PackageSources { get; set; }
         public string Environment { get; set; }
-		public string AgentGroup { get; set; }
+        public string AgentGroup { get; set; }
 
-		public int HeartbeatIntervalSeconds { get; set; }
+        public int HeartbeatIntervalSeconds { get; set; }
         public int WebPort { get; set; }
         public string ApiKey { get; set; }
         public int ConfigVersion { get; set; }
@@ -65,16 +65,20 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public string NodeFrontUrl { get; set; }
         public string WebNotificationUrl { get; set; }
 
-		public DeployUnits Units { get; set; } = new DeployUnits();
-		public List<DeployEnvironment> Environments { get; set; } = new List<DeployEnvironment>();
+        public DeployUnits Units { get; set; } = new DeployUnits();
+        public List<DeployEnvironment> Environments { get; set; } = new List<DeployEnvironment>();
 
-	    public DeployUnits GetUnitsByGroup(string agentGroup = null)
-	    {
-			if (!string.IsNullOrWhiteSpace(agentGroup) && !Environments.Any(a => a.AgentGroup == agentGroup)) return new DeployUnits();
-			return string.IsNullOrWhiteSpace(agentGroup) ? Units : Environments.First(a => a.AgentGroup == agentGroup).Units;
-		}
+        public DeployUnits GetUnitsByGroup(string agentGroup = null)
+        {
+            if (AgentGroupIsSuppliedButNoMatchingFound(agentGroup))
+                return new DeployUnits();
+            return string.IsNullOrWhiteSpace(agentGroup) ? Units : 
+                new DeployUnits(Units.Where(a => Environments.First(b => b.AgentGroup == agentGroup).Units.Any(b => b.Name == a.Name)));
+        }
 
-		public Uri WebControlUrl => new Uri($"http://{HostNameUtil.GetFullHostName()}:{WebPort}");
+        public Uri WebControlUrl
+            => new Uri($"http://{HostNameUtil.GetFullHostName()}:{WebPort}");
+
         public Dictionary<string, string> LoadBalancerParameters { get; set; }
 
         public string GetLoadBalancerParametersAsQueryString()
@@ -86,10 +90,12 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         }
 
         public PackageSource GetPackageSourceFor(DeployUnit deployUnit)
-        {
-			return PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
-        }
+            => PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
 
-	    public DeployUnit GetUnitByName(string name) => Units.Single(x => x.Name == name);
+        public DeployUnit GetUnitByName(string name)
+            => Units.Single(x => x.Name == name);
+
+        private bool AgentGroupIsSuppliedButNoMatchingFound(string agentGroup)
+            => !string.IsNullOrWhiteSpace(agentGroup) && !Environments.Any(a => a.AgentGroup == agentGroup);
     }
 }
