@@ -111,6 +111,7 @@
     <Compile Include="Framework\Tasks\CommandTask.cs" />
     <Compile Include="Framework\Tasks\LaunchCommandAsProcess.cs" />
     <Compile Include="Framework\Tasks\PowerShellCommand.cs" />
+    <Compile Include="Framework\Tasks\ServiceControl\ProcessAwareServiceController.cs" />
     <Compile Include="Web\Contracts\HeartbeatDto.cs" />
     <Compile Include="Web\Contracts\LoadBalancerStateDto.cs" />
     <Compile Include="Framework\LoadBalancers\ILoadBalancerService.cs" />
