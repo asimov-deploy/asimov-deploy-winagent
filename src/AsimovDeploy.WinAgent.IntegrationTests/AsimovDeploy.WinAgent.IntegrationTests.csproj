@@ -63,6 +63,7 @@
     <Compile Include="Scenarios\BasicScenario\BasicScenario.cs" />
     <Compile Include="Scenarios\PasswordScenario\PasswordScenario.cs" />
     <Compile Include="Scenarios\Powershell\PowershellScenario.cs" />
+    <Compile Include="Scenarios\ServiceScenario\ServiceScenario.cs" />
     <Compile Include="WinAgentSystemTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +85,8 @@
       <SubType>Component</SubType>
     </None>
     <None Include="Scenarios\Powershell\Packages\PSTest-v1.0.0.0-[master]-[123].zip" />
+    <None Include="Scenarios\ServiceScenario\ConfigFiles\config.json" />
+    <None Include="Scenarios\ServiceScenario\Packages\Asimov.RoundHouse.Example-v1.0.0.0-[master]-[123].zip" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AsimovDeploy.WinAgent\AsimovDeploy.WinAgent.csproj">
