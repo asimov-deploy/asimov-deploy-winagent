@@ -22,6 +22,7 @@ using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
+using AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl;
 
 namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 {
@@ -61,10 +62,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             context.Log.InfoFormat("Stopping service {0}", controller.ServiceName);
 
             if (controller.Status == ServiceControllerStatus.Running)
-                controller.Stop();
-
-            controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromMinutes(10));
-            Thread.Sleep(2500);
+                ProcessAwareServiceController.StopServiceAndWaitForExit(controller.ServiceName);
         }
 
         private void CopyNewFiles(DeployContext context)
