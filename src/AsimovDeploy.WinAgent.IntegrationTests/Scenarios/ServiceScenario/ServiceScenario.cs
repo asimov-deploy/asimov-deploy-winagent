@@ -56,7 +56,6 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
             var versions = Agent.Get<List<DeployUnitVersionDTO>>($"/versions/{ServiceName}");
             versions.Count.ShouldBe(1);
 
-
             Agent.Post("/deploy/deploy", NodeFront.ApiKey, new DeployCommand
             {
                 unitName = ServiceName,

@@ -23,27 +23,42 @@ using AsimovDeploy.WinAgent.Framework.Tasks;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
-    public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted
+    public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted, ICanUninstallWindowsService
     {
-        private string _serviceName; 
-        public string ServiceName 
+        private string _serviceName;
+        public string ServiceName
         {
-            get { return _serviceName ?? Name;}
-            set { _serviceName = value; } 
+            get { return _serviceName ?? Name; }
+            set { _serviceName = value; }
         }
 
         public string Url { get; set; }
 
-	    public WindowsServiceDeployUnit()
-	    {
-			Actions.Add(new StartDeployUnitAction() { Sort = 10 });
-			Actions.Add(new StopDeployUnitAction() { Sort = 11 });
-	    }
+        public WindowsServiceInstallConfig Service { get; set; }
+
+        public WindowsServiceDeployUnit()
+        {
+            Actions.Add(new StartDeployUnitAction() { Sort = 10 });
+            Actions.Add(new StopDeployUnitAction() { Sort = 11 });
+
+            //TODO: We only want to add this if an uninstall action has been configured
+            Actions.Add(new UninstallServiceUnitAction() { Sort = 20 });
+        }
 
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
         {
             var task = new DeployTask(this, version, parameterValues, user, correlationId);
-            task.AddDeployStep<UpdateWindowsService>();
+            var unitInfo = GetUnitInfo();
+
+            if (unitInfo.Status == UnitStatus.NotFound && Service?.Install != null)
+            {
+                task.AddDeployStep(new InstallWindowsService(Service));
+            }
+            else
+            {
+                task.AddDeployStep<UpdateWindowsService>();
+            }
+
             foreach (var action in Actions.OfType<CommandUnitAction>())
             {
                 task.AddDeployStep(new ExecuteUnitAction(action, user));
@@ -71,8 +86,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return unitInfo;
         }
 
-	    public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);
-
+        public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);
         public AsimovTask GetStartTask() => new StartStopWindowsServiceTask(this, stop: false);
+        public AsimovTask GetUninstallWindowsServiceTask() => new UninstallWindowsServiceTask(Service, this);
     }
 }
