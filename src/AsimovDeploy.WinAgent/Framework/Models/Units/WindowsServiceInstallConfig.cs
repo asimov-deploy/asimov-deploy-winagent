@@ -5,5 +5,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public string TargetPath { get; set; }
         public string Install { get; set; }
         public string Uninstall { get; set; }
+
+        public ActionParameterList Parameters { get; set; }
     }
 }

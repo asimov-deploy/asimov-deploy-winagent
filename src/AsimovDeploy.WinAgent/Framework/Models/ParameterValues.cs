@@ -22,7 +22,7 @@ using System.Text;
 
 namespace AsimovDeploy.WinAgent.Framework.Models
 {
-    public class ParameterValues
+    public class ParameterValues : IEnumerable<KeyValuePair<string,object>>
     {
         private readonly IDictionary<string, dynamic> _parameters;
 
@@ -63,5 +63,23 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
             return str.ToString();
         }
+
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        {
+            if (_parameters == null)
+            {
+                yield break;
+            }
+            foreach (var keyValuePair in _parameters)
+            {
+                yield return keyValuePair;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
     }
 }

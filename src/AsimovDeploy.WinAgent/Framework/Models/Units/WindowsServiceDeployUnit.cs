@@ -36,6 +36,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public WindowsServiceInstallConfig Service { get; set; }
 
+        public ActionParameterList InstallParameters { get; set; }
+
         public WindowsServiceDeployUnit()
         {
             Actions.Add(new StartDeployUnitAction() { Sort = 10 });
@@ -48,9 +50,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
         {
             var task = new DeployTask(this, version, parameterValues, user, correlationId);
-            var unitInfo = GetUnitInfo();
-
-            if (unitInfo.Status == UnitStatus.NotFound && Service?.Install != null)
+            if (CanInstall())
             {
                 task.AddDeployStep(new InstallWindowsService(Service));
             }
@@ -66,24 +66,47 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return task;
         }
 
+        private bool CanInstall()
+        {
+            return GetStatus() == UnitStatus.NotFound && Service?.Install != null;
+        }
+
+        public override ActionParameterList GetDeployParameters()
+        {
+            if (CanInstall())
+            {
+                return InstallParameters ?? new ActionParameterList();
+            }
+            return DeployParameters;
+        }
+
+
         public override DeployUnitInfo GetUnitInfo()
         {
-            var serviceManager = new ServiceController(ServiceName);
 
             var unitInfo = base.GetUnitInfo();
             if (!string.IsNullOrEmpty(Url))
                 unitInfo.Url = Url.Replace("localhost", HostNameUtil.GetFullHostName());
 
+            unitInfo.Status = GetStatus();
+
+            return unitInfo;
+        }
+
+        private UnitStatus GetStatus()
+        {
+            var serviceManager = new ServiceController(ServiceName);
+
             try
             {
-                unitInfo.Status = serviceManager.Status == ServiceControllerStatus.Running ? UnitStatus.Running : UnitStatus.Stopped;
+                return serviceManager.Status == ServiceControllerStatus.Running
+                    ? UnitStatus.Running
+                    : UnitStatus.Stopped;
             }
             catch
             {
-                unitInfo.Status = UnitStatus.NotFound;
+                return UnitStatus.NotFound;
             }
-
-            return unitInfo;
         }
 
         public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);

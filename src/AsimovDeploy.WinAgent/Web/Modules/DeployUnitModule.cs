@@ -17,6 +17,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Models;
+using AsimovDeploy.WinAgent.Framework.Models.Units;
 using AsimovDeploy.WinAgent.Web.Contracts;
 using Nancy;
 
@@ -44,13 +45,13 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                 if (deployUnit == null)
                     return 404;
 
-                var parameters = deployUnit.DeployParameters.Select(deployParameter => deployParameter.GetDescriptor()).ToList();
+                var parameters = deployUnit.GetDeployParameters().Select(deployParameter => deployParameter.GetDescriptor()).ToList();
 
                 return Response.AsJson(parameters);
             };
         }
 
-	    private static List<DeployUnitInfoDTO> GetDeployUnits(IAsimovConfig config, string agentGroup = null)
+        private static List<DeployUnitInfoDTO> GetDeployUnits(IAsimovConfig config, string agentGroup = null)
 	    {
 		    var units = new List<DeployUnitInfoDTO>();
 

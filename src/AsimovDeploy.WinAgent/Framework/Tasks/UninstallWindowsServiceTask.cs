@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Events;
+using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
 namespace AsimovDeploy.WinAgent.Framework.Tasks
@@ -19,8 +21,8 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         {
             ProcessUtil.ExecutePowershellScript(
                 _config.TargetPath, //TODO: We may want to use the location of the service in the future
-                _config.Uninstall,
-                Log);
+                _config.Uninstall, 
+                new ParameterValues(new Dictionary<string,object>()), Log);
 
             _nodefront.Notify(new UnitStatusChangedEvent(_unit.Name, _unit.GetUnitInfo().Status));
         }

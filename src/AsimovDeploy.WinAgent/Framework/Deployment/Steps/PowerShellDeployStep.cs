@@ -73,7 +73,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
                     .Replace("%TEMP_FOLDER%", _config.TempFolder)
                     .Replace("%MACHINE_NAME%", Environment.MachineName);
 
-                foreach (var parameter in context.DeployUnit.DeployParameters)
+                foreach (var parameter in context.DeployUnit.GetDeployParameters())
                 {
                     var value = context.ParameterValues.GetValue(parameter.Name);
                     parameter.ApplyToPowershellScript(script, value);

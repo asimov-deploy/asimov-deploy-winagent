@@ -22,7 +22,11 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
         private void InstallService(DeployContext context, WindowsServiceInstallConfig service)
         {
-            ProcessUtil.ExecutePowershellScript(service.TargetPath, service.Install, context.Log);
+            ProcessUtil.ExecutePowershellScript(
+                service.TargetPath, 
+                service.Install, 
+                context.ParameterValues, 
+                context.Log);
         }
 
         private void CopyFiles(DeployContext context, WindowsServiceInstallConfig service)

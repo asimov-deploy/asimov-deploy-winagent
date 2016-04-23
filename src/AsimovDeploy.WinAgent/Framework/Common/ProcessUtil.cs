@@ -16,14 +16,16 @@
 
 using System;
 using System.Diagnostics;
+using System.Text;
 using AsimovDeploy.WinAgent.Framework.Deployment;
+using AsimovDeploy.WinAgent.Framework.Models;
 using log4net;
 
 namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public class ProcessUtil
     {
-        public static void ExecutePowershellScript(string workingDirectory, string command, ILog log)
+        public static void ExecutePowershellScript(string workingDirectory, string command, ParameterValues parameters, ILog log)
         {
             using (var p = new Process())
             {
@@ -41,6 +43,11 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 
                 p.StandardOutput.RedirectOutput(log.Info);
                 p.StandardError.RedirectOutput(log.Error);
+
+                foreach (var param in parameters)
+                {
+                    p.StandardInput.WriteLine($"${param.Key}=\"{param.Value}\";");
+                }
                 p.StandardInput.WriteLine(command);
                 p.StandardInput.Close();
 
