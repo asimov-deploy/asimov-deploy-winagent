@@ -113,7 +113,7 @@
     <Compile Include="Framework\Models\Units\ICanUninstallWindowsService.cs" />
     <Compile Include="Framework\Models\UnitActions\UninstallServiceUnitAction.cs" />
     <Compile Include="Framework\Tasks\UninstallWindowsServiceTask.cs" />
-    <Compile Include="Framework\Models\Units\WindowsServiceInstallConfig.cs" />
+    <Compile Include="Framework\Models\Units\InstallableConfig.cs" />
     <Compile Include="Framework\Tasks\CommandTask.cs" />
     <Compile Include="Framework\Tasks\LaunchCommandAsProcess.cs" />
     <Compile Include="Framework\Tasks\PowerShellCommand.cs" />

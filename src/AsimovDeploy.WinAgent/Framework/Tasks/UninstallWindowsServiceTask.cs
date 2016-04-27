@@ -8,10 +8,10 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 {
     public class UninstallWindowsServiceTask : AsimovTask
     {
-        private readonly WindowsServiceInstallConfig _config;
+        private readonly InstallableConfig _config;
         private readonly DeployUnit _unit;
         private readonly NodeFront _nodefront = new NodeFront();
-        public UninstallWindowsServiceTask(WindowsServiceInstallConfig windowsConfigInstallConfig, DeployUnit unit)
+        public UninstallWindowsServiceTask(InstallableConfig windowsConfigInstallConfig, DeployUnit unit)
         {
             _config = windowsConfigInstallConfig;
             _unit = unit;

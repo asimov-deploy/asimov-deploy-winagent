@@ -34,9 +34,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public string Url { get; set; }
 
-        public WindowsServiceInstallConfig Service { get; set; }
-
-        public ActionParameterList InstallParameters { get; set; }
+        public InstallableConfig Installable { get; set; }
 
         public WindowsServiceDeployUnit()
         {
@@ -52,7 +50,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             var task = new DeployTask(this, version, parameterValues, user, correlationId);
             if (CanInstall())
             {
-                task.AddDeployStep(new InstallWindowsService(Service));
+                task.AddDeployStep(new InstallWindowsService(Installable));
             }
             else
             {
@@ -68,14 +66,14 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         private bool CanInstall()
         {
-            return GetStatus() == UnitStatus.NotFound && Service?.Install != null;
+            return GetStatus() == UnitStatus.NotFound && Installable?.Install != null;
         }
 
         public override ActionParameterList GetDeployParameters()
         {
             if (CanInstall())
             {
-                return InstallParameters ?? new ActionParameterList();
+                return Installable.InstallParameters ?? new ActionParameterList();
             }
             return DeployParameters;
         }
@@ -111,6 +109,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);
         public AsimovTask GetStartTask() => new StartStopWindowsServiceTask(this, stop: false);
-        public AsimovTask GetUninstallWindowsServiceTask() => new UninstallWindowsServiceTask(Service, this);
+        public AsimovTask GetUninstallWindowsServiceTask() => new UninstallWindowsServiceTask(Installable, this);
     }
 }

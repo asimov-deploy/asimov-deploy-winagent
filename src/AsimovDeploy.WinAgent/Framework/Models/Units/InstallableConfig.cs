@@ -1,11 +1,12 @@
 namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
-    public class WindowsServiceInstallConfig
+    public class InstallableConfig
     {
         public string TargetPath { get; set; }
         public string Install { get; set; }
+        public ActionParameterList InstallParameters { get; set; }
+
         public string Uninstall { get; set; }
 
-        public ActionParameterList Parameters { get; set; }
     }
 }

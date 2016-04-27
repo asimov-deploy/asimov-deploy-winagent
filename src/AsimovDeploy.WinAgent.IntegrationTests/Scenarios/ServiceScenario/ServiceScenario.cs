@@ -65,11 +65,11 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
         [Test]
         public void uses_parameters_when_installing()
         {
-            InstallService(displayName: "Asimov Test Service Testing Parameters");
+            InstallService(displayName: "Asimov Test Service Testing InstallParameters");
 
             using (var controller = new ServiceController(ServiceName))
             {
-                controller.DisplayName.ShouldBe("Asimov Test Service Testing Parameters");       
+                controller.DisplayName.ShouldBe("Asimov Test Service Testing InstallParameters");       
             }
         }
 

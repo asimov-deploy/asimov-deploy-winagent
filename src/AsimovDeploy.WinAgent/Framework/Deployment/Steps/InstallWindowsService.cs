@@ -6,9 +6,9 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 {
     public class InstallWindowsService : IDeployStep
     {
-        private readonly WindowsServiceInstallConfig service;
+        private readonly InstallableConfig service;
 
-        public InstallWindowsService(WindowsServiceInstallConfig service)
+        public InstallWindowsService(InstallableConfig service)
         {
             if (service == null) throw new ArgumentNullException(nameof(service));
             this.service = service;
@@ -20,7 +20,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             InstallService(context, service);
         }
 
-        private void InstallService(DeployContext context, WindowsServiceInstallConfig service)
+        private void InstallService(DeployContext context, InstallableConfig service)
         {
             ProcessUtil.ExecutePowershellScript(
                 service.TargetPath, 
@@ -29,7 +29,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
                 context.Log);
         }
 
-        private void CopyFiles(DeployContext context, WindowsServiceInstallConfig service)
+        private void CopyFiles(DeployContext context, InstallableConfig service)
         {
             context.Log.InfoFormat("Copying files");
             DirectoryUtil.CopyDirectory(context.TempFolderWithNewVersionFiles, service.TargetPath);

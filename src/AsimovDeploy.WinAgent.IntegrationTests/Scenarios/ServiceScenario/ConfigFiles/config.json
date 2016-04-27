@@ -17,19 +17,21 @@
     {
       "Name": "Asimov.Roundhouse.Example",
       "Type": "WindowsService",
-      "TargetPath": "%DATA_FOLDER%\\WindowsServiceTarget",
+      
       "DeployParameters": {
         "NotUsed": { "Type": "Text" }
-      },
-      "InstallParameters": {
-        "DisplayName": { "Type": "Text", Default: "Asimov Test Service From Config"}
       },
 
       "PackageInfo": { "Source": "Test" },
 
-      "Service": {
+      "Installable": {
         "TargetPath": "%DATA_FOLDER%\\WindowsServiceTarget",
+        
         "Install": ".\\Asimov.Roundhouse.Example.exe install -displayname \"$DisplayName\"",
+        "InstallParameters": {
+          "DisplayName": { "Type": "Text", Default: "Asimov Test Service From Config"}
+        },
+        
         "Uninstall": ".\\Asimov.Roundhouse.Example.exe uninstall"
       }
 
