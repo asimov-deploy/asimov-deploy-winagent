@@ -1,0 +1,18 @@
+﻿{
+    "NodeFrontUrl": "http://192.168.123.93:3333",
+    "Units": [
+        {
+            "Name": "prod-img.dn.se",
+            "Type": "WebSite",
+            "SiteName": "prod-img.dn.se",
+            "UnitPackagePath": "DefaultSitePath",
+            "CleanDeploy": true,
+
+            "PackageInfo": {
+                "Source": "prod-img-source",
+                "InternalPath": "" /* path within zip to extract */
+            },
+            "SiteUrl": "http://prod-img.dn.se"
+        }
+    ]
+}

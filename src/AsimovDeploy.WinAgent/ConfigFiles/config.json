@@ -1,0 +1,28 @@
+﻿{
+    "WebPort": 21233, /* API path for deploy agent that deploy ui will commnicate with */
+    "HeartbeatIntervalSeconds": 10,
+    "DataFolder": "\\Data",
+    "ConfigVersion": 1,
+    "nodeFrontUrl": "http://192.168.123.93:3333",
+    "Environment": "default",
+
+    "PackageSources": {
+        "latest-app-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/app/latest" },
+        "latest-img-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/img/latest" },
+        "latest-admin-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/admin/latest" },
+        "prod-app-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/app/prod" },
+        "prod-img-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/img/prod" },
+        "prod-admin-source": { "Type": "AsimovWeb", "Uri": "http://192.168.123.93:3344/admin/prod" }
+    },
+
+    "LoadBalancerAgentUrl": "http://dev.dn-wea.se/Loadbalancer/",    
+
+    "Agents": {        
+        "dn-app-ci-*": { "Environment": "latest-app", "LoadBalancerParameters": { "Port": "80" } },
+        "dn-img-ci-*": { "Environment": "latest-img", "LoadBalancerParameters": { "Port": "80" } },
+        "dn-app-pr-*": { "Environment": "prod-app", "LoadBalancerParameters": { "Port": "80" } },
+        "dn-img-pr-*": { "Environment": "prod-img", "LoadBalancerParameters": { "Port": "80" } },
+        "dn-adm-pr-*": { "Environment": "prod-adm", "LoadBalancerParameters": { "Port": "80" } }
+    }
+}
+    

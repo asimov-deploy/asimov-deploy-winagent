@@ -1,0 +1,20 @@
+﻿{
+    "WebPort": 21233, /* API path for deploy agent that deploy ui will commnicate with */
+    "HeartbeatIntervalSeconds": 10,
+    "DataFolder": "\\Data",
+    "ConfigVersion": 1,
+    "nodeFrontUrl": "http://localhost:3333",
+    "Environment": "default",
+
+    "PackageSources": {
+        "olle": { "Type": "AsimovWeb", "Uri": "http://deploy-packages:3344/img" },
+        "pelle": { "Type": "AsimovWeb", "Uri": "http://deploy-packages:3344/img" }
+    },
+
+    "LoadBalancerAgentUrl": null,
+
+    "Agents": {
+        "dnw872hl12": { "Environment": "latest", "LoadBalancerParameters": { "Partition": "Dev", "Host": "vet inte" } }
+    }
+}
+    

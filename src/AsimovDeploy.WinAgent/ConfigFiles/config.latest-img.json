@@ -1,0 +1,19 @@
+﻿{
+    "NodeFrontUrl": "http://192.168.123.93:3333",
+    
+    "Units": [
+        {
+            "Name": "latest-img.dn.se",
+            "Type": "WebSite",
+            "SiteName": "latest-img.dn.se",
+            "UnitPackagePath": "DefaultSitePath",
+            "CleanDeploy": true,
+
+            "PackageInfo": {
+                "Source": "latest-img-source",
+                "InternalPath": "" /* path within zip to extract */
+            },
+            "SiteUrl": "http://latest-img.dn.se"
+        }
+    ]
+}

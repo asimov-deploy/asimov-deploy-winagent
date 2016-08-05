@@ -1,0 +1,18 @@
+﻿{
+    "NodeFrontUrl": "http://192.168.123.93:3333",
+    "Units": [
+        {
+            "Name": "prod-admin.dn.se",
+            "Type": "WebSite",
+            "SiteName": "prod-admin.dn.se",
+            "UnitPackagePath": "DefaultSitePath",
+            "CleanDeploy": true,
+
+            "PackageInfo": {
+                "Source": "prod-admin-source",
+                "InternalPath": "" /* path within zip to extract */
+            },
+            "SiteUrl": "http://prod-admin.dn.se"
+        }
+    ]
+}
