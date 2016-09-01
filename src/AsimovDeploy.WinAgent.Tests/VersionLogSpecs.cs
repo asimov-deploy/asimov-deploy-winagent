@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models;
 using NUnit.Framework;
@@ -75,6 +76,30 @@ namespace AsimovDeploy.WinAgent.Tests
             log[0].VersionTimestamp.ShouldBe(timestamp);
             log[0].VersionId.ShouldBe("theId2");
             log[0].VersionNumber.ShouldBe("v1.2.3.5");
+        }
+
+        [Test]
+        public void restricts_number_of_versions_that_are_saved()
+        {
+            var timestamp = DateTime.Now;
+            var SavedEntries = VersionUtil.MAX_LOG_ENTRIES + 10;
+            for (int i = 1; i <= SavedEntries; i++)
+            {
+                VersionUtil.UpdateVersionLog(".", new DeployedVersion()
+                {
+                    VersionBranch = "master",
+                    VersionCommit = "123",
+                    VersionTimestamp = timestamp,
+                    VersionId = i.ToString(),
+                    VersionNumber = "v1.2.3.4",
+                    LogFileName = "logfile.txt"
+                });
+            }
+            var log = VersionUtil.ReadVersionLog(".");
+            log.Count.ShouldBe(VersionUtil.MAX_LOG_ENTRIES);
+            var versions = log.Select(x=>x.VersionId);
+            versions.ShouldContain(SavedEntries.ToString());
+            versions.ShouldContain("11");
         }
         
     }
