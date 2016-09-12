@@ -116,10 +116,11 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
             if (!_deployUnit.HasDeployParameters)
                 return false;
 
-            foreach (var parameter in _deployUnit.DeployParameters)
+            foreach (var parameter in _deployUnit.GetDeployParameters())
             {
                 var passwordParameter = parameter as PasswordActionParameter;
                 if (passwordParameter == null) continue;
+                if(string.IsNullOrEmpty(passwordParameter.Password) ) continue;
 
                 var suppliedPassword = _parameterValues.GetValue(passwordParameter.Name);
                 return suppliedPassword != passwordParameter.Password;

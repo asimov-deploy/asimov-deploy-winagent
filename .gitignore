@@ -25,6 +25,7 @@ PublishProfiles/
 *.dbmdl
 *.dbproj.schemaview
 *.log
+.vs
 node_modules/
 .vs
 
