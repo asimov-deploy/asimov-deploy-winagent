@@ -40,7 +40,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public string[] OnlyOnAgents { get; set; }
         public UnitActionList Actions { get; set; }
         public ActionParameterList DeployParameters { get; protected set; }
-        public bool HasDeployParameters => DeployParameters.Count > 0;
+        public bool HasDeployParameters => GetDeployParameters().Count > 0;
 
         public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId);
 
@@ -112,6 +112,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             VersionUtil.UpdateVersionLog(DataDirectory, Version);
 
             NotificationPublisher.PublishNotifications(new DeployFailedEvent(Name, Version));
+        }
+
+        public virtual ActionParameterList GetDeployParameters()
+        {
+            return DeployParameters;
         }
     }
 }

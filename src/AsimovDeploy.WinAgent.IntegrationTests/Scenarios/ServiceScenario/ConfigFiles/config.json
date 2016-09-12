@@ -1,0 +1,42 @@
+{
+  "WebPort": %AGENT_PORT%,
+  "DataFolder": "%DATA_FOLDER%",
+  "HeartbeatIntervalSeconds": 10,
+  "NodeFrontUrl": "%NODE_FRONT_URL%",
+  "Environment": "dev",
+  "ConfigVersion": 1,
+
+  "PackageSources": {
+    "Test": {
+      "Type": "FileSystem",
+      "Uri": "%PACKAGES_URI%"
+    }
+  },
+
+  "Units": [
+    {
+      "Name": "Asimov.Roundhouse.Example",
+      "Type": "WindowsService",
+      
+      "DeployParameters": {
+        "NotUsed": { "Type": "Text" }
+      },
+
+      "PackageInfo": { "Source": "Test" },
+
+      "Installable": {
+        "TargetPath": "%DATA_FOLDER%\\WindowsServiceTarget",
+        
+        "Install": ".\\Asimov.Roundhouse.Example.exe install -displayname \"$DisplayName\"",
+        "InstallParameters": {
+          "DisplayName": { "Type": "Text", Default: "Asimov Test Service From Config"}
+        },
+        
+        "Uninstall": ".\\Asimov.Roundhouse.Example.exe uninstall"
+      }
+
+    }
+
+
+  ]
+}
