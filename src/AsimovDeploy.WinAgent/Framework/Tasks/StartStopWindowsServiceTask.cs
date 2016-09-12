@@ -5,6 +5,7 @@ using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Events;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
+using AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl;
 using log4net;
 
 namespace AsimovDeploy.WinAgent.Framework.Tasks
@@ -61,10 +62,9 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 		private static void StopService(ServiceController controller)
 		{
 			if (controller.Status == ServiceControllerStatus.Running)
-				controller.Stop();
-
-			controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromMinutes(10));
-			Thread.Sleep(2500);
+				ProcessAwareServiceController.StopServiceAndWaitForExit(controller.ServiceName);
 		}
 	}
+
+
 }

@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,6 +28,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public static class VersionUtil
     {
+        public const int MAX_LOG_ENTRIES = 250;
         public static string VERSION_LOG_FILENAME = "version-log.json";
 
         public static string GetAgentVersion()
@@ -39,14 +41,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         public static string ExtractVersionFromString(string str)
         {
             var match = Regex.Match(str, @"(v\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})");
-            if (match.Success)
-            {
-                return match.Groups[0].Value;
-            }
-            else
-            {
-                return null;
-            }
+            return match.Success ? match.Groups[0].Value : null;
         }
 
         public static void UpdateVersionLog(string inDirectory, DeployedVersion version)
@@ -59,11 +54,14 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 
         private static void UpdateLog(string inDirectory, List<DeployedVersion> log)
         {
+            //Node frontend chokes when the log gets to long so we only save the last 250 entries
+            var deployedVersionsToSave = log.Take(MAX_LOG_ENTRIES).ToList();
+
             using (var writer = new StreamWriter(Path.Combine(inDirectory, VERSION_LOG_FILENAME), false, Encoding.UTF8))
             {
                 var serializer = new JsonSerializer();
                 serializer.Formatting = Formatting.Indented;
-                serializer.Serialize(writer, log);
+                serializer.Serialize(writer, deployedVersionsToSave);
             }
         }
 

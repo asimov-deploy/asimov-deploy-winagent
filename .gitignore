@@ -26,6 +26,7 @@ PublishProfiles/
 *.dbproj.schemaview
 *.log
 node_modules/
+.vs
 
 #Tooling
 _ReSharper*/
