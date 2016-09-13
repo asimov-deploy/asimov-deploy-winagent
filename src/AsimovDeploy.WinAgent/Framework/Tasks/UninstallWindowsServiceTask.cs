@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Events;
 using AsimovDeploy.WinAgent.Framework.Models;
@@ -8,21 +10,47 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 {
     public class UninstallWindowsServiceTask : AsimovTask
     {
-        private readonly InstallableConfig _config;
+        private readonly InstallableConfig _installableConfig;
         private readonly DeployUnit _unit;
         private readonly NodeFront _nodefront = new NodeFront();
-        public UninstallWindowsServiceTask(InstallableConfig windowsConfigInstallConfig, DeployUnit unit)
+        public UninstallWindowsServiceTask(InstallableConfig installableInstallableConfig, DeployUnit unit)
         {
-            _config = windowsConfigInstallConfig;
+            _installableConfig = installableInstallableConfig;
             _unit = unit;
         }
 
         protected override void Execute()
         {
+            if (string.IsNullOrEmpty(_installableConfig.TargetPath))
+                _installableConfig.TargetPath = Path.Combine(@"\Services", _unit.Name);
+            if (!string.IsNullOrEmpty(_installableConfig.Uninstall))
+                UnInstallUsingCommandFromConfig();
+            else if (_installableConfig.InstallType.Equals("NServiceBus", StringComparison.InvariantCultureIgnoreCase))
+                UnInstallNServiceBusHandler();
+            else if (_installableConfig.InstallType.Equals("TopShelf", StringComparison.InvariantCultureIgnoreCase))
+                UnInstallTopShelfService();
+
+        }
+
+        private void UnInstallNServiceBusHandler()
+        {
+            //
+
+        }
+
+        private void UnInstallTopShelfService()
+        {
+            var exePath = $"{_installableConfig.TargetPath}\\{_installableConfig.AssemblyName ?? _unit.Name}.exe";
+            ProcessUtil.ExecuteCommand(exePath, new[] { "uninstall" }, Log);
+
+        }
+
+        private void UnInstallUsingCommandFromConfig()
+        {
             ProcessUtil.ExecutePowershellScript(
-                _config.TargetPath, //TODO: We may want to use the location of the service in the future
-                _config.Uninstall, 
-                new ParameterValues(new Dictionary<string,object>()), Log);
+                _installableConfig.TargetPath, //TODO: We may want to use the location of the service in the future
+                _installableConfig.Uninstall,
+                new ParameterValues(new Dictionary<string, object>()), Log);
 
             _nodefront.Notify(new UnitStatusChangedEvent(_unit.Name, _unit.GetUnitInfo().Status));
         }

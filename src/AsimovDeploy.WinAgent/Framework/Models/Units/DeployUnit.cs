@@ -26,21 +26,18 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
     public abstract class DeployUnit
     {
-        protected DeployUnit()
-        {
-            DeployParameters = new ActionParameterList();
-            Actions = new UnitActionList {new RollbackUnitAction()};
-        }
-
         public string Name { get; set; }
         public PackageInfo PackageInfo { get; set; }
         public string DataDirectory { get; set; }
         public DeployStatus DeployStatus { get; protected set; }
         public DeployedVersion Version { get; protected set; }
         public string[] OnlyOnAgents { get; set; }
-        public UnitActionList Actions { get; set; }
-        public ActionParameterList DeployParameters { get; protected set; }
-        public bool HasDeployParameters => GetDeployParameters().Count > 0;
+        public UnitActionList Actions { get; set; } = new UnitActionList { new RollbackUnitAction() };
+        public ActionParameterList DeployParameters { get; protected set; } = new ActionParameterList();
+        public ActionParameterList Credentials { get; protected set; } = new ActionParameterList();
+
+        public bool HasDeployParameters => GetDeployParameters().Count > 0 || GetCredentials().Count > 0;
+        
 
         public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId);
 
@@ -49,7 +46,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             var deployUnitInfo = new DeployUnitInfo
             {
                 Name = Name,
-                HasDeployParameters = HasDeployParameters
+                HasDeployParameters = HasDeployParameters,
+                
             };
 
             if (Version == null)
@@ -117,6 +115,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public virtual ActionParameterList GetDeployParameters()
         {
             return DeployParameters;
+        }
+        public virtual ActionParameterList GetCredentials()
+        {
+            return Credentials;
         }
     }
 }

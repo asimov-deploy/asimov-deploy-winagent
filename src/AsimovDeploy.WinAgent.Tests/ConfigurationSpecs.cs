@@ -169,24 +169,7 @@ namespace AsimovDeploy.WinAgent.Tests
             var packageSource = config.GetPackageSourceFor(config.Units[1]);
             ((FileSystemPackageSource) packageSource).Uri.ShouldBe(new Uri("file://extra"));
         }
-		[Test]
-		public void can_get_deploy_units_by_group_using_multiple_environments()
-		{
-			var config = ReadConfig("ConfigExamples", "testagent3");
-			var testUnits = config.GetUnitsByGroup("Test Group");
-			var otherUnits = config.GetUnitsByGroup("Other Group");
-
-			config.GetUnitsByGroup().Count.ShouldBe(3);
-			testUnits.Count.ShouldBe(1);
-			otherUnits.Count.ShouldBe(1);
-
-			var unit = config.GetUnitByName("UnitWithParameters");
-			unit.ShouldNotBe(null);
-
-			unit = config.GetUnitByName("TestService");
-			unit.ShouldNotBe(null);
-		}
-
-		public AsimovConfig ReadConfig(string configDir, string agentName)
+		
+        
     }
 }

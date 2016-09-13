@@ -14,6 +14,7 @@
 * limitations under the License.
 ******************************************************************************/
 
+using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
 using AsimovDeploy.WinAgent.Framework.Common;
@@ -38,24 +39,20 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public WindowsServiceDeployUnit()
         {
-            Actions.Add(new StartDeployUnitAction() { Sort = 10 });
-            Actions.Add(new StopDeployUnitAction() { Sort = 11 });
+            Actions.Add(new StartDeployUnitAction { Sort = 10 });
+            Actions.Add(new StopDeployUnitAction { Sort = 11 });
 
             //TODO: We only want to add this if an uninstall action has been configured
-            Actions.Add(new UninstallServiceUnitAction() { Sort = 20 });
+            Actions.Add(new UninstallServiceUnitAction { Sort = 20 });
         }
 
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
         {
             var task = new DeployTask(this, version, parameterValues, user, correlationId);
             if (CanInstall())
-            {
                 task.AddDeployStep(new InstallWindowsService(Installable));
-            }
             else
-            {
                 task.AddDeployStep<UpdateWindowsService>();
-            }
 
             foreach (var action in Actions.OfType<CommandUnitAction>())
             {
@@ -66,15 +63,13 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         private bool CanInstall()
         {
-            return GetStatus() == UnitStatus.NotFound && Installable?.Install != null;
+            return GetStatus() == UnitStatus.NotFound && (Installable?.Install != null || Installable?.InstallType != null);
         }
 
         public override ActionParameterList GetDeployParameters()
         {
             if (CanInstall())
-            {
-                return Installable.InstallParameters ?? new ActionParameterList();
-            }
+                return Installable.GetInstallAndCredentialParameters();
             return DeployParameters;
         }
 

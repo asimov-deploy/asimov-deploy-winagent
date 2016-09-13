@@ -72,28 +72,22 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         {
             if (AgentGroupIsSuppliedButNoMatchingFound(agentGroup))
                 return new DeployUnits();
-            return string.IsNullOrWhiteSpace(agentGroup) ? Units : 
+            return string.IsNullOrWhiteSpace(agentGroup) ? Units :
                 new DeployUnits(Units.Where(a => Environments.First(b => b.AgentGroup == agentGroup).Units.Any(b => b.Name == a.Name)));
         }
 
-        public Uri WebControlUrl
-            => new Uri($"http://{HostNameUtil.GetFullHostName()}:{WebPort}");
+        public Uri WebControlUrl => new Uri($"http://{HostNameUtil.GetFullHostName()}:{WebPort}");
 
         public Dictionary<string, string> LoadBalancerParameters { get; set; }
 
         public string GetLoadBalancerParametersAsQueryString()
         {
-            if (LoadBalancerParameters.Count == 0)
-                return "";
-
-            return string.Join("&", LoadBalancerParameters.Select(p => $"{HttpUtility.UrlEncode(p.Key.ToLower())}={HttpUtility.UrlEncode(p.Value.ToLower())}"));
+            return LoadBalancerParameters.Count == 0 ? "" : string.Join("&", LoadBalancerParameters.Select(p => $"{HttpUtility.UrlEncode(p.Key.ToLower())}={HttpUtility.UrlEncode(p.Value.ToLower())}"));
         }
 
-        public PackageSource GetPackageSourceFor(DeployUnit deployUnit)
-            => PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
+        public PackageSource GetPackageSourceFor(DeployUnit deployUnit) => PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
 
-        public DeployUnit GetUnitByName(string name)
-            => Units.Single(x => x.Name == name);
+        public DeployUnit GetUnitByName(string name) => Units.Single(x => x.Name == name);
 
         private bool AgentGroupIsSuppliedButNoMatchingFound(string agentGroup)
             => !string.IsNullOrWhiteSpace(agentGroup) && !Environments.Any(a => a.AgentGroup == agentGroup);
