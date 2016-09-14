@@ -21,6 +21,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
         protected override void Execute()
         {
+            Log.Info($"Uninstalling {_unit.Name}...");
             if (string.IsNullOrEmpty(_installableConfig.TargetPath))
                 _installableConfig.TargetPath = Path.Combine(@"\Services", _unit.Name);
             if (!string.IsNullOrEmpty(_installableConfig.Uninstall))
@@ -29,11 +30,18 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
                 UnInstallNServiceBusHandler();
             else if (_installableConfig.InstallType.Equals("TopShelf", StringComparison.InvariantCultureIgnoreCase))
                 UnInstallTopShelfService();
-
+            else
+            {
+                Log.Warn($"Uninstall of {_unit.Name} not supported. Please check InstallableConfig.");
+                return;
+            }
+            _nodefront.Notify(new UnitStatusChangedEvent(_unit.Name, _unit.GetUnitInfo().Status));
+            Log.Info($"Uninstall of {_unit.Name} done!");
         }
 
         private void UnInstallNServiceBusHandler()
         {
+            ;
             var exePath = $"{_installableConfig.TargetPath}\\NServiceBus.Host.exe";
             var serviceName = (_unit as WindowsServiceDeployUnit)?.ServiceName ?? _unit.Name;
             var args = new List<string>
@@ -44,7 +52,6 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
                _installableConfig.TargetPath
             };
             ProcessUtil.ExecuteCommand(exePath, args.ToArray(), Log);
-            //"{0}NServiceBus.Host.exe /uninstall /serviceName:$ProcessServiceName.$ApplicationName" -f $HandlerDirectory
 
         }
 
@@ -62,7 +69,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
                 _installableConfig.Uninstall,
                 new ParameterValues(new Dictionary<string, object>()), Log);
 
-            _nodefront.Notify(new UnitStatusChangedEvent(_unit.Name, _unit.GetUnitInfo().Status));
+
         }
     }
 }
