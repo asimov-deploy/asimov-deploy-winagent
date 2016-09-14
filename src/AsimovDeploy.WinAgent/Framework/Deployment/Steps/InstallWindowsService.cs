@@ -43,6 +43,9 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             var exePath = $"{_installableConfig.TargetPath}\\NServiceBus.Host.exe";
 
             var serviceName = (context.DeployUnit as WindowsServiceDeployUnit)?.ServiceName ?? context.DeployUnit.Name;
+
+            context.Log.Info($"Installing: {exePath} as {serviceName}");
+
             var args = new List<string>
             {
                 "/install",
@@ -63,6 +66,8 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             context.Log.InfoFormat("Service is marked as TopShelf, running install");
 
             var exePath = $"{_installableConfig.TargetPath}\\{_installableConfig.AssemblyName ?? context.DeployUnit.Name}.exe";
+
+            context.Log.Info($"Installing: {exePath}");
 
             var args = new List<string> { "install" };
 
