@@ -68,13 +68,11 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                 Arguments = string.Join(" ", arguments),
                 RedirectStandardError = true,
                 RedirectStandardInput = true
-                
+
             };
 
             using (var p = Process.Start(startInfo))
             {
-                p.StandardError.RedirectOutput(log.Warn);
-                p.StandardOutput.RedirectOutput(log.Info);
                 p.WaitForExit((int)TimeSpan.FromMinutes(40).TotalMilliseconds);
                 if (p.ExitCode != 0)
                     throw new DeployException($"Script did not complete successfully: {command}");
