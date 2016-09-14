@@ -30,6 +30,8 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             if (string.IsNullOrEmpty(_installableConfig.TargetPath))
                 _installableConfig.TargetPath = Path.Combine(@"\Services", context.DeployUnit.Name);
 
+
+
             CopyFiles(context);
 
             if (!string.IsNullOrEmpty(_installableConfig.Install))
@@ -48,11 +50,12 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
             var exePath = $"{_installableConfig.TargetPath}\\NServiceBus.Host.exe";
 
+            var serviceName = (context.DeployUnit as WindowsServiceDeployUnit)?.ServiceName ?? context.DeployUnit.Name;
             var args = new List<string>
             {
                 "/install",
-                "/servicename:" + context.DeployUnit.Name,
-                "/displayname:" + context.DeployUnit.Name,
+                "/servicename:" + serviceName,
+                "/displayname:" + serviceName,
                 "NServiceBus.Production",
                 "NServiceBus.PerformanceCounters"
             };
