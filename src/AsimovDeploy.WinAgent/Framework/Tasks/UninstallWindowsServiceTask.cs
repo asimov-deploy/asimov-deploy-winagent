@@ -34,7 +34,17 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
         private void UnInstallNServiceBusHandler()
         {
-            //
+            var exePath = $"{_installableConfig.TargetPath}\\NServiceBus.Host.exe";
+
+            var args = new List<string>
+            {
+                "/uninstall",
+                "/servicename:" + _unit.Name,
+                "-f",
+               _installableConfig.TargetPath
+            };
+            ProcessUtil.ExecuteCommand(exePath, args.ToArray(), Log);
+            //"{0}NServiceBus.Host.exe /uninstall /serviceName:$ProcessServiceName.$ApplicationName" -f $HandlerDirectory
 
         }
 
