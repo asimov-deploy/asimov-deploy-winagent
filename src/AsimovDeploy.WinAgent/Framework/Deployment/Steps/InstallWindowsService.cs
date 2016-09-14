@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Configuration.Install;
 using System.IO;
 using System.Linq;
-using System.ServiceProcess;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
@@ -20,17 +17,12 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             _installableConfig = installableConfig;
         }
 
-        public void Execute(DeployContext context)
-        {
-            InstallService(context);
-        }
+        public void Execute(DeployContext context) => InstallService(context);
 
         private void InstallService(DeployContext context)
         {
             if (string.IsNullOrEmpty(_installableConfig.TargetPath))
                 _installableConfig.TargetPath = Path.Combine(@"\Services", context.DeployUnit.Name);
-
-
 
             CopyFiles(context);
 
@@ -63,10 +55,6 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             args.AddRange(context.ParameterValues.Select(credential => $"/{credential.Key}:{credential.Value}"));
 
             ProcessUtil.ExecuteCommand(exePath, args.ToArray(), context.Log);
-
-            //$InstallService = "{0}NServiceBus.Host.exe /install /serviceName:$ProcessServiceName.$ApplicationName /displayname:$ProcessServiceName.$ApplicationName NServiceBus.Production /username:$userName /password:$password NServiceBus.PerformanceCounters" - f $HandlerDirectory
-
-
 
         }
 
