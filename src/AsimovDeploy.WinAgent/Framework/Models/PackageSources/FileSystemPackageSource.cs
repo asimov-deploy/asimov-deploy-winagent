@@ -36,9 +36,15 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
         {
             var versions = new List<AsimovVersion>();
 
-            CollectZipFiles(versions, Uri.LocalPath, 1);
+            var path = GetPackagesPath(packageInfo);
+            CollectZipFiles(versions, path, 1);
 
             return versions.OrderByDescending(x => x.Timestamp).ToList();
+        }
+
+        private string GetPackagesPath(PackageInfo packageInfo)
+        {
+            return Path.Combine(Uri.LocalPath, packageInfo.SourceRelativePath ?? "");
         }
 
         public override AsimovVersion GetVersion(string versionId, PackageInfo packageInfo)
@@ -94,7 +100,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
         private AsimovVersion GetVersionInfoFromFile(FileInfo fileInfo)
         {
-            var match = Regex.Match(fileInfo.Name, Pattern);
+            var match = Regex.Match(fileInfo.Name, Pattern, RegexOptions.IgnoreCase);
             if (!match.Success)
                 return null;
 
