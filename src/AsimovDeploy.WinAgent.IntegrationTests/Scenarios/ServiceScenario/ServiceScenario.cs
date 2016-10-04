@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.ServiceProcess;
+using System.Threading;
+using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Web.Commands;
 using AsimovDeploy.WinAgent.Web.Contracts;
@@ -40,6 +44,10 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
                 unitName = ServiceName
             });
             WaitForStatus("NotFound");
+            while (Process.GetProcesses().Any(x => x.ProcessName == "Asimov.Roundhouse.Example"))
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(0.5));
+            }
         }
 
         [Test]
