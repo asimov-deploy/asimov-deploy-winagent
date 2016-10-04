@@ -100,7 +100,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
         private AsimovVersion GetVersionInfoFromFile(FileInfo fileInfo)
         {
-            var match = Regex.Match(fileInfo.Name, Pattern);
+            var match = Regex.Match(fileInfo.Name, Pattern, RegexOptions.IgnoreCase);
             if (!match.Success)
                 return null;
 
