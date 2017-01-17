@@ -78,7 +78,10 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
             {
                 unitName = ServiceName,
                 versionId = versions[0].id,
-                parameters = new Dictionary<string, object>()
+                parameters = new Dictionary<string, object>() {
+                {
+                    "Port", "8145"
+                } }
             });
 
             WaitForStatus("Running");
