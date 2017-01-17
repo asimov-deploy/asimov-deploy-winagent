@@ -6,23 +6,26 @@ using AsimovDeploy.WinAgent.Framework.Models.Units;
 
 namespace AsimovDeploy.WinAgent.Framework.Tasks
 {
-    public class UninstallWindowsServiceTask : AsimovTask
+    public class PowershellUninstallTask : AsimovTask
     {
         private readonly InstallableConfig _config;
         private readonly DeployUnit _unit;
+        private readonly Dictionary<string, object> unitParameters;
         private readonly NodeFront _nodefront = new NodeFront();
-        public UninstallWindowsServiceTask(InstallableConfig windowsConfigInstallConfig, DeployUnit unit)
+        public PowershellUninstallTask(InstallableConfig config, DeployUnit unit, Dictionary<string,object> unitParameters)
         {
-            _config = windowsConfigInstallConfig;
+            _config = config;
             _unit = unit;
+            this.unitParameters = unitParameters;
         }
 
         protected override void Execute()
         {
+            Log.Info(_config.TargetPath);
             ProcessUtil.ExecutePowershellScript(
                 _config.TargetPath, //TODO: We may want to use the location of the service in the future
                 _config.Uninstall, 
-                new ParameterValues(new Dictionary<string,object>()), Log);
+                unitParameters, Log);
 
             _nodefront.Notify(new UnitStatusChangedEvent(_unit.Name, _unit.GetUnitInfo().Status));
         }

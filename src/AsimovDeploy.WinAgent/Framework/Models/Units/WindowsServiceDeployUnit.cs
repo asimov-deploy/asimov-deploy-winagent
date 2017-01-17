@@ -14,6 +14,7 @@
 * limitations under the License.
 ******************************************************************************/
 
+using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
 using AsimovDeploy.WinAgent.Framework.Common;
@@ -23,7 +24,7 @@ using AsimovDeploy.WinAgent.Framework.Tasks;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
-    public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted, ICanUninstallWindowsService
+    public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted, ICanUninistall
     {
         private string _serviceName;
         public string ServiceName
@@ -42,7 +43,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             Actions.Add(new StopDeployUnitAction() { Sort = 11 });
 
             //TODO: We only want to add this if an uninstall action has been configured
-            Actions.Add(new UninstallServiceUnitAction() { Sort = 20 });
+            Actions.Add(new UnInstallUnitAction() { Sort = 20 });
         }
 
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
@@ -109,6 +110,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);
         public AsimovTask GetStartTask() => new StartStopWindowsServiceTask(this, stop: false);
-        public AsimovTask GetUninstallWindowsServiceTask() => new UninstallWindowsServiceTask(Installable, this);
+        public AsimovTask GetUninstallTask() => new PowershellUninstallTask(Installable, this, new Dictionary<string, object>());
     }
 }

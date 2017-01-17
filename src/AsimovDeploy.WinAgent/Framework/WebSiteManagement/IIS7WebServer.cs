@@ -90,7 +90,7 @@ namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement
                 var state = ObjectState.Started;
 
                 // accessing state for WCF AppFabric sites causes com Exception
-                try { state = site.State; } catch { }
+                try { state = site.State; } catch(Exception ex) { Console.WriteLine(ex); }
 
                 return new WebSiteData()
                            {

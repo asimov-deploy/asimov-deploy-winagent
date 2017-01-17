@@ -20,19 +20,19 @@ using AsimovDeploy.WinAgent.Framework.Models.Units;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 {
-    public class UninstallServiceUnitAction : UnitAction
+    public class UnInstallUnitAction : UnitAction
     {
-        public UninstallServiceUnitAction()
+        public UnInstallUnitAction()
         {
             Name = "Uninstall";
         }
 
         public override AsimovTask GetTask(DeployUnit unit, AsimovUser user, string correlationId)
         {
-            if (!(unit is ICanUninstallWindowsService))
-                throw new ArgumentException("Action is only supported for deploy units that implement ICanUninstallWindowsService");
+            if (!(unit is ICanUninistall))
+                throw new ArgumentException("Action is only supported for deploy units that implement ICanUninstall");
 
-            return ((ICanUninstallWindowsService)unit).GetUninstallWindowsServiceTask();
+            return ((ICanUninistall)unit).GetUninstallTask();
         }
 
     }
