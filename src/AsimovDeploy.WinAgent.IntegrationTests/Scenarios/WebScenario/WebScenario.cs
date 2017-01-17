@@ -93,8 +93,8 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
             var parameters = Agent.Get<List<TextActionParameter>>($"/units/deploy-parameters/{ServiceName}");
 
             parameters.Count.ShouldBe(1);
-            parameters[0].Name.ShouldBe("Custom");
-            parameters[0].Default.ShouldBe("CustomValue");
+            parameters[0].Name.ShouldBe("Port");
+            parameters[0].Default.ShouldBe("8123");
         }
 
         [Test]

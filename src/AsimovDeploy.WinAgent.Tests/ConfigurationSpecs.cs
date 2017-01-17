@@ -148,12 +148,12 @@ namespace AsimovDeploy.WinAgent.Tests
         {
             var config = ReadConfig("ConfigExamples", "asd");
 
-            config.Units[0].Actions.Count.ShouldBe(5);
+            config.Units[0].Actions.Count.ShouldBe(6);
 
-            config.Units[0].Actions[3].ShouldBeTypeOf<VerifyUrlsUnitAction>();
-            config.Units[0].Actions[4].ShouldBeTypeOf<VerifyCommandUnitAction>();
+            config.Units[0].Actions[4].ShouldBeTypeOf<VerifyUrlsUnitAction>();
+            config.Units[0].Actions[5].ShouldBeTypeOf<VerifyCommandUnitAction>();
 
-            var commandAction = (VerifyCommandUnitAction) config.Units[0].Actions[4];
+            var commandAction = (VerifyCommandUnitAction) config.Units[0].Actions[5];
             commandAction.ZipPath.ShouldBe("SiteVerify.zip");
             commandAction.Command.ShouldBe("phantomjs.exe");
         }
@@ -169,5 +169,7 @@ namespace AsimovDeploy.WinAgent.Tests
             var packageSource = config.GetPackageSourceFor(config.Units[1]);
             ((FileSystemPackageSource) packageSource).Uri.ShouldBe(new Uri("file://extra"));
         }
+		
+        
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AsimovDeploy.WinAgent.IntegrationTests
@@ -33,7 +32,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                     {
                         var context = _listener.GetContext();
 
-                        Action<dynamic> handler = null;
+                        Action<dynamic> handler;
                         dynamic data = null;
                         
                         _handlers.TryGetValue(context.Request.Url.PathAndQuery, out handler);
@@ -54,19 +53,13 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                             }
                         }
 
-                        if (handler != null)
-                        {
-                            handler(data);
-                        }
+                        handler?.Invoke(data);
                         context.Response.Close();
                     }
                 });
          
         }
 
-        public void Dispose()
-        {
-            _listener.Stop();
-        }
+        public void Dispose() => _listener.Stop();
     }
 }

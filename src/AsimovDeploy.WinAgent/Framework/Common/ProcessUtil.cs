@@ -17,7 +17,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using AsimovDeploy.WinAgent.Framework.Deployment;
 using AsimovDeploy.WinAgent.Framework.Models;
 using log4net;
@@ -52,10 +51,32 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                 p.StandardInput.WriteLine(command);
                 p.StandardInput.Close();
 
-                p.WaitForExit((int) TimeSpan.FromMinutes(40).TotalMilliseconds);
+                p.WaitForExit((int)TimeSpan.FromMinutes(40).TotalMilliseconds);
 
                 if (p.ExitCode != 0)
                     throw new DeployException("Powershell script did not complete successfully");
+            }
+        }
+        public static void ExecuteCommand(string command, string[] arguments, ILog log)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                Verb = "runas",
+                FileName = command,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = string.Join(" ", arguments),
+                RedirectStandardError = true,
+                RedirectStandardInput = true
+
+            };
+
+            using (var p = Process.Start(startInfo))
+            {
+                p.WaitForExit((int)TimeSpan.FromMinutes(40).TotalMilliseconds);
+                if (p.ExitCode != 0)
+                    throw new DeployException($"Script did not complete successfully: {command}");
             }
         }
     }

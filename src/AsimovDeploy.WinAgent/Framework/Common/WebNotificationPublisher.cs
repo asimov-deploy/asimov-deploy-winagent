@@ -8,7 +8,7 @@ using StructureMap;
 
 namespace AsimovDeploy.WinAgent.Framework.Common
 {
-    public class WebNotificationPublisher:INotifier
+    public class WebNotificationPublisher : INotifier
     {
         private static readonly string _webNotificationUrl;
 
@@ -22,7 +22,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         {
             try
             {
-                if (String.IsNullOrEmpty(_webNotificationUrl) ) return;
+                if (string.IsNullOrEmpty(_webNotificationUrl)) return;
 
                 var url = new Uri(_webNotificationUrl);
 
@@ -46,7 +46,6 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                 {
                     resp.Close();
                 }
-
             }
             catch (Exception)
             {
