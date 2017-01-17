@@ -45,7 +45,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
         private void CopyFiles(DeployContext context)
         {
-            context.Log.InfoFormat("Copying files");
+            context.Log.Info($"Copying files from {context.TempFolderWithNewVersionFiles} to {unit.Installable.TargetPath}...");
             DirectoryUtil.CopyDirectory(context.TempFolderWithNewVersionFiles, unit.Installable.TargetPath);
         }
     }
