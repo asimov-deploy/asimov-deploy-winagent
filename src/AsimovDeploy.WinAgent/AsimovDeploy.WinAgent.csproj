@@ -111,9 +111,10 @@
     <Compile Include="Framework\Models\UnitActions\PowerShellUnitAction.cs" />
     <Compile Include="Framework\Models\UnitActions\RollbackUnitAction.cs" />
     <Compile Include="Framework\Models\Units\DeployEnvironment.cs" />
-    <Compile Include="Framework\Models\Units\ICanUninstallWindowsService.cs" />
-    <Compile Include="Framework\Models\UnitActions\UninstallServiceUnitAction.cs" />
-    <Compile Include="Framework\Tasks\UninstallWindowsServiceTask.cs" />
+    <Compile Include="Framework\Models\Units\ICanUninistall.cs" />
+    <Compile Include="Framework\Models\UnitActions\UninstallUnitAction.cs" />
+    <Compile Include="Framework\Deployment\Steps\InstallWebSite.cs" />
+    <Compile Include="Framework\Tasks\PowershellUninstallTask.cs" />
     <Compile Include="Framework\Models\Units\InstallableConfig.cs" />
     <Compile Include="Framework\Tasks\CommandTask.cs" />
     <Compile Include="Framework\Tasks\LaunchCommandAsProcess.cs" />

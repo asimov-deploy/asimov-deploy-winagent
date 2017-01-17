@@ -1,0 +1,58 @@
+{
+  "WebPort": %AGENT_PORT%,
+  "DataFolder": "%DATA_FOLDER%",
+  "HeartbeatIntervalSeconds": 10,
+  "NodeFrontUrl": "%NODE_FRONT_URL%",
+  "Environment": "dev",
+  "ConfigVersion": 1,
+
+  "PackageSources": {
+    "Test": {
+      "Type": "FileSystem",
+      "Uri": "%PACKAGES_URI%"
+    }
+  },
+
+  "Units": [
+  {
+    "Name": "Asimov.Web.Example",
+    "Type": "WebSite",
+    "SiteName": "Asimov.Web.Example",
+    "SiteUrl": "http://localhost:9123",
+
+    "DeployParameters": {
+      "NotUsed": { "Type": "Text" }
+    },
+
+    "PackageInfo": { "Source": "Test" },
+
+    "Installable": {
+      "TargetPath": "%DATA_FOLDER%\\WebTarget",
+
+      "Install": "
+Import-module WebAdministration;
+New-WebAppPool -Name \"${SiteName}AppPool\"
+$pool = Get-Item \"IIS:\\AppPools\\${SiteName}AppPool\"
+$pool.startMode = 'AlwaysRunning'
+$pool | Set-Item
+New-WebSite -Name $SiteName -ApplicationPool \"${SiteName}AppPool\" -PhysicalPath \"$(pwd)\" -Port ([System.Uri]$SiteUrl).Port
+Set-ItemProperty IIS:\\Sites\\$SiteName -name EnabledProtocols -value 'http,net.pipe,net.tcp'
+#Remove-ItemProperty -path IIS:\\Sites\\$SiteName -name bindings
+New-ItemProperty -Path IIS:\\Sites\\$SiteName -name bindings -value @{protocol='net.tcp';bindingInformation=\"${Port}:*\"}
+New-ItemProperty -Path IIS:\\Sites\\$SiteName -name bindings -value @{protocol='net.pipe';bindingInformation='*';ipaddress='*'}
+        ",
+        "InstallParameters": {
+          "Port": { "Type": "Text", Default: "8123"}
+        },
+        
+        "Uninstall": "\r\n
+Import-module WebAdministration;\r\n
+Remove-WebSite -name $SiteName
+Remove-WebAppPool -Name \"${SiteName}AppPool\" 
+        "
+      }
+    }
+
+
+  ]
+}

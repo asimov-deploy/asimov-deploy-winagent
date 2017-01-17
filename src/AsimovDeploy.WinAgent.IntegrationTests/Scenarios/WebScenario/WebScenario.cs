@@ -4,19 +4,18 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
-using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Web.Commands;
 using AsimovDeploy.WinAgent.Web.Contracts;
 using NUnit.Framework;
 using Shouldly;
 
-namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
+namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
 {
     [TestFixture]
-    public class WindowsServiceScenario : WinAgentSystemTest
+    public class WebScenario : WinAgentSystemTest
     {
-        private const string ServiceName = "Asimov.Roundhouse.Example";
+        private const string ServiceName = "Asimov.Web.Example";
 
         public override void Given()
         {
@@ -67,21 +66,10 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
             units.Count.ShouldBe(1);
             units[0].name.ShouldBe(ServiceName);
-            units[0].status.ShouldBe("Stopped");
+            units[0].status.ShouldBe("Running");
         }
 
-        [Test]
-        public void uses_parameters_when_installing()
-        {
-            InstallService(displayName: "Asimov Test Service Testing InstallParameters");
-
-            using (var controller = new ServiceController(ServiceName))
-            {
-                controller.DisplayName.ShouldBe("Asimov Test Service Testing InstallParameters");       
-            }
-        }
-
-        private void InstallService(string displayName = "Asimov Test Service")
+        private void InstallService()
         {
             var versions = Agent.Get<List<DeployUnitVersionDTO>>($"/versions/{ServiceName}");
             versions.Count.ShouldBe(1);
@@ -90,15 +78,13 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
             {
                 unitName = ServiceName,
                 versionId = versions[0].id,
-                parameters = new Dictionary<string, object>
+                parameters = new Dictionary<string, object>() {
                 {
-                    {
-                        "DisplayName", displayName
-                    }
-                }
+                    "Port", "8145"
+                } }
             });
 
-            WaitForStatus("Stopped");
+            WaitForStatus("Running");
         }
 
         [Test]
@@ -107,8 +93,8 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
             var parameters = Agent.Get<List<TextActionParameter>>($"/units/deploy-parameters/{ServiceName}");
 
             parameters.Count.ShouldBe(1);
-            parameters[0].Name.ShouldBe("DisplayName");
-            parameters[0].Default.ShouldBe("Asimov Test Service From Config");
+            parameters[0].Name.ShouldBe("Port");
+            parameters[0].Default.ShouldBe("8123");
         }
 
         [Test]
