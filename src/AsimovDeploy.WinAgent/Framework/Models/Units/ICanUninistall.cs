@@ -18,8 +18,8 @@ using AsimovDeploy.WinAgent.Framework.Common;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
-    public interface    ICanUninstallWindowsService
+    public interface ICanUninistall
     {
-        AsimovTask GetUninstallWindowsServiceTask();
+        AsimovTask GetUninstallTask();
     }
 }

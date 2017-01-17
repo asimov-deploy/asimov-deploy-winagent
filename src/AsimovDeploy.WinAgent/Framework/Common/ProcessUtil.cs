@@ -15,6 +15,7 @@
 ******************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using AsimovDeploy.WinAgent.Framework.Deployment;
@@ -25,7 +26,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public class ProcessUtil
     {
-        public static void ExecutePowershellScript(string workingDirectory, string command, ParameterValues parameters, ILog log)
+        public static void ExecutePowershellScript(string workingDirectory, string command, IEnumerable<KeyValuePair<string,object>> parameters, ILog log)
         {
             using (var p = new Process())
             {

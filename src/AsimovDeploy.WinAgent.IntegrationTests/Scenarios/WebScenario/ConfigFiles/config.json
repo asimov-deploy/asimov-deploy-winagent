@@ -1,0 +1,48 @@
+{
+  "WebPort": %AGENT_PORT%,
+  "DataFolder": "%DATA_FOLDER%",
+  "HeartbeatIntervalSeconds": 10,
+  "NodeFrontUrl": "%NODE_FRONT_URL%",
+  "Environment": "dev",
+  "ConfigVersion": 1,
+
+  "PackageSources": {
+    "Test": {
+      "Type": "FileSystem",
+      "Uri": "%PACKAGES_URI%"
+    }
+  },
+
+  "Units": [
+    {
+      "Name": "Asimov.Web.Example",
+      "Type": "WebSite",
+      "SiteName": "Asimov.Web.Example",
+			"SiteUrl": "http://localhost:9123",
+      
+      "DeployParameters": {
+        "NotUsed": { "Type": "Text" }
+      },
+
+      "PackageInfo": { "Source": "Test" },
+
+      "Installable": {
+        "TargetPath": "%DATA_FOLDER%\\WebTarget",
+
+        "Install": "\r\n
+Import-module WebAdministration;\r\n
+New-WebSite -name $SiteName -PhysicalPath \"$(pwd)\" -Port ([System.Uri]$SiteUrl).Port",
+        "InstallParameters": {
+          "Custom": { "Type": "Text", Default: "CustomValue"}
+        },
+        
+        "Uninstall": "\r\n
+Import-module WebAdministration;\r\n
+Remove-WebSite -name $SiteName"
+      }
+
+    }
+
+
+  ]
+}
