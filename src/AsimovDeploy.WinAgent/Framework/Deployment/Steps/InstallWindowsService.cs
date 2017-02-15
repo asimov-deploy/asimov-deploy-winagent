@@ -10,11 +10,13 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
     public class InstallWindowsService : IDeployStep
     {
         private readonly InstallableConfig _installableConfig;
+        private readonly IInstallableService _service;
 
-        public InstallWindowsService(InstallableConfig installableConfig)
+        public InstallWindowsService(IInstallableService service)
         {
-            if (installableConfig == null) throw new ArgumentNullException(nameof(installableConfig));
-            _installableConfig = installableConfig;
+            if (service == null) throw new ArgumentNullException(nameof(service));
+            _installableConfig = service.Installable;
+            _service = service;
         }
 
         public void Execute(DeployContext context) => InstallService(context);
@@ -23,6 +25,8 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
         {
             if (string.IsNullOrEmpty(_installableConfig.TargetPath))
                 _installableConfig.TargetPath = Path.Combine(@"\Services", context.DeployUnit.Name);
+
+            CleanPhysicalPath(context);
 
             CopyFiles(context);
 
@@ -42,7 +46,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
             var exePath = $"{_installableConfig.TargetPath}\\NServiceBus.Host.exe";
 
-            var serviceName = (context.DeployUnit as WindowsServiceDeployUnit)?.ServiceName ?? context.DeployUnit.Name;
+            var serviceName = _service.ServiceName;
 
             context.Log.Info($"Installing: {exePath} as {serviceName}");
 
@@ -79,10 +83,14 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
         private void InstallServiceUsingInstallCommandFromConfig(DeployContext context)
         {
+            var parameters = context.ParameterValues.Concat(new[]
+            {
+                new KeyValuePair<string, object>("ServiceName", _service.ServiceName)
+            });
             ProcessUtil.ExecutePowershellScript(
                 _installableConfig.TargetPath,
                 _installableConfig.Install,
-                context.ParameterValues,
+                parameters,
                 context.Log);
         }
 
@@ -90,6 +98,16 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
         {
             context.Log.Info($"Copying files from {context.TempFolderWithNewVersionFiles} to {_installableConfig.TargetPath}...");
             DirectoryUtil.CopyDirectory(context.TempFolderWithNewVersionFiles, _installableConfig.TargetPath);
+        }
+
+        private void CleanPhysicalPath(DeployContext context)
+        {
+            if (DirectoryUtil.Exists(_installableConfig.TargetPath))
+            {
+                context.Log.InfoFormat("Cleaning folder {0}", _installableConfig.TargetPath);
+                DirectoryUtil.Clean(_installableConfig.TargetPath);
+            }
+            
         }
     }
 }

@@ -24,7 +24,7 @@ using AsimovDeploy.WinAgent.Framework.Tasks;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
-    public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted, ICanUninistall
+    public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted, ICanUninistall, IInstallableService
     {
         private string _serviceName;
         public string ServiceName
@@ -50,7 +50,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         {
             var task = new DeployTask(this, version, parameterValues, user, correlationId);
             if (CanInstall())
-                task.AddDeployStep(new InstallWindowsService(Installable));
+                task.AddDeployStep(new InstallWindowsService(this));
             else
                 task.AddDeployStep<UpdateWindowsService>();
 

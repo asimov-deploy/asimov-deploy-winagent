@@ -114,6 +114,7 @@
     <Compile Include="Framework\Models\Units\ICanUninistall.cs" />
     <Compile Include="Framework\Models\UnitActions\UninstallUnitAction.cs" />
     <Compile Include="Framework\Deployment\Steps\InstallWebSite.cs" />
+    <Compile Include="Framework\Models\Units\IServiceInfo.cs" />
     <Compile Include="Framework\Tasks\PowershellUninstallTask.cs" />
     <Compile Include="Framework\Models\Units\InstallableConfig.cs" />
     <Compile Include="Framework\Tasks\CommandTask.cs" />
