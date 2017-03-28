@@ -104,6 +104,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);
         public AsimovTask GetStartTask() => new StartStopWindowsServiceTask(this, stop: false);
-        public AsimovTask GetUninstallTask() => new PowershellUninstallTask(Installable, this, new Dictionary<string, object>());
+        public AsimovTask GetUninstallTask() => new PowershellUninstallTask(Installable, this, new Dictionary<string, object>() { { "ServiceName", ServiceName } });
     }
 }
