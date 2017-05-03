@@ -31,13 +31,23 @@ namespace AsimovDeploy.WinAgent.Framework.Common
             foreach (ManagementObject managementObject in managementObjectCollection)
             {
                 var path = managementObject.GetPropertyValue("PathName").ToString();
-                var serviceExe = Regex.Match(path, "([^\"])+").Groups[0].Value;
 
+                var serviceExe = GetServiceExecutable(path);
                 var fileInfo = new FileInfo(serviceExe);
                 return fileInfo.Directory.FullName;
             }
 
             return null;
+        }
+
+        public static string GetServiceExecutable(string windowsServicePath)
+        {
+            if (windowsServicePath.StartsWith("\""))
+            {
+                return Regex.Match(windowsServicePath, "([^\"])+").Groups[0].Value;
+            }
+
+            return Regex.Match(windowsServicePath, "([^\\s])+").Groups[0].Value;
         }
     }
 }
