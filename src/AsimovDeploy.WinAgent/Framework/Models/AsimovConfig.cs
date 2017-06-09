@@ -38,7 +38,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         }
 
         public string DataFolder { get; set; }
-
         public PackageSourceList PackageSources { get; set; }
         public string Environment { get; set; }
         public string AgentGroup { get; set; }
