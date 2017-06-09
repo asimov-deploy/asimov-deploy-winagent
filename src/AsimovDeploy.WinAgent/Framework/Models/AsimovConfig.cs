@@ -72,8 +72,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         {
             if (AgentGroupIsSuppliedButNoMatchingFound(agentGroup))
                 return new DeployUnits();
-            return string.IsNullOrWhiteSpace(agentGroup) ? Units :
-                new DeployUnits(Units.Where(a => Environments.First(b => b.AgentGroup == agentGroup).Units.Any(b => b.Name == a.Name)));
+            return string.IsNullOrWhiteSpace(agentGroup) ? 
+                Units : 
+                new DeployUnits(Environments.First(a => a.AgentGroup == agentGroup).Units.Select(a => Units.First(b => b.Name == a.Name)));
         }
 
         public Uri WebControlUrl => new Uri($"http://{HostNameUtil.GetFullHostName()}:{WebPort}");
