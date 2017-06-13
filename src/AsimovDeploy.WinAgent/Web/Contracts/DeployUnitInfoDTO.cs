@@ -19,6 +19,7 @@ namespace AsimovDeploy.WinAgent.Web.Contracts
     public class DeployUnitInfoDTO
     {
         public string name { get; set; }
+        public string type { get; set; }
         public string url { get; set; }
         public string version { get; set; }
         public string branch { get; set; }

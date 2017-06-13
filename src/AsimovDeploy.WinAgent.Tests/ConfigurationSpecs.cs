@@ -94,6 +94,7 @@ namespace AsimovDeploy.WinAgent.Tests
             config.HeartbeatIntervalSeconds.ShouldBe(10);
             config.TempFolder.ShouldBe("\\Data\\Temp");
             config.ConfigVersion.ShouldBe(101);
+            config.Units[0].UnitType.ShouldBe(DeployUnitTypes.WebSite);
 
             var webSite = (WebSiteDeployUnit) config.Units[0];
             webSite.Name.ShouldBe("DefaultSite");
@@ -102,6 +103,7 @@ namespace AsimovDeploy.WinAgent.Tests
             webSite.PackageInfo.InternalPath.ShouldBe("DefaultSitePath");
             webSite.PackageInfo.Source.ShouldBe("Prod");
 
+            webSite.UnitType.ShouldBe(DeployUnitTypes.WebSite);
 
             webSite.CleanDeploy.ShouldBe(true);
         }

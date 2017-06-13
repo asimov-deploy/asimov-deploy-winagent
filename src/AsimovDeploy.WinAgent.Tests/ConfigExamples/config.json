@@ -29,7 +29,7 @@
 				"verify2": { "Type": "VerifyCommand", "ZipPath": "SiteVerify.zip", "Command": "phantomjs.exe" }
 			},
 
-			"SiteUrl": "http://localhost/DefaultSite",
+      "SiteUrl": "http://localhost/DefaultSite",
 		}
 	],
 	

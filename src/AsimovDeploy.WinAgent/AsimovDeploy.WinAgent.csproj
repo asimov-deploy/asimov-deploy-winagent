@@ -36,6 +36,14 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EasyHttp">
       <HintPath>..\..\packages\EasyHttp.1.6.58.0\lib\net40\EasyHttp.dll</HintPath>
@@ -102,6 +110,7 @@
     <Compile Include="Framework\Common\WebNotificationPublisher.cs" />
     <Compile Include="Framework\Configuration\AsimovListJsonConverter.cs" />
     <Compile Include="Framework\Configuration\AsimovListTypeAttribute.cs" />
+    <Compile Include="Framework\Configuration\DeployUnitTypes.cs" />
     <Compile Include="Framework\Deployment\Steps\FileCopyDeployStep.cs" />
     <Compile Include="Framework\Common\ProcessUtil.cs" />
     <Compile Include="Framework\Deployment\Steps\InstallWindowsService.cs" />
@@ -227,6 +236,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ConfigFiles\config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ConfigFiles\config.empty.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

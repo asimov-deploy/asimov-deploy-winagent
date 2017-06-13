@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Web.Commands;
 using AsimovDeploy.WinAgent.Web.Contracts;
 using NUnit.Framework;
@@ -20,6 +21,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.BasicScenario
         {
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
             units.Count.ShouldBe(1);
+            units[0].type.ShouldBe(DeployUnitTypes.FileCopy);
         }
     }
 }

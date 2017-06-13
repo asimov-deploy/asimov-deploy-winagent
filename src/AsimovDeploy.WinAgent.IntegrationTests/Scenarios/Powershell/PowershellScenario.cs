@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
+using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Web.Commands;
 using AsimovDeploy.WinAgent.Web.Contracts;
 using NUnit.Framework;
@@ -28,6 +28,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.Powershell
             units[0].status.ShouldBe("NA");
             units[0].url.ShouldBe(string.Format("http://{0}:2121", HostNameUtil.GetFullHostName()));
             units[0].hasDeployParameters.ShouldBe(true);
+            units[0].type.ShouldBe(DeployUnitTypes.PowerShell);
         }
 
         [Test]

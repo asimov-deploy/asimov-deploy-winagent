@@ -15,6 +15,7 @@
 ******************************************************************************/
 
 using AsimovDeploy.WinAgent.Framework.Common;
+using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
 using AsimovDeploy.WinAgent.Framework.Tasks;
 
@@ -24,6 +25,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
     {
         public string TargetPath { get; set; }
         public bool CleanTargetPath { get; set; }
+
+        public override string UnitType => DeployUnitTypes.FileCopy;
 
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
         {

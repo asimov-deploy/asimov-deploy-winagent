@@ -1,19 +1,26 @@
 ﻿{
-	"NodeFrontUrl": "http://overriden:3335",
-    "AgentGroup": "Test Group",
+  "NodeFrontUrl": "http://overriden:3335",
+  "AgentGroup": "Test Group",
 
-	"PackageSources": {
-		"Extra": { "Type": "FileSystem", "Uri": "file://extra" }
-	},
+  "PackageSources": {
+    "Extra": {
+      "Type": "FileSystem",
+      "Uri": "file://extra"
+    }
+  },
 
-	"Units": [
-		{
-			"Name": "TestService",
-			"Type": "WindowsService",										
-		
-			"ServiceName": "Test",
+  "Units": [
+    {
+      "Name": "TestService",
+      "Type": "WindowsService",
 
-			"PackageInfo": { "Source": "Extra", "InternalPath": "Muu" }
-		}
-	]
+      "ServiceName": "Test",
+
+      "PackageInfo": {
+        "Source": "Extra",
+        "InternalPath": "Muu"
+      },
+
+    }
+  ]
 }

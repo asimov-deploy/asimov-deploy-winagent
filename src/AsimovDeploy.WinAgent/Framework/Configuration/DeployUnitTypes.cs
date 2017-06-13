@@ -14,14 +14,14 @@
 * limitations under the License.
 ******************************************************************************/
 
-using AsimovDeploy.WinAgent.Framework.Configuration;
-using AsimovDeploy.WinAgent.Framework.WebSiteManagement;
-
-namespace AsimovDeploy.WinAgent.Framework.Models.Units
+namespace AsimovDeploy.WinAgent.Framework.Configuration
 {
-    public class IIS6WebSiteDeployUnit : WebSiteDeployUnit
+    public class DeployUnitTypes
     {
-        public override IWebServer GetWebServer() => new IIS6WebServer(SiteName);
-        public override string UnitType => DeployUnitTypes.Iis6WebSite;
+        public const string WebSite = "WebSite";
+        public const string Iis6WebSite = "IIS6WebSite";
+        public const string WindowsService = "WindowsService";
+        public const string PowerShell = "PowerShell";
+        public const string FileCopy = "FileCopy";
     }
 }

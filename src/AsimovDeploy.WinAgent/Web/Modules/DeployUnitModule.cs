@@ -17,7 +17,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Models;
-using AsimovDeploy.WinAgent.Framework.Models.Units;
 using AsimovDeploy.WinAgent.Web.Contracts;
 using Nancy;
 
@@ -27,19 +26,19 @@ namespace AsimovDeploy.WinAgent.Web.Modules
     {
         public DeployUnitModule(IAsimovConfig config)
         {
-			Get["/units/list"] = _ =>
-			{
-				var units = GetDeployUnits(config);
-				return Response.AsJson(units);
-			};
+            Get["/units/list"] = _ =>
+            {
+                var units = GetDeployUnits(config);
+                return Response.AsJson(units);
+            };
 
-			Get["/units/list/{group}"] = urlArgs =>
-			{
-				var units = GetDeployUnits(config, (string)urlArgs.group);
-				return Response.AsJson(units);
-			};
+            Get["/units/list/{group}"] = urlArgs =>
+            {
+                var units = GetDeployUnits(config, (string)urlArgs.group);
+                return Response.AsJson(units);
+            };
 
-			Get["/units/deploy-parameters/{unitName}"] = urlArgs =>
+            Get["/units/deploy-parameters/{unitName}"] = urlArgs =>
             {
                 var deployUnit = config.GetUnitByName((string)urlArgs.unitName);
                 if (deployUnit == null)
@@ -52,35 +51,38 @@ namespace AsimovDeploy.WinAgent.Web.Modules
         }
 
         private static List<DeployUnitInfoDTO> GetDeployUnits(IAsimovConfig config, string agentGroup = null)
-	    {
-		    var units = new List<DeployUnitInfoDTO>();
+        {
+            var units = new List<DeployUnitInfoDTO>();
 
-		    foreach (var deployUnit in config.GetUnitsByGroup(agentGroup))
-		    {
-			    var unitInfo = deployUnit.GetUnitInfo();
-			    var unitInfoDto = new DeployUnitInfoDTO
-			    {
-				    name = unitInfo.Name,
-				    lastDeployed = unitInfo.LastDeployed
-			    };
+            foreach (var deployUnit in config.GetUnitsByGroup(agentGroup))
+            {
+                var unitInfo = deployUnit.GetUnitInfo();
+                var unitInfoDto = new DeployUnitInfoDTO
+                {
+                    name = unitInfo.Name,
+                    type = deployUnit.UnitType,
+                    lastDeployed = unitInfo.LastDeployed,
+                };
 
-			    if (unitInfo.DeployStatus != DeployStatus.NA)
-			    {
-				    unitInfoDto.status = unitInfo.DeployStatus.ToString();
-				    unitInfoDto.lastDeployed = "";
-			    }
-			    else
-				    unitInfoDto.status = unitInfo.Status.ToString();
+                if (unitInfo.DeployStatus != DeployStatus.NA)
+                {
+                    unitInfoDto.status = unitInfo.DeployStatus.ToString();
+                    unitInfoDto.lastDeployed = "";
+                }
+                else
+                {
+                    unitInfoDto.status = unitInfo.Status.ToString();
+                }
 
-			    unitInfoDto.url = unitInfo.Url;
-			    unitInfoDto.version = unitInfo.Version.VersionNumber;
-			    unitInfoDto.branch = unitInfo.Version.VersionBranch;
-			    unitInfoDto.hasDeployParameters = unitInfo.HasDeployParameters;
-			    unitInfoDto.actions = deployUnit.Actions.OrderBy(x => x.Sort).Select(x => x.Name).ToArray();
+                unitInfoDto.url = unitInfo.Url;
+                unitInfoDto.version = unitInfo.Version.VersionNumber;
+                unitInfoDto.branch = unitInfo.Version.VersionBranch;
+                unitInfoDto.hasDeployParameters = unitInfo.HasDeployParameters;
+                unitInfoDto.actions = deployUnit.Actions.OrderBy(x => x.Sort).Select(x => x.Name).ToArray();
 
-			    units.Add(unitInfoDto);
-		    }
-		    return units;
-	    }
+                units.Add(unitInfoDto);
+            }
+            return units;
+        }
     }
 }
