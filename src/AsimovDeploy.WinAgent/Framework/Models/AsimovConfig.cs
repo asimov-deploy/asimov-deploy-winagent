@@ -87,7 +87,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
         public PackageSource GetPackageSourceFor(DeployUnit deployUnit) => PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
 
-        public DeployUnit GetUnitByName(string name) => Units.Single(x => x.Name == name);
+        public DeployUnit GetUnitByName(string name) => Units.First(x => x.Name == name);
 
         private bool AgentGroupIsSuppliedButNoMatchingFound(string agentGroup)
             => !string.IsNullOrWhiteSpace(agentGroup) && !Environments.Any(a => a.AgentGroup == agentGroup);
