@@ -41,9 +41,17 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 		List<DeployEnvironment> Environments { get; set; }
 		DeployUnits Units { get; set; }
 		DeployUnit GetUnitByName(string name);
-		DeployUnits GetUnitsByGroup(string agentGroup = null);
+		DeployUnits GetUnitsByAgentGroup(string agentGroup = null);
+        DeployUnits GetUnitsByUnitGroup(string unitGroup);
+        DeployUnits GetUnitsByType(string unitType);
+        DeployUnits GetUnitsByTag(string tag);
 
-		Uri WebControlUrl { get; }
+        string[] GetAgentGroups();
+        string[] GetUnitGroups();
+        string[] GetUnitTypes();
+        string[] GetUnitTags();
+
+        Uri WebControlUrl { get; }
         Dictionary<string, string> LoadBalancerParameters { get; set; }
 
         PackageSource GetPackageSourceFor(DeployUnit deployUnit);

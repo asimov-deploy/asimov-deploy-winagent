@@ -9,7 +9,8 @@
 	"Units": [
 		{
 			"Name": "UnitWithParameters",
-			"Type": "WindowsService",										
+			"Group": "Test 1",
+      "Type": "WindowsService",										
 		
 			"ServiceName": "Test",
 
@@ -17,7 +18,8 @@
                 "Tasks": { "Type": "Text", "Default": "Deploy-Everything" }
             },
 
-			"PackageInfo": { "Source": "Extra", "InternalPath": "Muu" }
-		}
+			"PackageInfo": { "Source": "Extra", "InternalPath": "Muu" },
+			"Tags": [ "tag1", "tag3" ]
+    }
 	]
 }

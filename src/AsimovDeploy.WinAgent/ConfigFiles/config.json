@@ -1,0 +1,44 @@
+{
+    "WebPort": 21233,
+    "DataFolder": "Data",
+    "HeartbeatIntervalSeconds": 10,
+    "NodeFrontUrl": "http://localhost:3333",
+    "ConfigVersion": 1,
+    "Environment": "default,api,tradera_site,process_services,billing,databases,distributors,tools,cluster,customer_support,windows-config", 
+
+    "PackageSources": {
+        "Tradera.Test.Drops":                               { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/Tradera_CI_BuildDrops" },
+        "AsimovDeploy.NodeFront":                           { "Type": "FileSystem", "Uri": "file://tradera-build1/Drops/AsimovDeploy", "Pattern": "AsimovDeploy.NodeFront-v(?<version>\\d+\\.\\d+\\.\\d+)-\\[(?<branch>\\w*)\\]-\\[(?<commit>\\w*)\\]" },
+        "ProcessServiceTest":                               { "Type": "FileSystem", "Uri": "file://tradera-build1.intranet.tradera.com/Drops/test/processservices" },
+        "WebApiTest":                                       { "Type": "FileSystem", "Uri": "file://tradera-build1.intranet.tradera.com/Drops/test/webapi" },
+        "ApiTest":                                          { "Type": "FileSystem", "Uri": "file://tradera-build1.intranet.tradera.com/Drops/test/api" },
+        "TouchWebTest":                                     { "Type": "FileSystem", "Uri": "file://tradera-build1.intranet.tradera.com/Drops/test/touchweb" },
+        "UserRegistrationTest":                             { "Type": "FileSystem", "Uri": "file://tradera-build1.intranet.tradera.com/Drops/test/userregistration" },
+        "CustomerSupportTest":                              { "Type": "FileSystem", "Uri": "file://tradera-build1.intranet.tradera.com/Drops/test/customersupport" },
+        "AppLogs2Elastic":                                  { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/InfrastructureTools/Applogs2elastic/Tradera.Infrastructure.Tools.AppLogs2Elastic.Service" },
+        "Appsrv_Test":                                      { "Type": "FileSystem", "Uri": "file://tradera-build1.intranet.tradera.com/Drops/Appsrv_test" },
+        "UdpPublisherService":                              { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/InfrastructureTools/UdpPublisherService/Tradera.Infrastructure.Tools.UdpPublisher.Service" },
+        "MetadataCollection":                               { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/Finding/SearchMetadataCollection/Tradera.Finding.SearchMetadataCollection.Service" },
+        "MetadataAggregation":                              { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/Finding/SearchMetadataCollection/Tradera.Finding.SearchMetadataCollectionAggregator.Service" },
+        "ElasticMigrate":                                   { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/Finding/Search/EbaySweden.Trading.ElasticMigrate" },
+
+        "MyTradera.Denormalizer.Item.Drop":                 { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/MyTradera/Denormalizer/Tradera.MyTradera.Denormalizer.Item.Service" },
+        "MyTradera.Denormalizer.Transaction.Drop":          { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/MyTradera/Denormalizer/Tradera.MyTradera.Denormalizer.Transaction.Service" },
+        "MyTradera.Initializer.Web.Drop":                   { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/MyTradera/Denormalizer/Tradera.MyTradera.Initializer.Web.Service" },
+        "MyTradera.SecondLevelRetry.Drop":                  { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/MyTradera/Denormalizer/Tradera.MyTradera.Denormalizer.SecondLevelRetry.Service" },
+        "Metadata":                                         { "Type": "FileSystem", "Uri": "file://tradera-build1/Drops/Metadata" },
+        "Tradera.Finding.SavedSearch.Percolator.Service":   { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/Finding/SavedSearch/EbaySweden.Trading.Finding.Notifications.Service" },
+        "Finding.Notifications.SaveSearches.Service":       { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/test/asimov/Finding/Finding.Notifications.SaveSearches.Service.choco" },
+        "Finding.LiveIndexing.Service":                     { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/Finding/Search/Tradera.Finding.Search.LiveIndexing.Service" },
+
+        "AsimovDeploy.Annotations.Service":                     { "Type": "FileSystem", "Uri": "file://tradera-build1/Drops/AsimovAnnotations/AsimovDeploy.Annotations.Agent" }
+    },
+    "Agents": {
+        "test*":         { "Environment": "default,api,tradera_site,process_services,billing,databases,distributors,tools,cluster,customer_support,windows-config" },
+        "staging":       { "Environment": "default" },
+        "integration01": { "Environment": "default" },
+        "se0-testlogs*": { "Environment": "infrastructure" },
+        "rob-dsc-test*": { "Environment": "windows-config" },
+
+    }
+}

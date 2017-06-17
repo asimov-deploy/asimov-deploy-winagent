@@ -38,7 +38,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public bool HasDeployParameters => GetDeployParameters().Count > 0 || GetCredentials().Count > 0;
 
+        public string Group { get; set; }
         public abstract string UnitType { get; }
+        public List<string> Tags { get; set; } = new List<string>();
 
         public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId);
 
@@ -47,6 +49,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             var deployUnitInfo = new DeployUnitInfo
             {
                 Name = Name,
+                Group = Group,
                 HasDeployParameters = HasDeployParameters,
 
             };

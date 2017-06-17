@@ -1,0 +1,115 @@
+{
+    "NodeFrontUrl": "http://test04:3333",
+    "AgentGroup": "Tools",
+
+    "HeartbeatIntervalSeconds": 60,
+
+    "PackageSources":  {
+        "Tradera.Test.Finding.Notifications.EmailData": { "Type": "FileSystem", "Uri": "file://tradera-build1/drops/test/asimov/Finding/Finding.Notifications.EmailData.choco" }
+    },
+
+    "Units": [
+        {
+            "Name":			"WebApi.Browse.Initializer",
+            "Type":			"WindowsService",
+            "ServiceName": 	"WebApi.BrowseInitializer",
+
+            "PackageInfo":	{ "Source": "WebApiTest", "InternalPath":  "_PublishedApplications/WebApi/WebApi.Browse.Initializer"  },
+
+            "Url": "http://localhost:5978",
+
+            "Installable": {
+                "TargetPath": "D:\\Services\\ProcessServices\\WebApi\\WebApi.Browse.Initializer",
+                "Install": "netsh http add urlacl url=http://*:5978/ user=$Username; .\\EbaySweden.WebApi.Browse.Initializer.exe install -username=\"$Username\" -password=\"$Password\"",
+                "InstallParameters": {
+                    "Username": { "Type": "Text", "Default": "tradera\\webapi_svc" },
+                    "Password": { "Type": "Password" }
+                },
+                "Uninstall": ".\\EbaySweden.WebApi.Browse.Initializer.exe uninstall; netsh http delete urlacl url=http://*:5978/"
+            }
+        },
+
+        {
+            "Name":			"Buying.Initializer.QueryStore.Member",
+            "Type":			"WindowsService",
+            "ServiceName": 	"Buying.Initializer.QueryStore.Member",
+
+            "PackageInfo":	{ "Source": "ProcessServiceTest", "InternalPath":  "_PublishedApplications/Buying/Initializer.QueryStore.Member/"  },
+
+            "Url": "http://localhost:5979",
+
+            "Installable": {
+                "TargetPath": "D:\\Services\\ProcessServices\\Buying\\Initializers\\Initializer.QueryStore.Member",
+                "Install": "netsh http add urlacl url=http://*:5979/ user=$Username; .\\Initializer.QueryStore.Member.exe install -username=\"$Username\" -password=\"$Password\"",
+                "InstallParameters": {
+                    "Username": { "Type": "Text", "Default": "tradera\\buying_svc" },
+                    "Password": { "Type": "Password" }
+                },
+                "Uninstall": ".\\Initializer.QueryStore.Member.exe uninstall; netsh http delete urlacl url=http://*:5979/"
+            }
+        },
+        {
+            "Name":			"Application.ErrorQueueManager",
+            "Type":			"WindowsService",
+
+            "PackageInfo":	{ "Source": "Tradera.Test.Drops", "InternalPath":  "_PublishedApplications/Operations/ErrorQueueManager/"  },
+
+            "Url": "http://localhost:5979",
+
+            "Installable": {
+                "TargetPath": "D:\\Applications\\Operations\\ErrorQueueManager",
+                "Install": ".\\Operataions.ErrorQueueManager.exe install -servicename:\"Application.ErrorQueueManager\" -username:\"$Username\" -password:\"$Password\"",
+                "InstallParameters": {
+                    "Username": { "Type": "Text", "Default": "tradera\\operations_svc" },
+                    "Password": { "Type": "Password" }
+                },
+                "Uninstall": ".\\Operataions.ErrorQueueManager.exe uninstall -servicename:\"Application.ErrorQueueManager\" "
+            }
+        },
+        {
+            "Name": "Operations.TimingEvents.MonitoringHandler",
+            "Type": "WindowsService",
+            "PackageInfo": { "Source": "Tradera.Test.Drops", "InternalPath":  "_PublishedApplications/Operations/TimingEvents.MonitoringHandler"  },
+            "Url": "http://localhost:8730/health",
+            "Installable": {
+                "TargetPath": "D:\\Applications\\Operations\\Services\\TimingEvents.MonitoringHandler",
+                "Install": ".\\NServiceBus.Host.exe -install -username=\"$Username\" -password=\"$Password\" -serviceName=\"$ServiceName\" -displayName=\"$ServiceName\" NServiceBus.Production NServiceBus.PerformanceCounters",
+                "InstallParameters": {
+                    "Username": {
+                        "Type": "Text",
+                        "Default": "tradera\\operations_svc"
+                    },
+                    "Password": {
+                        "Type": "Password"
+                    }
+                },
+                "Uninstall": "\\NServiceBus.Host.exe -uninstall -serviceName=\"$ServiceName\""
+            }
+        },
+
+        {
+            "Name": "Finding.Notification.EmailData.ScheduledJob)",
+            "Type":  "PowerShell",
+
+            "PackageInfo": { "Source": "Tradera.Test.Finding.Notifications.EmailData" },
+
+            "Script":
+            "
+            ./install.ps1 -Environment test
+            "
+        },
+
+        {
+            "Name": "AsimovDeploy.Annotations.Service",
+            "Type": "WindowsService",
+            "ServiceName": "AsimovDeploy.Annotations",
+            "PackageInfo":  { "Source": "AsimovDeploy.Annotations.Service" },
+            "Url": "http://localhost:9195/",
+            "Installable": {
+                "TargetPath": "D:\\Applications\\AsimovAnnotations",
+                "Install": ".\\AsimovDeploy.Annotations.Agent.exe install",
+                "Uninstall": ".\\AsimovDeploy.Annotations.Agent.exe uninstall"
+            }
+        }
+    ]
+}

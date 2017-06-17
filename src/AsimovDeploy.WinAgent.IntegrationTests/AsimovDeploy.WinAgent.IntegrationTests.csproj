@@ -62,7 +62,7 @@
     <Compile Include="PackageSource\FileSystemPackageSourceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenarios\SourceRelativePathScenario\SourceRelativePathScenario.cs" />
-    <Compile Include="Scenarios\GroupScenario\GroupScenario.cs" />
+    <Compile Include="Scenarios\GetDeployUnitsScenario\GetDeployUnitsScenario.cs" />
     <Compile Include="Scenarios\BasicScenario\BasicScenario.cs" />
     <Compile Include="Scenarios\PasswordScenario\PasswordScenario.cs" />
     <Compile Include="Scenarios\Powershell\PowershellScenario.cs" />
@@ -81,10 +81,9 @@
     </None>
     <None Include="Scenarios\SourceRelativePathScenario\Packages\Group\Unit1\somefile-v1.0.0.0-[bbb]-[123123].zip" />
     <None Include="Scenarios\SourceRelativePathScenario\Packages\Group\Unit2\somefile-v2.0.0.0-[bbb]-[123123].zip" />
-    <None Include="Scenarios\GroupScenario\ConfigFiles\config.other-environment.json" />
-    <None Include="Scenarios\GroupScenario\ConfigFiles\config.json" />
-    <None Include="Scenarios\GroupScenario\ConfigFiles\config.interesting.json" />
-    <None Include="Scenarios\GroupScenario\Packages\somefile-v12.0.0.0-[bbb]-[123123].zip" />
+    <None Include="Scenarios\GetDeployUnitsScenario\ConfigFiles\config.other-environment.json" />
+    <None Include="Scenarios\GetDeployUnitsScenario\ConfigFiles\config.json" />
+    <None Include="Scenarios\GetDeployUnitsScenario\ConfigFiles\config.interesting.json" />
     <None Include="Scenarios\BasicScenario\ConfigFiles\config.json">
       <SubType>Component</SubType>
     </None>
@@ -113,7 +112,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Scenarios\GetDeployUnitsScenario\Packages\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

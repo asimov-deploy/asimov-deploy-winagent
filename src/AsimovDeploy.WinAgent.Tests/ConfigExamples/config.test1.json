@@ -12,6 +12,7 @@
   "Units": [
     {
       "Name": "TestService",
+      "Group": "Test", 
       "Type": "WindowsService",
 
       "ServiceName": "Test",
@@ -21,6 +22,7 @@
         "InternalPath": "Muu"
       },
 
+      "Tags": [ "tag1", "tag3", "tag4" ]
     }
   ]
 }

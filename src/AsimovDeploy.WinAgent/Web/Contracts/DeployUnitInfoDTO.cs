@@ -14,11 +14,14 @@
 * limitations under the License.
 ******************************************************************************/
 
+using System.Collections.Generic;
+
 namespace AsimovDeploy.WinAgent.Web.Contracts
 {
     public class DeployUnitInfoDTO
     {
         public string name { get; set; }
+        public string group { get; set; }
         public string type { get; set; }
         public string url { get; set; }
         public string version { get; set; }
@@ -27,6 +30,7 @@ namespace AsimovDeploy.WinAgent.Web.Contracts
         public string lastDeployed { get; set; }
         public bool hasDeployParameters { get; set; }
         public string[] actions { get; set;}
+        public string[] tags { get; set; }
     }
 
     public class DeployedVersionDTO
