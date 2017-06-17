@@ -62,7 +62,16 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             }
 
             if (!Version.DeployFailed)
-                deployUnitInfo.LastDeployed = $"Deployed by {Version.UserName} {DateUtils.GetFriendlyAge(Version.DeployTimestamp)}";
+            {
+                if (Version.DeployTimestamp == DateTime.MinValue)
+                {
+                    deployUnitInfo.LastDeployed = string.Empty;
+                }
+                else
+                {
+                    deployUnitInfo.LastDeployed = $"Deployed by {Version.UserName} {DateUtils.GetFriendlyAge(Version.DeployTimestamp)}";
+                }
+            }
 
             deployUnitInfo.Version = Version;
             deployUnitInfo.DeployStatus = DeployStatus;
