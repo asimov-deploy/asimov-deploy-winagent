@@ -9,5 +9,8 @@
 		public string version;
 		public int configVersion;
 		public LoadBalancerStateDTO loadBalancerState;
+	    public string[] unitGroups;
+	    public string[] unitTypes { get; set; }
+	    public string[] tags { get; set; }
 	}
 }
