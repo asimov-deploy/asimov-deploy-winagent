@@ -125,6 +125,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             return Units
                 .Where(x => x.Tags != null)
                 .SelectMany(x => x.Tags)
+                .Union(new []
+                {
+                    "Windows",
+                    System.Environment.MachineName
+                })
                 .Distinct()
                 .OrderBy(x => x)
                 .ToArray();

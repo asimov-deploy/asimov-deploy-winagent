@@ -280,7 +280,9 @@ namespace AsimovDeploy.WinAgent.Tests
             var config = ReadConfig("ConfigExamples", "testagent3");
             var tags = config.GetUnitTags();
 
-            tags.Length.ShouldBe(5);
+            tags.Length.ShouldBe(7);
+            tags.ShouldContain("Windows");
+            tags.ShouldContain(Environment.MachineName);
             tags.ShouldContain("tag1");
             tags.ShouldContain("tag2");
             tags.ShouldContain("tag3");
