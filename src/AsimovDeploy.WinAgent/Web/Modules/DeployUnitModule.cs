@@ -88,6 +88,12 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                 deployUnits = deployUnits.Intersect(filteredByTags);
             }
 
+            if (getDeployUnitsRequestDto.Units != null && getDeployUnitsRequestDto.Units.Any())
+            {
+                var filteredByUnits = getDeployUnitsRequestDto.Units.SelectMany(config.GetUnitsByUnitName);
+                deployUnits = deployUnits.Intersect(filteredByUnits);
+            }
+
             var units = new List<DeployUnitInfoDTO>();
 
             foreach (var deployUnit in deployUnits.ToList().Distinct())

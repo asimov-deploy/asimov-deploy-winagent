@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Web.Contracts;
@@ -27,7 +26,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_agent_group_interesting_group()
         {
-            var url = GetUrl(agentGroups: new[]
+            var url = GenerateUrl(agentGroups: new[]
             {
                 "Interesting Group"
             });
@@ -39,7 +38,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_agent_group_other_group()
         {
-            var url = GetUrl(agentGroups: new[]
+            var url = GenerateUrl(agentGroups: new[]
             {
                 "Other Group"
             });
@@ -51,7 +50,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_multiple_existing_agent_groups()
         {
-            var url = GetUrl(agentGroups: new[]
+            var url = GenerateUrl(agentGroups: new[]
             {
                 "Other Group",
                 "Interesting Group"
@@ -64,7 +63,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_not_return_any_deploy_units_when_non_existing_agent_group()
         {
-            var url = GetUrl(agentGroups: new[]
+            var url = GenerateUrl(agentGroups: new[]
             {
                 "Non Existing Group"
             });
@@ -76,7 +75,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_existing_and_non_existing_agent_group()
         {
-            var url = GetUrl(agentGroups: new[]
+            var url = GenerateUrl(agentGroups: new[]
             {
                 "Interesting Group",
                 "Non Existing Group"
@@ -89,7 +88,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_unit_group_test_1()
         {
-            var url = GetUrl(unitGroups: new[]
+            var url = GenerateUrl(unitGroups: new[]
             {
                 "Test 1"
             });
@@ -102,7 +101,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_unit_group_test_2()
         {
-            var url = GetUrl(unitGroups: new[]
+            var url = GenerateUrl(unitGroups: new[]
             {
                 "Test 2"
             });
@@ -115,7 +114,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_multiple_existing_unit_groups()
         {
-            var url = GetUrl(unitGroups: new[]
+            var url = GenerateUrl(unitGroups: new[]
             {
                 "Test 1",
                 "Test 2"
@@ -130,7 +129,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_not_return_any_deploy_units_when_non_existing_unit_group()
         {
-            var url = GetUrl(unitGroups: new[]
+            var url = GenerateUrl(unitGroups: new[]
             {
                 "Non Existing Group"
             });
@@ -142,7 +141,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_existing_and_non_existing_unit_group()
         {
-            var url = GetUrl(unitGroups: new[]
+            var url = GenerateUrl(unitGroups: new[]
             {
                 "Test 1",
                 "Non Existing Group"
@@ -156,7 +155,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_unit_type_windows_service()
         {
-            var url = GetUrl(unitTypes: new[]
+            var url = GenerateUrl(unitTypes: new[]
             {
                 DeployUnitTypes.WindowsService
             });
@@ -169,7 +168,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_not_return_any_deploy_units_when_non_existing_unit_type()
         {
-            var url = GetUrl(unitTypes: new[]
+            var url = GenerateUrl(unitTypes: new[]
             {
                 DeployUnitTypes.WebSite
             });
@@ -181,7 +180,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_unit_type_existing_and_non_existing()
         {
-            var url = GetUrl(unitTypes: new[]
+            var url = GenerateUrl(unitTypes: new[]
             {
                 DeployUnitTypes.WindowsService,
                 DeployUnitTypes.WebSite
@@ -195,7 +194,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_tag_tag_1()
         {
-            var url = GetUrl(tags: new[]
+            var url = GenerateUrl(tags: new[]
             {
                 "tag1"
             });
@@ -207,7 +206,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_tag_tag_2()
         {
-            var url = GetUrl(tags: new[]
+            var url = GenerateUrl(tags: new[]
             {
                 "tag2"
             });
@@ -219,7 +218,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_tag_tag_3()
         {
-            var url = GetUrl(tags: new[]
+            var url = GenerateUrl(tags: new[]
             {
                 "tag3"
             });
@@ -231,7 +230,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_multiple_existing_tags()
         {
-            var url = GetUrl(tags: new[]
+            var url = GenerateUrl(tags: new[]
             {
                 "tag1",
                 "tag2"
@@ -244,7 +243,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_not_return_any_deploy_units_when_non_existing_tag()
         {
-            var url = GetUrl(tags: new[]
+            var url = GenerateUrl(tags: new[]
             {
                 "Non Existing Tag"
             });
@@ -256,7 +255,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         [Test]
         public void should_return_deploy_units_when_existing_and_non_existing_tag()
         {
-            var url = GetUrl(tags: new[]
+            var url = GenerateUrl(tags: new[]
             {
                 "tag3",
                 "Non Existing Tag"
@@ -266,10 +265,106 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
             units.Count.ShouldBe(1);
         }
 
+        [Test]
+        public void should_return_deploy_units_when_unit_is_empty_string()
+        {
+            var url = GenerateUrl(units: new[]
+            {
+                string.Empty
+            });
+
+            var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
+            units.Count.ShouldNotBe(0);
+        }
+
+        [Test]
+        public void should_return_deploy_units_when_unit_is_null()
+        {
+            var url = GenerateUrl(units: new string[]
+            {
+                null
+            });
+
+            var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
+            units.Count.ShouldNotBe(0);
+        }
+
+        [Test]
+        public void should_return_deploy_units_when_unit_TestService1()
+        {
+            var url = GenerateUrl(units: new[]
+            {
+                "TestService1"
+            });
+
+            var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
+            units.Single().name.ShouldBe("TestService1");
+        }
+
+        [Test]
+        public void should_return_deploy_units_when_unit_TestService2()
+        {
+            var url = GenerateUrl(units: new[]
+            {
+                "TestService2"
+            });
+
+            var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
+            units.Single().name.ShouldBe("TestService2");
+        }
+
+        [Test]
+        public void should_return_deploy_units_when_unit_UnitWithParameters()
+        {
+            var url = GenerateUrl(units: new[]
+            {
+                "UnitWithParameters"
+            });
+
+            var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
+            units.Single().name.ShouldBe("UnitWithParameters");
+        }
+
+        [Test]
+        public void should_return_deploy_units_when_unit_starts_with_test()
+        {
+            var url = GenerateUrl(units: new[]
+            {
+                "test.*"
+            });
+
+            var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
+            units.Count.ShouldBe(2);
+        }
+
+        [Test]
+        public void should_return_deploy_units_when_unit_has_service_in_the_middle()
+        {
+            var url = GenerateUrl(units: new[]
+            {
+                ".*service.*"
+            });
+
+            var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
+            units.Count.ShouldBe(2);
+        }
+
+        [Test]
+        public void should_return_deploy_units_when_unit_contains_e()
+        {
+            var url = GenerateUrl(units: new[]
+            {
+                ".*e.*"
+            });
+
+            var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
+            units.Count.ShouldBe(3);
+        }
+
         [Test, TestCaseSource(nameof(CombinedFilterCases))]
         public void should_return_deploy_units_when_combining_filters(string[] agentGroups, string[] unitGroups, string[] unitTypes, string[] tags, int expectedUnits)
         {
-            var url = GetUrl(agentGroups, unitGroups, unitTypes, tags);
+            var url = GenerateUrl(agentGroups, unitGroups, unitTypes, tags);
             var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
             units.Count.ShouldBe(expectedUnits);
         }
@@ -302,7 +397,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
             }
         };
 
-        private static string GetUrl(string[] agentGroups = null, string[] unitGroups = null, string[] unitTypes = null, string[] tags = null)
+        private static string GenerateUrl(string[] agentGroups = null, string[] unitGroups = null, string[] unitTypes = null, string[] tags = null, string[] units = null)
         {
             var url = "/units/list";
             var querystrings = new Dictionary<string, string[]>();
@@ -325,6 +420,11 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
             if (tags != null)
             {
                 querystrings.Add("tags", tags);
+            }
+
+            if (units != null)
+            {
+                querystrings.Add("units", units);
             }
 
             if (querystrings.Any())

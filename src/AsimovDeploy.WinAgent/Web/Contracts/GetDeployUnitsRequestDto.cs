@@ -22,5 +22,6 @@ namespace AsimovDeploy.WinAgent.Web.Contracts
         public string[] UnitGroups { get; set; }
         public string[] UnitTypes { get; set; }
         public string[] Tags { get; set; }
+        public string[] Units { get; set; }
     }
 }
