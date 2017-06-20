@@ -40,7 +40,12 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public string Group { get; set; }
         public abstract string UnitType { get; }
-        public List<string> Tags { get; set; } = new List<string>();
+
+        public List<string> Tags { get; set; } = new List<string>
+        {
+            "os:Windows",
+            $"host:{Environment.MachineName}"
+        };
 
         public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId);
 

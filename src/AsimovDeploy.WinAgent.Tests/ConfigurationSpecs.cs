@@ -281,8 +281,8 @@ namespace AsimovDeploy.WinAgent.Tests
             var tags = config.GetUnitTags();
 
             tags.Length.ShouldBe(7);
-            tags.ShouldContain("Windows");
-            tags.ShouldContain(Environment.MachineName);
+            tags.ShouldContain("os:Windows");
+            tags.ShouldContain($"host:{Environment.MachineName}");
             tags.ShouldContain("tag1");
             tags.ShouldContain("tag2");
             tags.ShouldContain("tag3");
