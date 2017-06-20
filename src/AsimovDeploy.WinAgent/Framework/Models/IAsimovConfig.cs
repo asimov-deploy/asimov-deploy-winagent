@@ -45,6 +45,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         DeployUnits GetUnitsByUnitGroup(string unitGroup);
         DeployUnits GetUnitsByType(string unitType);
         DeployUnits GetUnitsByTag(string tag);
+        DeployUnits GetUnitsByUnitName(string arg);
 
         string[] GetAgentGroups();
         string[] GetUnitGroups();
@@ -56,6 +57,5 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
         PackageSource GetPackageSourceFor(DeployUnit deployUnit);
         string GetLoadBalancerParametersAsQueryString();
-
     }
 }

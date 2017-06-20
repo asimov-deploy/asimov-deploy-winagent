@@ -362,9 +362,9 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
         }
 
         [Test, TestCaseSource(nameof(CombinedFilterCases))]
-        public void should_return_deploy_units_when_combining_filters(string[] agentGroups, string[] unitGroups, string[] unitTypes, string[] tags, int expectedUnits)
+        public void should_return_deploy_units_when_combining_filters(string[] agentGroups, string[] unitGroups, string[] unitTypes, string[] tags, string[] unitNames, int expectedUnits)
         {
-            var url = GenerateUrl(agentGroups, unitGroups, unitTypes, tags);
+            var url = GenerateUrl(agentGroups, unitGroups, unitTypes, tags, unitNames);
             var units = Agent.Get<List<DeployUnitInfoDTO>>(url);
             units.Count.ShouldBe(expectedUnits);
         }
@@ -377,6 +377,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
                 new[] { "Test 1", "Test 2" },
                 new[] { DeployUnitTypes.WindowsService },
                 new[] { "tag1", "tag2, tag3" },
+                new[] { "TestService1", "TestService2", "UnitWithParameters" },
                 3
             },
             new object[]
@@ -385,6 +386,16 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
                 new[] { "Test 1", "Test 2" },
                 new[] { DeployUnitTypes.WindowsService },
                 new[] { "tag1" },
+                new string[] {},
+                2
+            },
+            new object[]
+            {
+                new[] { "Interesting Group" },
+                new[] { "Test 1", "Test 2" },
+                new[] { DeployUnitTypes.WindowsService },
+                new[] { "tag1" },
+                new[] { ".*service.*" },
                 2
             },
             new object[]
@@ -393,6 +404,16 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.GetDeployUnitsScenari
                 new[] { "Test 1", "Test 2" },
                 new[] { DeployUnitTypes.WindowsService },
                 new[] { "tag2" },
+                new string[] {},
+                1
+            },
+            new object[]
+            {
+                new[] { "Interesting Group" },
+                new[] { "Test 1", "Test 2" },
+                new[] { DeployUnitTypes.WindowsService },
+                new[] { "tag2" },
+                new [] { ".*Service2" },
                 1
             }
         };

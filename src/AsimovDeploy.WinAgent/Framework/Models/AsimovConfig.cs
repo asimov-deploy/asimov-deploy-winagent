@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
@@ -89,6 +90,22 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public DeployUnits GetUnitsByTag(string tag)
         {
             return new DeployUnits(Units.Where(x => x.Tags.Any(t => t == tag)));
+        }
+
+        public DeployUnits GetUnitsByUnitName(string unitName)
+        {
+            if (string.IsNullOrWhiteSpace(unitName)) return new DeployUnits();
+
+            try
+            {
+                var regex = new Regex(unitName, RegexOptions.IgnoreCase);
+
+                return new DeployUnits(Units.Where(x => regex.IsMatch(x.Name)));
+            }
+            catch (ArgumentException)
+            {
+                return new DeployUnits();
+            }
         }
 
         public string[] GetAgentGroups()
