@@ -93,9 +93,6 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
                             version = VersionUtil.GetAgentVersion(),
                             configVersion = _config.ConfigVersion,
                             group = _config.AgentGroup,
-                            unitGroups = _config.GetUnitGroups(),
-                            unitTypes = _config.GetUnitTypes(),
-                            tags = _config.GetUnitTags(),
                             loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
                         })
                 };
@@ -111,9 +108,6 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
                         version = VersionUtil.GetAgentVersion(),
                         configVersion = _config.ConfigVersion,
                         group = env.AgentGroup,
-                        unitGroups = _config.GetUnitGroups(),
-                        unitTypes = _config.GetUnitTypes(),
-                        tags = _config.GetUnitTags(),
                         loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
                     }));
         }
