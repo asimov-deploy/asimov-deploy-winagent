@@ -98,6 +98,16 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
             try
             {
+                if (!unitName.StartsWith("^"))
+                {
+                    unitName = "^" + unitName;
+                }
+
+                if (!unitName.EndsWith("$"))
+                {
+                    unitName = unitName + "$";
+                }
+
                 var regex = new Regex(unitName, RegexOptions.IgnoreCase);
 
                 return new DeployUnits(Units.Where(x => regex.IsMatch(x.Name)));
