@@ -17,7 +17,8 @@
 	"Units": [
 		{
 			"Name": "DefaultSite",
-			"Type": "WebSite",										
+			"Group":  "Default", 
+      "Type": "WebSite",										
 			"SiteName": "DeployTestWeb",
 			"UnitPackagePath": "DefaultSitePath",
 			"CleanDeploy": true,
@@ -29,7 +30,9 @@
 				"verify2": { "Type": "VerifyCommand", "ZipPath": "SiteVerify.zip", "Command": "phantomjs.exe" }
 			},
 
-			"SiteUrl": "http://localhost/DefaultSite",
+      "SiteUrl": "http://localhost/DefaultSite",
+
+			"Tags": [ "tag1", "tag2" ]
 		}
 	],
 	

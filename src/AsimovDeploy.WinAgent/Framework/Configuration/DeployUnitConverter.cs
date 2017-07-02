@@ -31,11 +31,11 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
         {
             DeployUnitLookup = new Dictionary<string, Type>
             {
-                { "WebSite", typeof(WebSiteDeployUnit) },
-                { "IIS6WebSite", typeof(IIS6WebSiteDeployUnit) },
-                { "WindowsService", typeof(WindowsServiceDeployUnit) },
-                { "PowerShell", typeof(PowerShellDeployUnit) },
-                { "FileCopy", typeof(FileCopyDeployUnit) }
+                { DeployUnitTypes.WebSite, typeof(WebSiteDeployUnit) },
+                { DeployUnitTypes.Iis6WebSite, typeof(IIS6WebSiteDeployUnit) },
+                { DeployUnitTypes.WindowsService, typeof(WindowsServiceDeployUnit) },
+                { DeployUnitTypes.PowerShell, typeof(PowerShellDeployUnit) },
+                { DeployUnitTypes.FileCopy, typeof(FileCopyDeployUnit) }
             };
         }
 

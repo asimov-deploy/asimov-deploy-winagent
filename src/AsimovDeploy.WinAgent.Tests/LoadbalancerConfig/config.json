@@ -9,7 +9,7 @@
     "PackageSources":  {
         "Default":  { "Type": "FileSystem", "Uri": "file://test"    },
         "Prod":     { "Type": "FileSystem", "Uri": "file://test2"   },
-        "Asimov":   { "Type": "AsimovWeb",  "Uri": "http://asimov"  },
+        "Asimov":   { "Type": "AsimovWeb",  "Uri": "http://asimov"  }
     },
 
     "LoadBalancerAgentUrl": "http://localhost:3450",
@@ -23,14 +23,14 @@
             "UnitPackagePath": "DefaultSitePath",
             "CleanDeploy": true,
 
-            "PackageInfo": { Source: "Prod", InternalPath: "DefaultSitePath" },
+            "PackageInfo": { "Source": "Prod", "InternalPath": "DefaultSitePath" },
         
             "Actions": {
                 "verify1": { "Type": "VerifyUrls" },
                 "verify2": { "Type": "VerifyCommand", "ZipPath": "SiteVerify.zip", "Command": "phantomjs.exe" }
             },
 
-            "SiteUrl": "http://localhost/DefaultSite",
+            "SiteUrl": "http://localhost/DefaultSite"
         }
     ],
     

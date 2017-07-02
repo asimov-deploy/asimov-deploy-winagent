@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
 using AsimovDeploy.WinAgent.Framework.Common;
+using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
 using AsimovDeploy.WinAgent.Framework.Models.UnitActions;
 using AsimovDeploy.WinAgent.Framework.Tasks;
@@ -45,6 +46,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             //TODO: We only want to add this if an uninstall action has been configured
             Actions.Add(new UnInstallUnitAction() { Sort = 20 });
         }
+
+        public override string UnitType => DeployUnitTypes.WindowsService;
 
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
         {

@@ -12,17 +12,20 @@
     "Units": [
         {
             "Name": "TestService1",
+            "Group": "Test 1", 
             "Type": "WindowsService",
 
             "ServiceName": "Test",
 
-            "PackageInfo": {
-                "Source": "Extra",
-                "InternalPath": "Muu"
-            }
+          "PackageInfo": {
+            "Source": "Extra",
+            "InternalPath": "Muu"
+          },
+          "Tags": [ "tag1" ] 
         },
         {
             "Name": "TestService2",
+            "Group": "Test 2",
             "Type": "WindowsService",
 
             "ServiceName": "Test2",
@@ -30,7 +33,8 @@
             "PackageInfo": {
                 "Source": "Extra2",
                 "InternalPath": "Muu2"
-            }
+            },
+            "Tags": [ "tag1", "tag2" ]
         }
     ]
 }

@@ -37,7 +37,15 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public ActionParameterList Credentials { get; protected set; } = new ActionParameterList();
 
         public bool HasDeployParameters => GetDeployParameters().Count > 0 || GetCredentials().Count > 0;
-        
+
+        public string Group { get; set; }
+        public abstract string UnitType { get; }
+
+        public List<string> Tags { get; set; } = new List<string>
+        {
+            "os:Windows",
+            $"host:{Environment.MachineName}"
+        };
 
         public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId);
 
@@ -46,8 +54,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             var deployUnitInfo = new DeployUnitInfo
             {
                 Name = Name,
+                Group = Group,
                 HasDeployParameters = HasDeployParameters,
-                
+
             };
 
             if (Version == null)
@@ -58,7 +67,16 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             }
 
             if (!Version.DeployFailed)
-                deployUnitInfo.LastDeployed = $"Deployed by {Version.UserName} {DateUtils.GetFriendlyAge(Version.DeployTimestamp)}";
+            {
+                if (Version.DeployTimestamp == DateTime.MinValue)
+                {
+                    deployUnitInfo.LastDeployed = string.Empty;
+                }
+                else
+                {
+                    deployUnitInfo.LastDeployed = $"Deployed by {Version.UserName} {DateUtils.GetFriendlyAge(Version.DeployTimestamp)}";
+                }
+            }
 
             deployUnitInfo.Version = Version;
             deployUnitInfo.DeployStatus = DeployStatus;

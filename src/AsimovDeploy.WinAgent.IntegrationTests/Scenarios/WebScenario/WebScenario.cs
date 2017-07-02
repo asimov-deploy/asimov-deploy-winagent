@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.ServiceProcess;
 using System.Threading;
+using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Web.Commands;
 using AsimovDeploy.WinAgent.Web.Contracts;
@@ -56,6 +56,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
             units.Count.ShouldBe(1);
             units[0].name.ShouldBe(ServiceName);
             units[0].status.ShouldBe("NotFound");
+            units[0].type.ShouldBe(DeployUnitTypes.WebSite);
         }
 
         [Test]
@@ -67,6 +68,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
             units.Count.ShouldBe(1);
             units[0].name.ShouldBe(ServiceName);
             units[0].status.ShouldBe("Running");
+            units[0].type.ShouldBe(DeployUnitTypes.WebSite);
         }
 
         private void InstallService()

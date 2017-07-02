@@ -17,6 +17,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Common;
+using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
 using AsimovDeploy.WinAgent.Framework.Models.UnitActions;
 using AsimovDeploy.WinAgent.Framework.Tasks;
@@ -66,6 +67,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         }
         public string SiteUrl { get; set; }
         public InstallableConfig Installable { get; set; }
+
+        public override string UnitType => DeployUnitTypes.WebSite;
 
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user,
             string correlationId)

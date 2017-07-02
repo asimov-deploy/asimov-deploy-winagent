@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
@@ -67,13 +68,93 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public DeployUnits Units { get; set; } = new DeployUnits();
         public List<DeployEnvironment> Environments { get; set; } = new List<DeployEnvironment>();
 
-        public DeployUnits GetUnitsByGroup(string agentGroup = null)
+        public DeployUnits GetUnitsByAgentGroup(string agentGroup = null)
         {
             if (AgentGroupIsSuppliedButNoMatchingFound(agentGroup))
                 return new DeployUnits();
             return string.IsNullOrWhiteSpace(agentGroup) ? 
                 Units : 
                 new DeployUnits(Environments.First(a => a.AgentGroup == agentGroup).Units.Select(a => Units.First(b => b.Name == a.Name)));
+        }
+
+        public DeployUnits GetUnitsByUnitGroup(string unitGroup)
+        {
+            return new DeployUnits(Units.Where(x => x.Group == unitGroup));
+        }
+
+        public DeployUnits GetUnitsByType(string unitType)
+        {
+            return new DeployUnits(Units.Where(x => x.UnitType == unitType));
+        }
+
+        public DeployUnits GetUnitsByTag(string tag)
+        {
+            return new DeployUnits(Units.Where(x => x.Tags.Any(t => t == tag)));
+        }
+
+        public DeployUnits GetUnitsByUnitName(string unitName)
+        {
+            if (string.IsNullOrWhiteSpace(unitName)) return new DeployUnits();
+
+            try
+            {
+                if (!unitName.StartsWith("^"))
+                {
+                    unitName = "^" + unitName;
+                }
+
+                if (!unitName.EndsWith("$"))
+                {
+                    unitName = unitName + "$";
+                }
+
+                var regex = new Regex(unitName, RegexOptions.IgnoreCase);
+
+                return new DeployUnits(Units.Where(x => regex.IsMatch(x.Name)));
+            }
+            catch (ArgumentException)
+            {
+                return new DeployUnits();
+            }
+        }
+
+        public string[] GetAgentGroups()
+        {
+            return Environments
+                .Where(x => x.AgentGroup != null)
+                .Select(x => x.AgentGroup)
+                .Distinct()
+                .OrderBy(x => x).ToArray();
+        }
+
+        public string[] GetUnitGroups()
+        {
+            return Units
+                .Where(x => x.Group != null)
+                .Select(x => x.Group)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToArray();
+        }
+
+        public string[] GetUnitTypes()
+        {
+            return Units
+                .Where(x => x.UnitType != null)
+                .Select(x => x.UnitType)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToArray();
+        }
+
+        public string[] GetUnitTags()
+        {
+            return Units
+                .Where(x => x.Tags != null)
+                .SelectMany(x => x.Tags)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToArray();
         }
 
         public Uri WebControlUrl => new Uri($"http://{HostNameUtil.GetFullHostName()}:{WebPort}");

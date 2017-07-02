@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
@@ -28,13 +29,13 @@ namespace AsimovDeploy.WinAgent.Tests
         }
 
         [Test]
-        public void can_get_deploy_units_by_group_using_multiple_environments()
+        public void can_get_deploy_units_by_agent_group_using_multiple_environments()
         {
             var config = ReadConfig("ConfigExamples", "testagent3");
-            var testUnits = config.GetUnitsByGroup("Test Group");
-            var otherUnits = config.GetUnitsByGroup("Other Group");
+            var testUnits = config.GetUnitsByAgentGroup("Test Group");
+            var otherUnits = config.GetUnitsByAgentGroup("Other Group");
 
-            config.GetUnitsByGroup().Count.ShouldBe(3);
+            config.GetUnitsByAgentGroup().Count.ShouldBe(3);
             testUnits.Count.ShouldBe(1);
             otherUnits.Count.ShouldBe(1);
 
@@ -43,6 +44,68 @@ namespace AsimovDeploy.WinAgent.Tests
 
             unit = config.GetUnitByName("TestService");
             unit.ShouldNotBe(null);
+        }
+
+        [Test]
+        public void can_get_deploy_units_by_unit_group_using_multiple_environments()
+        {
+            var config = ReadConfig("ConfigExamples", "testagent3");
+            var testUnits = config.GetUnitsByUnitGroup("Test");
+            var defaultUnits = config.GetUnitsByUnitGroup("Default");
+
+            testUnits.Count.ShouldBe(2);
+            defaultUnits.Count.ShouldBe(1);
+
+            var unit = config.GetUnitByName("UnitWithParameters");
+            unit.ShouldNotBe(null);
+
+            unit = config.GetUnitByName("TestService");
+            unit.ShouldNotBe(null);
+        }
+
+        [Test]
+        public void can_get_deploy_units_by_unit_type_using_multiple_environments()
+        {
+            var config = ReadConfig("ConfigExamples", "testagent3");
+            var windowsServiceUnits = config.GetUnitsByType(DeployUnitTypes.WindowsService);
+            var websiteUnits = config.GetUnitsByType(DeployUnitTypes.WebSite);
+
+            windowsServiceUnits.Count.ShouldBe(2);
+            windowsServiceUnits.Select(x => x.Name).ShouldContain("TestService");
+            windowsServiceUnits.Select(x => x.Name).ShouldContain("UnitWithParameters");
+
+            websiteUnits.Count.ShouldBe(1);
+            websiteUnits.Select(x => x.Name).ShouldContain("DefaultSite");
+        }
+
+        [Test]
+        public void can_get_deploy_units_by_tag_using_multiple_environments()
+        {
+            var config = ReadConfig("ConfigExamples", "testagent3");
+            var tag1Units = config.GetUnitsByTag("tag1");
+            var tag2Units = config.GetUnitsByTag("tag2");
+            var tag3Units = config.GetUnitsByTag("tag3");
+            var tag4Units = config.GetUnitsByTag("tag4");
+            var tag5Units = config.GetUnitsByTag("tag5");
+
+            tag1Units.Count.ShouldBe(3);
+            tag1Units.Select(x => x.Name).ShouldContain("DefaultSite");
+            tag1Units.Select(x => x.Name).ShouldContain("UnitWithParameters");
+            tag1Units.Select(x => x.Name).ShouldContain("TestService");
+
+            tag2Units.Count.ShouldBe(1);
+            tag2Units.Select(x => x.Name).ShouldContain("DefaultSite");
+
+            tag3Units.Count.ShouldBe(2);
+            tag3Units.Select(x => x.Name).ShouldContain("TestService");
+            tag3Units.Select(x => x.Name).ShouldContain("UnitWithParameters");
+
+            tag4Units.Count.ShouldBe(2);
+            tag4Units.Select(x => x.Name).ShouldContain("TestService");
+            tag4Units.Select(x => x.Name).ShouldContain("UnitWithParameters");
+
+            tag5Units.Count.ShouldBe(1);
+            tag5Units.Select(x => x.Name).ShouldContain("UnitWithParameters");
         }
 
         [Test]
@@ -94,14 +157,18 @@ namespace AsimovDeploy.WinAgent.Tests
             config.HeartbeatIntervalSeconds.ShouldBe(10);
             config.TempFolder.ShouldBe("\\Data\\Temp");
             config.ConfigVersion.ShouldBe(101);
+            config.Units[0].UnitType.ShouldBe(DeployUnitTypes.WebSite);
 
             var webSite = (WebSiteDeployUnit) config.Units[0];
             webSite.Name.ShouldBe("DefaultSite");
+            webSite.Group.ShouldBe("Default");
             webSite.SiteName.ShouldBe("DeployTestWeb");
             webSite.SiteUrl.ShouldBe("http://localhost/DefaultSite");
             webSite.PackageInfo.InternalPath.ShouldBe("DefaultSitePath");
             webSite.PackageInfo.Source.ShouldBe("Prod");
-
+            webSite.UnitType.ShouldBe(DeployUnitTypes.WebSite);
+            webSite.Tags.ShouldContain("tag1");
+            webSite.Tags.ShouldContain("tag2");
 
             webSite.CleanDeploy.ShouldBe(true);
         }
@@ -166,10 +233,61 @@ namespace AsimovDeploy.WinAgent.Tests
             config.PackageSources.Count.ShouldBe(4);
             config.Units.Count.ShouldBe(2);
 
-            var packageSource = config.GetPackageSourceFor(config.Units[1]);
-            ((FileSystemPackageSource) packageSource).Uri.ShouldBe(new Uri("file://extra"));
+            var testService = (WindowsServiceDeployUnit)config.Units[1];
+            var packageSource = config.GetPackageSourceFor(testService);
+            ((FileSystemPackageSource)packageSource).Uri.ShouldBe(new Uri("file://extra"));
+
+            testService.Tags.ShouldContain("tag3");
+            testService.Tags.ShouldContain("tag4");
         }
-		
-        
+
+        [Test]
+        public void can_get_agent_groups()
+        {
+            var config = ReadConfig("ConfigExamples", "testagent3");
+            var agentGroups = config.GetAgentGroups();
+
+            agentGroups.Length.ShouldBe(2);
+            agentGroups.ShouldContain("Other Group");
+            agentGroups.ShouldContain("Test Group");
+        }
+
+        [Test]
+        public void can_get_unit_groups()
+        {
+            var config = ReadConfig("ConfigExamples", "testagent3");
+            var unitGroups = config.GetUnitGroups();
+
+            unitGroups.Length.ShouldBe(2);
+            unitGroups.ShouldContain("Default");
+            unitGroups.ShouldContain("Test");
+        }
+
+        [Test]
+        public void can_get_unit_types()
+        {
+            var config = ReadConfig("ConfigExamples", "testagent3");
+            var unitTypes = config.GetUnitTypes();
+
+            unitTypes.Length.ShouldBe(2);
+            unitTypes.ShouldContain(DeployUnitTypes.WebSite);
+            unitTypes.ShouldContain(DeployUnitTypes.WindowsService);
+        }
+
+        [Test]
+        public void can_get_unit_tags()
+        {
+            var config = ReadConfig("ConfigExamples", "testagent3");
+            var tags = config.GetUnitTags();
+
+            tags.Length.ShouldBe(7);
+            tags.ShouldContain("os:Windows");
+            tags.ShouldContain($"host:{Environment.MachineName}");
+            tags.ShouldContain("tag1");
+            tags.ShouldContain("tag2");
+            tags.ShouldContain("tag3");
+            tags.ShouldContain("tag4");
+            tags.ShouldContain("tag5");
+        }
     }
 }

@@ -45,3 +45,6 @@ Site/js/eo_script/eo*
 Site/eo_web.ashx
 build_artifacts/
 config_overrides.js
+
+src/AsimovDeploy.WinAgent/ConfigFiles/
+!src/AsimovDeploy.WinAgent/ConfigFiles/config.empty.json

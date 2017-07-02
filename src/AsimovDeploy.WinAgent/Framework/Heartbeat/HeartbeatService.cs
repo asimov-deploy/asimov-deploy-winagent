@@ -20,7 +20,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models;
@@ -93,7 +92,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
                             apiKey = _config.ApiKey,
                             version = VersionUtil.GetAgentVersion(),
                             configVersion = _config.ConfigVersion,
-                            @group = _config.AgentGroup,
+                            group = _config.AgentGroup,
                             loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
                         })
                 };
@@ -108,7 +107,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
                         apiKey = _config.ApiKey,
                         version = VersionUtil.GetAgentVersion(),
                         configVersion = _config.ConfigVersion,
-                        @group = env.AgentGroup,
+                        group = env.AgentGroup,
                         loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
                     }));
         }

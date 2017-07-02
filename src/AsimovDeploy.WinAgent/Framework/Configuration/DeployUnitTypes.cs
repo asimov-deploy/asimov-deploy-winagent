@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
 * Copyright (C) 2012 eBay Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +14,14 @@
 * limitations under the License.
 ******************************************************************************/
 
-using AsimovDeploy.WinAgent.Framework.Common;
-
-namespace AsimovDeploy.WinAgent.Framework.Models
+namespace AsimovDeploy.WinAgent.Framework.Configuration
 {
-    public class DeployUnitInfo
+    public class DeployUnitTypes
     {
-        public string Name { get; set; }
-        public string Group { get; set; }
-        public string LastDeployed { get; set; }
-        public string Url { get; set; }
-
-        public UnitStatus Status { get; set; }
-        public DeployStatus DeployStatus { get; set; }
-
-        public DeployedVersion Version { get; set; }
-
-        public bool HasDeployParameters { get; set; }
+        public const string WebSite = "WebSite";
+        public const string Iis6WebSite = "IIS6WebSite";
+        public const string WindowsService = "WindowsService";
+        public const string PowerShell = "PowerShell";
+        public const string FileCopy = "FileCopy";
     }
 }
