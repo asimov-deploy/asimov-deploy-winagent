@@ -118,6 +118,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             }
         }
 
+        public DeployUnits GetUnitsByStatus(string status)
+        {
+            return new DeployUnits(Units.Where(x => x.GetUnitInfo().GetUnitStatus() == status));
+        }
+
         public string[] GetAgentGroups()
         {
             return Environments
@@ -152,6 +157,23 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             return Units
                 .Where(x => x.Tags != null)
                 .SelectMany(x => x.Tags)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToArray();
+        }
+
+        public string[] GetUnitStatuses()
+        {
+            var statuses = Enum.GetValues(typeof(UnitStatus))
+                .Cast<UnitStatus>()
+                .Select(x => x.ToString());
+
+            var deployStatuses = Enum.GetValues(typeof(DeployStatus))
+                .Cast<DeployStatus>()
+                .Select(x => x.ToString());
+
+            return statuses
+                .Concat(deployStatuses)
                 .Distinct()
                 .OrderBy(x => x)
                 .ToArray();

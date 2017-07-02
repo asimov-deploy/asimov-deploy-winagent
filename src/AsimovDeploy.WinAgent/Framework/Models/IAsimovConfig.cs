@@ -46,11 +46,13 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         DeployUnits GetUnitsByType(string unitType);
         DeployUnits GetUnitsByTag(string tag);
         DeployUnits GetUnitsByUnitName(string arg);
+        DeployUnits GetUnitsByStatus(string status);
 
         string[] GetAgentGroups();
         string[] GetUnitGroups();
         string[] GetUnitTypes();
         string[] GetUnitTags();
+        string[] GetUnitStatuses();
 
         Uri WebControlUrl { get; }
         Dictionary<string, string> LoadBalancerParameters { get; set; }

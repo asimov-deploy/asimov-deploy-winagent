@@ -38,7 +38,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public bool HasDeployParameters => GetDeployParameters().Count > 0 || GetCredentials().Count > 0;
 
-        public string Group { get; set; }
+        public string Group { get; set; } = "N/A";
         public abstract string UnitType { get; }
 
         public List<string> Tags { get; set; } = new List<string>

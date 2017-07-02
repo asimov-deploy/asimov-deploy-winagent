@@ -58,6 +58,7 @@ namespace AsimovDeploy.WinAgent.Web.Modules
             Get["/unit-groups"] = _ => Response.AsJson(config.GetUnitGroups());
             Get["/unit-types"] = _ => Response.AsJson(config.GetUnitTypes());
             Get["/unit-tags"] = _ => Response.AsJson(config.GetUnitTags());
+            Get["/unit-statuses"] = _ => Response.AsJson(config.GetUnitStatuses());
         }
 
         private static List<DeployUnitInfoDTO> GetDeployUnits(IAsimovConfig config, GetDeployUnitsRequestDto getDeployUnitsRequestDto)
@@ -94,6 +95,12 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                 deployUnits = deployUnits.Intersect(filteredByUnits);
             }
 
+            if (getDeployUnitsRequestDto.UnitStatus != null && getDeployUnitsRequestDto.UnitStatus.Any())
+            {
+                var filteredByStatus = getDeployUnitsRequestDto.UnitStatus.SelectMany(config.GetUnitsByStatus);
+                deployUnits = deployUnits.Intersect(filteredByStatus);
+            }
+
             var units = new List<DeployUnitInfoDTO>();
 
             foreach (var deployUnit in deployUnits.ToList().Distinct())
@@ -104,18 +111,14 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                     name = unitInfo.Name,
                     group = unitInfo.Group,
                     type = deployUnit.UnitType,
+                    status = unitInfo.GetUnitStatus(),
                     lastDeployed = unitInfo.LastDeployed,
                     tags = deployUnit.Tags.ToArray()
                 };
 
                 if (unitInfo.DeployStatus != DeployStatus.NA)
                 {
-                    unitInfoDto.status = unitInfo.DeployStatus.ToString();
                     unitInfoDto.lastDeployed = "";
-                }
-                else
-                {
-                    unitInfoDto.status = unitInfo.Status.ToString();
                 }
 
                 unitInfoDto.url = unitInfo.Url;

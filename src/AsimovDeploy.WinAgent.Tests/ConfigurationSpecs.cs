@@ -289,5 +289,22 @@ namespace AsimovDeploy.WinAgent.Tests
             tags.ShouldContain("tag4");
             tags.ShouldContain("tag5");
         }
+
+        [Test]
+        public void can_get_unit_statuses()
+        {
+            var config = ReadConfig("ConfigExamples", "testagent3");
+            var statuses = config.GetUnitStatuses();
+
+            foreach (var unitStatus in Enum.GetValues(typeof(UnitStatus)))
+            {
+                statuses.ShouldContain(unitStatus.ToString());
+            }
+
+            foreach (var deployStatus in Enum.GetValues(typeof(DeployStatus)))
+            {
+                statuses.ShouldContain(deployStatus.ToString());
+            }
+        }
     }
 }
