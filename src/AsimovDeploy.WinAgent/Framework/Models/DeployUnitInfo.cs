@@ -31,5 +31,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public DeployedVersion Version { get; set; }
 
         public bool HasDeployParameters { get; set; }
+
+        public string GetUnitStatus()
+        {
+            return DeployStatus != DeployStatus.NA ? DeployStatus.ToString() : Status.ToString();
+        }
     }
 }
