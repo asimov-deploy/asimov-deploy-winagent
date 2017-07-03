@@ -1,26 +1,43 @@
 ﻿{
-	"NodeFrontUrl": "http://overriden:3335",
-    "AgentGroup": "Other Group",
+  "NodeFrontUrl": "http://overriden:3335",
+  "AgentGroup": "Other Group",
 
-	"PackageSources": {
-		"Extra": { "Type": "FileSystem", "Uri": "file://extra" }
-	},
+  "PackageSources": {
+    "Extra": {
+      "Type": "FileSystem",
+      "Uri": "file://extra"
+    }
+  },
 
-	"Units": [
-		{
+  "Units": [
+    {
       "Name": "UnitWithParameters",
       "Group": "Test",
-			"Type": "WindowsService",										
-		
-			"ServiceName": "Test",
+      "Type": "WindowsService",
 
-			"DeployParameters": {
-                "Tasks": { "Type": "Text", "Default": "Deploy-Everything" }
-            },
+      "ServiceName": "Test",
 
-			"PackageInfo": { "Source": "Extra", "InternalPath": "Muu" },
+      "DeployParameters": {
+        "Tasks": {
+          "Type": "Text",
+          "Default": "Deploy-Everything"
+        },
+        "Password": {
+          "Type": "Password",
+          "Password": "Password!" 
+        },
+        "PasswordWithInput": {
+          "Type": "Password",
+          "Default": "DefaultPassword"
+        }
+      },
+
+      "PackageInfo": {
+        "Source": "Extra",
+        "InternalPath": "Muu"
+      },
 
       "Tags": [ "tag1", "tag3", "tag4", "tag5" ]
     }
-	]
+  ]
 }

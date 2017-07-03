@@ -65,6 +65,7 @@
     <None Include="PackageSource\Sources\Source2\Package2.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\PasswordScenario\Packages\somefile2-v12.0.0.0-[bbb]-[123123].zip" />
     <None Include="Scenarios\SourceRelativePathScenario\ConfigFiles\config.json">
       <SubType>Component</SubType>
     </None>
