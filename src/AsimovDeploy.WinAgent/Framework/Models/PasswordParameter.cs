@@ -22,19 +22,26 @@ namespace AsimovDeploy.WinAgent.Framework.Models
     public class PasswordActionParameter : ActionParameter
     {
         public string Password { get; set; }
+        public string Default { get; set; }
 
         public override dynamic GetDescriptor()
         {
             dynamic descriptor = new ExpandoObject();
             descriptor.type = "password";
             descriptor.name = Name;
-            descriptor.@default = "";
+            descriptor.@default = Default;
             return descriptor;
         }
 
         public override void ApplyToPowershellScript(StringBuilder script, dynamic value)
         {
+            if (!string.IsNullOrEmpty(Password))
+            {
+                return;
+            }
 
+            var scriptToInsert = string.Format("${0} = \"{1}\"\n", Name, value);
+            script.Insert(0, scriptToInsert);
         }
     }
 }

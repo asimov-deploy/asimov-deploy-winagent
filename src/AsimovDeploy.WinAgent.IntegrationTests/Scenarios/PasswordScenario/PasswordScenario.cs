@@ -19,8 +19,10 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.PasswordScenario
         [Test]
         public void cannot_deploy_without_correct_password()
         {
-            var parameterValues = new Dictionary<string, object>();
-            parameterValues["Password"] = "wrong";
+            var parameterValues = new Dictionary<string, object>
+            {
+                ["Password"] = "wrong"
+            };
 
             Agent.Post("/deploy/deploy", NodeFront.ApiKey, new DeployCommand
             {
@@ -45,6 +47,26 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.PasswordScenario
             Thread.Sleep(1000);
 
             File.Exists(Path.Combine(DataDir, "FileCopyTarget\\somefile.txt")).ShouldBe(true);
+        }
+
+        [Test]
+        public void can_deploy_with_password_input()
+        {
+            var parameterValues = new Dictionary<string, object>
+            {
+                ["Password"] = "Password!"
+            };
+
+            Agent.Post("/deploy/deploy", NodeFront.ApiKey, new DeployCommand
+            {
+                unitName = "PasswordTestWithInput",
+                versionId = "somefile2-v12.0.0.0-[bbb]-[123123].zip",
+                parameters = parameterValues
+            });
+
+            Thread.Sleep(1000);
+
+            File.Exists(Path.Combine(DataDir, "FileCopyTarget\\somefile2.txt")).ShouldBe(true);
         }
     }
 }

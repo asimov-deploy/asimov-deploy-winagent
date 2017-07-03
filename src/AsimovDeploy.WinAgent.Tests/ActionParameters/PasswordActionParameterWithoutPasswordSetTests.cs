@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
 * Copyright (C) 2012 eBay Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,35 +22,35 @@ using Shouldly;
 namespace AsimovDeploy.WinAgent.Tests.ActionParameters
 {
     [TestFixture]
-    public class TextActionParameterTests
+    public class PasswordActionParameterWithoutPasswordSetTests
     {
-        private TextActionParameter _textParam;
+        private PasswordActionParameter _passwordParam;
 
         [TestFixtureSetUp]
         public void Arrange()
         {
-            _textParam = new TextActionParameter
+            _passwordParam = new PasswordActionParameter
             {
-                Default = "testing value",
-                Name = "tasks"
+                Name = "pwd",
+                Default = "DefaultPassword"
             };
         }
 
-         [Test]
-         public void can_get_descriptor()
-         {
-             var descriptor = _textParam.GetDescriptor();
-             ((string) descriptor.name).ShouldBe("tasks");
-             ((string) descriptor.type).ShouldBe("text");
-             ((string) descriptor.@default).ShouldBe("testing value");
-         }
+        [Test]
+        public void can_get_descriptor()
+        {
+            var descriptor = _passwordParam.GetDescriptor();
+            ((string)descriptor.name).ShouldBe("pwd");
+            ((string)descriptor.type).ShouldBe("password");
+            ((string)descriptor.@default).ShouldBe("DefaultPassword");
+        }
 
         [Test]
         public void can_apply_to_powershell_script()
         {
             var script = new StringBuilder();
-            _textParam.ApplyToPowershellScript(script, "some value");
-            script.ToString().ShouldContain("$tasks = \"some value\"");
+            _passwordParam.ApplyToPowershellScript(script, "Password!");
+            script.ToString().ShouldContain("$pwd = \"Password!\"");
         }
     }
 }

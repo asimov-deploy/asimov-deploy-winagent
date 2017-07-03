@@ -117,6 +117,14 @@ namespace AsimovDeploy.WinAgent.Tests
             unit.HasDeployParameters.ShouldBe(true);
             unit.DeployParameters[0].ShouldBeTypeOf<TextActionParameter>();
             ((TextActionParameter) unit.DeployParameters[0]).Default.ShouldBe("Deploy-Everything");
+
+            unit.DeployParameters[1].ShouldBeTypeOf<PasswordActionParameter>();
+            ((PasswordActionParameter)unit.DeployParameters[1]).Password.ShouldBe("Password!");
+            ((PasswordActionParameter)unit.DeployParameters[1]).Default.ShouldBe(null);
+
+            unit.DeployParameters[2].ShouldBeTypeOf<PasswordActionParameter>();
+            ((PasswordActionParameter)unit.DeployParameters[2]).Password.ShouldBe(null);
+            ((PasswordActionParameter)unit.DeployParameters[2]).Default.ShouldBe("DefaultPassword");
         }
 
         [Test]

@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionParameters\ParameterValuesTests.cs" />
+    <Compile Include="ActionParameters\PasswordActionParameterTests.cs" />
+    <Compile Include="ActionParameters\PasswordActionParameterWithoutPasswordSetTests.cs" />
     <Compile Include="ActionParameters\TextActionParameterTests.cs" />
     <Compile Include="ConfigurationSpecs.cs" />
     <Compile Include="Packagesource\FileSystemPackageSourceRegexTest.cs" />
