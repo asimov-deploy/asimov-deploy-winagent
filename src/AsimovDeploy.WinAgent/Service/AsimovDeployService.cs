@@ -35,7 +35,7 @@ namespace AsimovDeploy.WinAgent.Service
                 ComponentRegistration.RegisterComponents();
                 ComponentRegistration.ReadAndRegisterConfiguration();
                 AddNodeFrontAppender();
-                ComponentRegistration.StartStartableComponenters();
+                ComponentRegistration.StartStartableComponents();
 
                 var config = ObjectFactory.GetInstance<IAsimovConfig>();
                 Log.InfoFormat("WinAgent Started, Version={0}, ConfigVersion={1}", VersionUtil.GetAgentVersion(), config.ConfigVersion);

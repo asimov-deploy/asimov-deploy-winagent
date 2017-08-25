@@ -63,7 +63,7 @@ namespace AsimovDeploy.WinAgent.Service
             ObjectFactory.Configure(x => x.For<IAsimovConfig>().Use(config));
         }
 
-        public static void StartStartableComponenters()
+        public static void StartStartableComponents()
         {
             Log.Debug("Starting startable components...");
 
