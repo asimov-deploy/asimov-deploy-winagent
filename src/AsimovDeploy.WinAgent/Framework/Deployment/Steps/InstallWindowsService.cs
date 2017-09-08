@@ -91,7 +91,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
                 _installableConfig.TargetPath,
                 _installableConfig.Install,
                 parameters,
-                context.Log);
+                context.Log, new []{_installableConfig.ScriptsDir});
         }
 
         private void CopyFiles(DeployContext context)

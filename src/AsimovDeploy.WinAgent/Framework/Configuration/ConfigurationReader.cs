@@ -17,6 +17,7 @@
 using System.IO;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Models;
+using AsimovDeploy.WinAgent.Framework.Models.Units;
 using Newtonsoft.Json;
 
 namespace AsimovDeploy.WinAgent.Framework.Configuration
@@ -43,7 +44,9 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                      {
                          var unitDataDir = Path.Combine(unitsDataBaseDir, deployUnit.Name);
                          deployUnit.DataDirectory = unitDataDir;
-
+                         
+                         AddScriptsDir(configDir,deployUnit);
+                        
                          CreateDirectoryIfNotExists(deployUnit.DataDirectory);
                      }
 
@@ -51,6 +54,24 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                  }
              }
          }
+
+        private static void AddScriptsDir(string configDir, DeployUnit config)
+        {
+            var installable = config as IInstallableService;
+            if (installable?.Installable == null)
+            {
+                return;
+            }
+            if (!string.IsNullOrEmpty(installable.Installable.ScriptsDir))
+            {
+                return;
+            }
+            var scriptsDir = Path.Combine(configDir, "scripts");
+            if (Directory.Exists(scriptsDir))
+            {
+                installable.Installable.ScriptsDir = Path.GetFullPath(scriptsDir);
+            }
+        }
 
         private void CreateDirectoryIfNotExists(string directory)
         {

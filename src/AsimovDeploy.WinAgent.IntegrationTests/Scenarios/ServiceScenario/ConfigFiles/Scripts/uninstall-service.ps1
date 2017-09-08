@@ -5,4 +5,4 @@ param (
 
 write-host $ServiceExecutable, $ServiceName
 
-& "$ServiceExecutable" install -servicename:"$ServiceName"
+& "$ServiceExecutable" uninstall -servicename:"$ServiceName"

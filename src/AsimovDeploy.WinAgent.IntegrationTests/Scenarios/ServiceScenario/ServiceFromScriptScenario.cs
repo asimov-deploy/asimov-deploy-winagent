@@ -71,17 +71,6 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
             units[1].type.ShouldBe(DeployUnitTypes.WindowsService);
         }
 
-        [Test]
-        public void uses_parameters_when_installing()
-        {
-            InstallService(displayName: "Asimov Test Service Testing InstallParameters");
-
-            using (var controller = new ServiceController(ServiceName))
-            {
-                controller.DisplayName.ShouldBe("Asimov Test Service Testing InstallParameters");       
-            }
-        }
-
         private void InstallService(string displayName = "Asimov Test Service")
         {
             var versions = Agent.Get<List<DeployUnitVersionDTO>>($"/versions/{ServiceName}");
@@ -100,27 +89,6 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
             });
 
             WaitForStatus("Stopped");
-        }
-
-        [Test]
-        public void when_NotFound_gets_install_parameters()
-        {
-            var parameters = Agent.Get<List<TextActionParameter>>($"/units/deploy-parameters/{ServiceName}");
-
-            parameters.Count.ShouldBe(1);
-            parameters[0].Name.ShouldBe("DisplayName");
-            parameters[0].Default.ShouldBe("Asimov Test Service From Config");
-        }
-
-        [Test]
-        public void when_Installed_gets_deploy_parameters()
-        {
-            InstallService();
-
-            var parameters = Agent.Get<List<TextActionParameter>>($"/units/deploy-parameters/{ServiceName}");
-
-            parameters.Count.ShouldBe(1);
-            parameters[0].Name.ShouldBe("NotUsed");
         }
 
         private void WaitForStatus(string expectedStatus)

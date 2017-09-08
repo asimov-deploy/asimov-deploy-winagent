@@ -46,12 +46,9 @@
       "Installable": {
         "TargetPath": "%DATA_FOLDER%\\WindowsServiceFromScriptsTarget",
         
-        "Install": "install-service.ps1 -ServiceExecutable .\\Asimov.Roundhouse.Example.exe -DisplayName \"$DisplayName\"",
-        "InstallParameters": {
-          "DisplayName": { "Type": "Text", Default: "Asimov Test Service From Config"}
-        },
+        "Install": "install-service.ps1 -ServiceExecutable .\\Asimov.Roundhouse.Example.exe -ServiceName $ServiceName",
         
-        "Uninstall": ".\\Asimov.Roundhouse.Example.exe uninstall"
+        "Uninstall": "uninstall-service.ps1 -ServiceExecutable .\\Asimov.Roundhouse.Example.exe -ServiceName $ServiceName"
       }
 
     }

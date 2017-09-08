@@ -30,8 +30,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         private string _serviceName;
         public string ServiceName
         {
-            get { return _serviceName ?? Name; }
-            set { _serviceName = value; }
+            get => _serviceName ?? Name;
+            set => _serviceName = value;
         }
 
         public string Url { get; set; }
@@ -107,6 +107,15 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);
         public AsimovTask GetStartTask() => new StartStopWindowsServiceTask(this, stop: false);
-        public AsimovTask GetUninstallTask() => new PowershellUninstallTask(Installable, this, new Dictionary<string, object>() { { "ServiceName", ServiceName } });
+        public AsimovTask GetUninstallTask()
+        {
+                return new PowershellUninstallTask(
+                    Installable,
+                    this,
+                    new Dictionary<string, object>() { { "ServiceName", ServiceName } })
+                {
+                    TargetPath = WindowsServiceUtil.GetWindowsServicePath(ServiceName)
+                };
+        }
     }
 }

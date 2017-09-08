@@ -25,7 +25,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public class ProcessUtil
     {
-        public static void ExecutePowershellScript(string workingDirectory, string command, IEnumerable<KeyValuePair<string,object>> parameters, ILog log)
+        public static void ExecutePowershellScript(string workingDirectory, string command, IEnumerable<KeyValuePair<string,object>> parameters, ILog log, IEnumerable<string> addToPath = null)
         {
             using (var p = new Process())
             {
@@ -47,6 +47,11 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                 foreach (var param in parameters)
                 {
                     p.StandardInput.WriteLine($"${param.Key}=\"{param.Value}\";");
+                }
+
+                if (addToPath != null)
+                {
+                    p.StandardInput.WriteLine("$env:Path += \";" + string.Join(";",addToPath) + "\"");
                 }
                 p.StandardInput.WriteLine(command);
                 p.StandardInput.Close();

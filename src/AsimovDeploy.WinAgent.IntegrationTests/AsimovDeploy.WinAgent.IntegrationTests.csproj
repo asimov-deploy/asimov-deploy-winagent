@@ -68,6 +68,7 @@
     </None>
     <None Include="Scenarios\PasswordScenario\Packages\somefile2-v12.0.0.0-[bbb]-[123123].zip" />
     <None Include="Scenarios\ServiceScenario\ConfigFiles\Scripts\install-service.ps1" />
+    <None Include="Scenarios\ServiceScenario\ConfigFiles\Scripts\uninstall-service.ps1" />
     <None Include="Scenarios\SourceRelativePathScenario\ConfigFiles\config.json">
       <SubType>Component</SubType>
     </None>

@@ -127,8 +127,9 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
         {
             var start = DateTime.Now;
             var timeout = TimeSpan.FromSeconds(10);
-            var duration = DateTime.Now - start;
-            var status = "";
+
+            TimeSpan duration;
+            string status;
 
             do
             {
