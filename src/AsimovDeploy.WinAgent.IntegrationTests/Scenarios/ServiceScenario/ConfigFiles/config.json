@@ -35,7 +35,27 @@
         "Uninstall": ".\\Asimov.Roundhouse.Example.exe uninstall"
       }
 
+    },
+
+    {
+      "Name": "Asimov.Roundhouse.Example.From.Scripts",
+      "Type": "WindowsService",
+
+      "PackageInfo": { "Source": "Test" },
+
+      "Installable": {
+        "TargetPath": "%DATA_FOLDER%\\WindowsServiceFromScriptsTarget",
+        
+        "Install": "install-service.ps1 -ServiceExecutable .\\Asimov.Roundhouse.Example.exe -DisplayName \"$DisplayName\"",
+        "InstallParameters": {
+          "DisplayName": { "Type": "Text", Default: "Asimov Test Service From Config"}
+        },
+        
+        "Uninstall": ".\\Asimov.Roundhouse.Example.exe uninstall"
+      }
+
     }
+
 
 
   ]

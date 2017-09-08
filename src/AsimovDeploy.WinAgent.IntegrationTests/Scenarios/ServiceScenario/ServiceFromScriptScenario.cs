@@ -14,9 +14,9 @@ using Shouldly;
 namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
 {
     [TestFixture]
-    public class WindowsServiceScenario : WinAgentSystemTest
+    public class WindowsServiceFromScriptScenario : WinAgentSystemTest
     {
-        private const string ServiceName = "Asimov.Roundhouse.Example";
+        private const string ServiceName = "Asimov.Roundhouse.Example.From.Scripts";
 
         public override void Given()
         {
@@ -55,9 +55,9 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
         {
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
             units.Count.ShouldBe(2);
-            units[0].name.ShouldBe(ServiceName);
-            units[0].status.ShouldBe("NotFound");
-            units[0].type.ShouldBe(DeployUnitTypes.WindowsService);
+            units[1].name.ShouldBe(ServiceName);
+            units[1].status.ShouldBe("NotFound");
+            units[1].type.ShouldBe(DeployUnitTypes.WindowsService);
         }
 
         [Test]
@@ -66,9 +66,9 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
             InstallService();
 
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
-            units[0].name.ShouldBe(ServiceName);
-            units[0].status.ShouldBe("Stopped");
-            units[0].type.ShouldBe(DeployUnitTypes.WindowsService);
+            units[1].name.ShouldBe(ServiceName);
+            units[1].status.ShouldBe("Stopped");
+            units[1].type.ShouldBe(DeployUnitTypes.WindowsService);
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
                 duration = DateTime.Now - start;
                 var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
                 units.Count.ShouldBe(2);
-                status = units[0].status;
+                status = units[1].status;
                 if (status == expectedStatus)
                 {
                     return;
