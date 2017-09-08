@@ -13,9 +13,9 @@ using Shouldly;
 namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
 {
     [TestFixture]
-    public class WebScenario : WinAgentSystemTest
+    public class WebFromScriptScenario : WinAgentSystemTest
     {
-        private const string ServiceName = "Asimov.Web.Example";
+        private const string ServiceName = "Asimov.Web.Example.From.Script";
 
         public override void Given()
         {
@@ -33,7 +33,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
         private void EnsureServiceIsNotInstalled()
         {
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
-            if (units[0].status == "NotFound")
+            if (units[1].status == "NotFound")
             {
                 return;
             }
@@ -54,9 +54,9 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
         {
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
             units.Count.ShouldBe(2);
-            units[0].name.ShouldBe(ServiceName);
-            units[0].status.ShouldBe("NotFound");
-            units[0].type.ShouldBe(DeployUnitTypes.WebSite);
+            units[1].name.ShouldBe(ServiceName);
+            units[1].status.ShouldBe("NotFound");
+            units[1].type.ShouldBe(DeployUnitTypes.WebSite);
         }
 
         [Test]
@@ -66,9 +66,9 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
 
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
             units.Count.ShouldBe(2);
-            units[0].name.ShouldBe(ServiceName);
-            units[0].status.ShouldBe("Running");
-            units[0].type.ShouldBe(DeployUnitTypes.WebSite);
+            units[1].name.ShouldBe(ServiceName);
+            units[1].status.ShouldBe("Running");
+            units[1].type.ShouldBe(DeployUnitTypes.WebSite);
         }
 
         private void InstallService()
@@ -89,27 +89,6 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
             WaitForStatus("Running");
         }
 
-        [Test]
-        public void when_NotFound_gets_install_parameters()
-        {
-            var parameters = Agent.Get<List<TextActionParameter>>($"/units/deploy-parameters/{ServiceName}");
-
-            parameters.Count.ShouldBe(1);
-            parameters[0].Name.ShouldBe("Port");
-            parameters[0].Default.ShouldBe("8123");
-        }
-
-        [Test]
-        public void when_Installed_gets_deploy_parameters()
-        {
-            InstallService();
-
-            var parameters = Agent.Get<List<TextActionParameter>>($"/units/deploy-parameters/{ServiceName}");
-
-            parameters.Count.ShouldBe(1);
-            parameters[0].Name.ShouldBe("NotUsed");
-        }
-
         private void WaitForStatus(string expectedStatus)
         {
             var start = DateTime.Now;
@@ -122,7 +101,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
                 duration = DateTime.Now - start;
                 var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
                 units.Count.ShouldBe(2);
-                status = units[0].status;
+                status = units[1].status;
                 if (status == expectedStatus)
                 {
                     return;

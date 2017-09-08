@@ -57,7 +57,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 
         private static void AddScriptsDir(string configDir, DeployUnit config)
         {
-            var installable = config as IInstallableService;
+            var installable = config as IInstallable;
             if (installable?.Installable == null)
             {
                 return;

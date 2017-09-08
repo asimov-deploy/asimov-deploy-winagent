@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Deployment;
 using AsimovDeploy.WinAgent.Framework.Models;
 using log4net;
@@ -51,7 +52,11 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 
                 if (addToPath != null)
                 {
-                    p.StandardInput.WriteLine("$env:Path += \";" + string.Join(";",addToPath) + "\"");
+                    foreach (var path in addToPath.Where(pa=>!string.IsNullOrEmpty(pa)))
+                    {
+                        log.Info($"Add {path} to $end:Path");
+                        p.StandardInput.WriteLine($"$env:Path += \";{path}\"");
+                    }   
                 }
                 p.StandardInput.WriteLine(command);
                 p.StandardInput.Close();

@@ -12,13 +12,13 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
     {
         private readonly InstallableConfig _installableConfig;
         private readonly DeployUnit _unit;
-        private readonly Dictionary<string, object> unitParameters;
+        private readonly Dictionary<string, object> _unitParameters;
         private readonly NodeFront _nodefront = new NodeFront();
         public PowershellUninstallTask(InstallableConfig config, DeployUnit unit, Dictionary<string,object> unitParameters)
         {
             _installableConfig = config;
             _unit = unit;
-            this.unitParameters = unitParameters;
+            _unitParameters = unitParameters;
         }
 
         public string TargetPath { get; set; }
@@ -71,7 +71,8 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
             ProcessUtil.ExecutePowershellScript(
                 GetTargetPath(),
                 _installableConfig.Uninstall, 
-                unitParameters, Log, new [] {_installableConfig.ScriptsDir});
+                _unitParameters, Log, 
+                new [] {_installableConfig.ScriptsDir});
 
         }
 

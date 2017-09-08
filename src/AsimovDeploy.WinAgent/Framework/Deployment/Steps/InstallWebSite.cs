@@ -9,13 +9,11 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 {
     public class InstallWebSite : IDeployStep
     {
-        private readonly IWebSiteDeployUnit unit;
+        private readonly IWebSiteDeployUnit _unit;
 
         public InstallWebSite(IWebSiteDeployUnit unit)
         {
-            if (unit == null) throw new ArgumentNullException(nameof(unit));
-            this.unit = unit;
-
+            _unit = unit ?? throw new ArgumentNullException(nameof(unit));
         }
 
         public void Execute(DeployContext context)
@@ -28,8 +26,8 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SiteName", unit.SiteName },
-                { "SiteUrl", unit.SiteUrl }
+                { "SiteName", _unit.SiteName },
+                { "SiteUrl", _unit.SiteUrl }
             };
             foreach (var contextParameterValue in context.ParameterValues)
             {
@@ -37,16 +35,17 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             }
 
             ProcessUtil.ExecutePowershellScript(
-                unit.Installable.TargetPath,
-                unit.Installable.Install,
+                _unit.Installable.TargetPath,
+                _unit.Installable.Install,
                 parameters,
-                context.Log);
+                context.Log, 
+                new[] { _unit.Installable.ScriptsDir });
         }
 
         private void CopyFiles(DeployContext context)
         {
-            context.Log.Info($"Copying files from {context.TempFolderWithNewVersionFiles} to {unit.Installable.TargetPath}...");
-            DirectoryUtil.CopyDirectory(context.TempFolderWithNewVersionFiles, unit.Installable.TargetPath);
+            context.Log.Info($"Copying files from {context.TempFolderWithNewVersionFiles} to {_unit.Installable.TargetPath}...");
+            DirectoryUtil.CopyDirectory(context.TempFolderWithNewVersionFiles, _unit.Installable.TargetPath);
         }
     }
 }
