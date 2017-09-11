@@ -51,6 +51,21 @@ Remove-WebSite -name $SiteName
 Remove-WebAppPool -Name \"${SiteName}AppPool\" 
         "
       }
+    },
+    {
+      "Name": "Asimov.Web.Example.From.Script",
+      "Type": "WebSite",
+      "SiteName": "Asimov.Web.Example.From.Script",
+      "SiteUrl": "http://localhost:9124",
+
+      "PackageInfo": { "Source": "Test" },
+
+      "Installable": {
+        "TargetPath": "%DATA_FOLDER%\\WebTarget",
+
+        "Install": "install-site.ps1 $SiteName $SiteUrl",
+        "Uninstall": "uninstall-site.ps1 $SiteName"
+      }
     }
 
 

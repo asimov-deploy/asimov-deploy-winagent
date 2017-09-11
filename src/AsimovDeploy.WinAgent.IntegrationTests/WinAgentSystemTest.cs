@@ -184,17 +184,4 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
             }).Start();
         }
     }
-
-    //[TestFixture]
-    //public class RandomFeatureTest : WinAgentSystemTest
-    //{
-    //    public RandomFeatureTest()
-    //    {
-    //        //GivenAlreadyInstalledWindowsServices();
-    //        //GivenAlreadyInstalledWebSites();
-    //        //GivenPackagesInFolder()
-
-    //        GivenRunningAgent();
-    //    }
-    //}
 }

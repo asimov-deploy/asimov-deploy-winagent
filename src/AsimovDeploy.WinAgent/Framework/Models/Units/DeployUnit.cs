@@ -32,6 +32,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public DeployStatus DeployStatus { get; protected set; }
         public DeployedVersion Version { get; protected set; }
         public string[] OnlyOnAgents { get; set; }
+
         public UnitActionList Actions { get; set; } = new UnitActionList { new RollbackUnitAction() };
         public ActionParameterList DeployParameters { get; protected set; } = new ActionParameterList();
         public ActionParameterList Credentials { get; protected set; } = new ActionParameterList();

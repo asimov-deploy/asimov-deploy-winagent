@@ -12,14 +12,16 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
     {
         private readonly InstallableConfig _installableConfig;
         private readonly DeployUnit _unit;
-        private readonly Dictionary<string, object> unitParameters;
+        private readonly Dictionary<string, object> _unitParameters;
         private readonly NodeFront _nodefront = new NodeFront();
         public PowershellUninstallTask(InstallableConfig config, DeployUnit unit, Dictionary<string,object> unitParameters)
         {
             _installableConfig = config;
             _unit = unit;
-            this.unitParameters = unitParameters;
+            _unitParameters = unitParameters;
         }
+
+        public string TargetPath { get; set; }
 
         protected override void Execute()
         {
@@ -44,14 +46,14 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         private void UnInstallNServiceBusHandler()
         {
             ;
-            var exePath = $"{_installableConfig.TargetPath}\\NServiceBus.Host.exe";
+            var exePath = $"{GetTargetPath()}\\NServiceBus.Host.exe";
             var serviceName = (_unit as WindowsServiceDeployUnit)?.ServiceName ?? _unit.Name;
             var args = new List<string>
             {
                 "/uninstall",
                 "/servicename:" + serviceName,
                 "-f",
-               _installableConfig.TargetPath
+                TargetPath ?? _installableConfig.TargetPath
             };
             ProcessUtil.ExecuteCommand(exePath, args.ToArray(), Log);
 
@@ -59,7 +61,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
         private void UnInstallTopShelfService()
         {
-            var exePath = $"{_installableConfig.TargetPath}\\{_installableConfig.AssemblyName ?? _unit.Name}.exe";
+            var exePath = $"{GetTargetPath()}\\{_installableConfig.AssemblyName ?? _unit.Name}.exe";
             ProcessUtil.ExecuteCommand(exePath, new[] { "uninstall" }, Log);
 
         }
@@ -67,10 +69,20 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         private void UnInstallUsingCommandFromConfig()
         {
             ProcessUtil.ExecutePowershellScript(
-                _installableConfig.TargetPath, //TODO: We may want to use the location of the service in the future
+                GetTargetPath(),
                 _installableConfig.Uninstall, 
-                unitParameters, Log);
+                _unitParameters, Log, 
+                new [] {_installableConfig.ScriptsDir});
 
+        }
+
+        private string GetTargetPath()
+        {
+            if (!string.IsNullOrEmpty(TargetPath) && Directory.Exists(TargetPath))
+            {
+                return TargetPath;
+            }
+            return _installableConfig.TargetPath;
         }
     }
 }

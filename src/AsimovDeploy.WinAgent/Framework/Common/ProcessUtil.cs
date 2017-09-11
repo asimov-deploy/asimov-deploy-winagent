@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Deployment;
 using AsimovDeploy.WinAgent.Framework.Models;
 using log4net;
@@ -25,7 +26,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public class ProcessUtil
     {
-        public static void ExecutePowershellScript(string workingDirectory, string command, IEnumerable<KeyValuePair<string,object>> parameters, ILog log)
+        public static void ExecutePowershellScript(string workingDirectory, string command, IEnumerable<KeyValuePair<string,object>> parameters, ILog log, IEnumerable<string> addToPath = null)
         {
             using (var p = new Process())
             {
@@ -47,6 +48,15 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                 foreach (var param in parameters)
                 {
                     p.StandardInput.WriteLine($"${param.Key}=\"{param.Value}\";");
+                }
+
+                if (addToPath != null)
+                {
+                    foreach (var path in addToPath.Where(pa=>!string.IsNullOrEmpty(pa)))
+                    {
+                        log.Info($"Add {path} to $end:Path");
+                        p.StandardInput.WriteLine($"$env:Path += \";{path}\"");
+                    }   
                 }
                 p.StandardInput.WriteLine(command);
                 p.StandardInput.Close();

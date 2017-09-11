@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.ServiceProcess;
 using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
@@ -11,12 +10,12 @@ using AsimovDeploy.WinAgent.Web.Contracts;
 using NUnit.Framework;
 using Shouldly;
 
-namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
+namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
 {
     [TestFixture]
-    public class WindowsServiceScenario : WinAgentSystemTest
+    public class WebFromScriptScenario : WinAgentSystemTest
     {
-        private const string ServiceName = "Asimov.Roundhouse.Example";
+        private const string ServiceName = "Asimov.Web.Example.From.Script";
 
         public override void Given()
         {
@@ -34,7 +33,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
         private void EnsureServiceIsNotInstalled()
         {
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
-            if (units[0].status == "NotFound")
+            if (units[1].status == "NotFound")
             {
                 return;
             }
@@ -55,9 +54,9 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
         {
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
             units.Count.ShouldBe(2);
-            units[0].name.ShouldBe(ServiceName);
-            units[0].status.ShouldBe("NotFound");
-            units[0].type.ShouldBe(DeployUnitTypes.WindowsService);
+            units[1].name.ShouldBe(ServiceName);
+            units[1].status.ShouldBe("NotFound");
+            units[1].type.ShouldBe(DeployUnitTypes.WebSite);
         }
 
         [Test]
@@ -66,23 +65,13 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
             InstallService();
 
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
-            units[0].name.ShouldBe(ServiceName);
-            units[0].status.ShouldBe("Stopped");
-            units[0].type.ShouldBe(DeployUnitTypes.WindowsService);
+            units.Count.ShouldBe(2);
+            units[1].name.ShouldBe(ServiceName);
+            units[1].status.ShouldBe("Running");
+            units[1].type.ShouldBe(DeployUnitTypes.WebSite);
         }
 
-        [Test]
-        public void uses_parameters_when_installing()
-        {
-            InstallService(displayName: "Asimov Test Service Testing InstallParameters");
-
-            using (var controller = new ServiceController(ServiceName))
-            {
-                controller.DisplayName.ShouldBe("Asimov Test Service Testing InstallParameters");       
-            }
-        }
-
-        private void InstallService(string displayName = "Asimov Test Service")
+        private void InstallService()
         {
             var versions = Agent.Get<List<DeployUnitVersionDTO>>($"/versions/{ServiceName}");
             versions.Count.ShouldBe(1);
@@ -91,52 +80,28 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.ServiceScenario
             {
                 unitName = ServiceName,
                 versionId = versions[0].id,
-                parameters = new Dictionary<string, object>
+                parameters = new Dictionary<string, object>() {
                 {
-                    {
-                        "DisplayName", displayName
-                    }
-                }
+                    "Port", "8145"
+                } }
             });
 
-            WaitForStatus("Stopped");
-        }
-
-        [Test]
-        public void when_NotFound_gets_install_parameters()
-        {
-            var parameters = Agent.Get<List<TextActionParameter>>($"/units/deploy-parameters/{ServiceName}");
-
-            parameters.Count.ShouldBe(1);
-            parameters[0].Name.ShouldBe("DisplayName");
-            parameters[0].Default.ShouldBe("Asimov Test Service From Config");
-        }
-
-        [Test]
-        public void when_Installed_gets_deploy_parameters()
-        {
-            InstallService();
-
-            var parameters = Agent.Get<List<TextActionParameter>>($"/units/deploy-parameters/{ServiceName}");
-
-            parameters.Count.ShouldBe(1);
-            parameters[0].Name.ShouldBe("NotUsed");
+            WaitForStatus("Running");
         }
 
         private void WaitForStatus(string expectedStatus)
         {
             var start = DateTime.Now;
             var timeout = TimeSpan.FromSeconds(10);
-
-            TimeSpan duration;
-            string status;
+            var duration = DateTime.Now - start;
+            var status = "";
 
             do
             {
                 duration = DateTime.Now - start;
                 var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
                 units.Count.ShouldBe(2);
-                status = units[0].status;
+                status = units[1].status;
                 if (status == expectedStatus)
                 {
                     return;

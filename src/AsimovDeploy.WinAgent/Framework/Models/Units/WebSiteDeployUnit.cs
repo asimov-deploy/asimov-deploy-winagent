@@ -25,11 +25,10 @@ using AsimovDeploy.WinAgent.Framework.WebSiteManagement;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
-    public interface IWebSiteDeployUnit
+    public interface IWebSiteDeployUnit : IInstallable
     {
         string SiteName { get; set; }
         string SiteUrl { get; set; }
-        InstallableConfig Installable { get; set; }
     }
 
     public class WebSiteDeployUnit : DeployUnit, ICanBeStopStarted, IWebSiteDeployUnit, ICanUninistall
@@ -53,17 +52,22 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public AsimovTask GetUninstallTask()
         {
+            var webServer = GetWebServer();
+            var siteData = webServer.GetInfo();
             return new PowershellUninstallTask(Installable, this, new Dictionary<string, object>
             {
                 {"SiteName", SiteName},
                 {"SiteUrl", SiteUrl}
-            });
+            })
+            {
+                TargetPath = siteData.PhysicalPath
+            };
         }
 
         public string SiteName
         {
-            get { return siteName ?? Name; }
-            set { siteName = value; }
+            get => siteName ?? Name;
+            set => siteName = value;
         }
         public string SiteUrl { get; set; }
         public InstallableConfig Installable { get; set; }
