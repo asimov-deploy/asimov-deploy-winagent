@@ -13,7 +13,9 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
         public InstallWebSite(IWebSiteDeployUnit unit)
         {
-            _unit = unit ?? throw new ArgumentNullException(nameof(unit));
+            if(unit == null)
+                throw new ArgumentNullException(nameof(unit));
+            _unit = unit;
         }
 
         public void Execute(DeployContext context)

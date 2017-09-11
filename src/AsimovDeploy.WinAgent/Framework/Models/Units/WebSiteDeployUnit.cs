@@ -66,8 +66,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public string SiteName
         {
-            get => siteName ?? Name;
-            set => siteName = value;
+            get { return siteName ?? Name; }
+            set { siteName = value; }
         }
         public string SiteUrl { get; set; }
         public InstallableConfig Installable { get; set; }

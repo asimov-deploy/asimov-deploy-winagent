@@ -30,8 +30,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         private string _serviceName;
         public string ServiceName
         {
-            get => _serviceName ?? Name;
-            set => _serviceName = value;
+            get { return _serviceName ?? Name; }
+            set { _serviceName = value; }
         }
 
         public string Url { get; set; }
