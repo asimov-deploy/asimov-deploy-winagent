@@ -58,6 +58,7 @@
     <Compile Include="ActionParameters\PasswordActionParameterWithoutPasswordSetTests.cs" />
     <Compile Include="ActionParameters\TextActionParameterTests.cs" />
     <Compile Include="ConfigurationSpecs.cs" />
+    <Compile Include="DeployUnit\DeployUnitTests.cs" />
     <Compile Include="Packagesource\FileSystemPackageSourceRegexTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tasks\ChangeLoadBalancerStateTaskSpecs.cs" />

@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Events;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
@@ -87,7 +88,13 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public IList<DeployedVersion> GetDeployedVersions() => VersionUtil.ReadVersionLog(DataDirectory);
 
-        public bool IsValidForAgent(string agentName) => OnlyOnAgents?.Any(x => x == agentName) ?? true;
+        public bool IsValidForAgent(string agentName)
+        {
+            if (OnlyOnAgents?.Any(x => x == agentName) ?? true)
+                return true;
+
+            return OnlyOnAgents.Where(t => t.Contains("*")).Any(agent => new Regex("^" + agent.Replace("*", ".*")).IsMatch(agentName));
+        }
 
         public void StartingDeploy(AsimovVersion newVersion, string logFileName, AsimovUser user, string correlationId, ParameterValues parameters)
         {

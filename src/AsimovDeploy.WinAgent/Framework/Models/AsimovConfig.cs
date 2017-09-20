@@ -77,20 +77,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models
                 new DeployUnits(Environments.First(a => a.AgentGroup == agentGroup).Units.Select(a => Units.First(b => b.Name == a.Name)));
         }
 
-        public DeployUnits GetUnitsByUnitGroup(string unitGroup)
-        {
-            return new DeployUnits(Units.Where(x => x.Group == unitGroup));
-        }
+        public DeployUnits GetUnitsByUnitGroup(string unitGroup) => new DeployUnits(Units.Where(x => x.Group == unitGroup));
 
-        public DeployUnits GetUnitsByType(string unitType)
-        {
-            return new DeployUnits(Units.Where(x => x.UnitType == unitType));
-        }
+        public DeployUnits GetUnitsByType(string unitType) => new DeployUnits(Units.Where(x => x.UnitType == unitType));
 
-        public DeployUnits GetUnitsByTag(string tag)
-        {
-            return new DeployUnits(Units.Where(x => x.Tags.Any(t => t == tag)));
-        }
+        public DeployUnits GetUnitsByTag(string tag) => new DeployUnits(Units.Where(x => x.Tags.Any(t => t == tag)));
 
         public DeployUnits GetUnitsByUnitName(string unitName)
         {
