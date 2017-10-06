@@ -24,5 +24,6 @@ namespace AsimovDeploy.WinAgent.Web.Contracts
         public string[] Tags { get; set; }
         public string[] Units { get; set; }
         public string[] UnitStatus { get; set; }
+        public bool SkipStatusRefresh { get; set; }
     }
 }

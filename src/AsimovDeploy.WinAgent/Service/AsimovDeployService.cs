@@ -16,7 +16,6 @@
 
 using System;
 using AsimovDeploy.WinAgent.Framework.Common;
-using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
 using StructureMap;
 using log4net;
@@ -35,10 +34,11 @@ namespace AsimovDeploy.WinAgent.Service
                 ComponentRegistration.RegisterComponents();
                 ComponentRegistration.ReadAndRegisterConfiguration();
                 AddNodeFrontAppender();
-                ComponentRegistration.StartStartableComponenters();
+                Log.Info("WinAgent starting...");
+                ComponentRegistration.StartStartableComponents();
 
                 var config = ObjectFactory.GetInstance<IAsimovConfig>();
-                Log.InfoFormat("WinAgent Started, Version={0}, ConfigVersion={1}", VersionUtil.GetAgentVersion(), config.ConfigVersion);
+                Log.Info($"WinAgent started, Version={VersionUtil.GetAgentVersion()}, ConfigVersion={config.ConfigVersion}");
             }
             catch (Exception e)
             {
@@ -57,8 +57,9 @@ namespace AsimovDeploy.WinAgent.Service
 
         public void Stop()
         {
-            Log.Info("WinAgent Stopping");
+            Log.Info("WinAgent stopping...");
             ComponentRegistration.StopAll();
+            Log.Info("WinAgent stopped");
         }
     }
 }

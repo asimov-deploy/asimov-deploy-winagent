@@ -109,9 +109,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             }
         }
 
-        public DeployUnits GetUnitsByStatus(string status)
+        public DeployUnits GetUnitsByStatus(string status, bool refreshUnitStatus)
         {
-            return new DeployUnits(Units.Where(x => x.GetUnitInfo().GetUnitStatus() == status));
+            return new DeployUnits(Units.Where(x => x.GetUnitInfo(refreshUnitStatus).GetUnitStatus() == status));
         }
 
         public string[] GetAgentGroups()

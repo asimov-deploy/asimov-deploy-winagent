@@ -17,6 +17,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
+using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
@@ -28,6 +29,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
     public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted, ICanUninistall, IInstallableService
     {
         private string _serviceName;
+        private int _lastUnitStatus;
         public string ServiceName
         {
             get { return _serviceName ?? Name; }
@@ -45,6 +47,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
             //TODO: We only want to add this if an uninstall action has been configured
             Actions.Add(new UnInstallUnitAction() { Sort = 20 });
+
+            _lastUnitStatus = (int)UnitStatus.NA;
         }
 
         public override string UnitType => DeployUnitTypes.WindowsService;
@@ -66,7 +70,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         private bool CanInstall()
         {
-            return GetStatus() == UnitStatus.NotFound && (Installable?.Install != null || Installable?.InstallType != null);
+            UpdateUnitStatus();
+
+            return 
+                (UnitStatus)_lastUnitStatus == UnitStatus.NotFound && 
+                (Installable?.Install != null || Installable?.InstallType != null);
         }
 
         public override ActionParameterList GetDeployParameters()
@@ -77,32 +85,37 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         }
 
 
-        public override DeployUnitInfo GetUnitInfo()
+        public override DeployUnitInfo GetUnitInfo(bool refreshUnitStatus)
         {
+            var unitInfo = base.GetUnitInfo(refreshUnitStatus);
 
-            var unitInfo = base.GetUnitInfo();
             if (!string.IsNullOrEmpty(Url))
+            {
                 unitInfo.Url = Url.Replace("localhost", HostNameUtil.GetFullHostName());
+            }
 
-            unitInfo.Status = GetStatus();
+            unitInfo.Status = (UnitStatus)_lastUnitStatus;
 
             return unitInfo;
         }
 
-        private UnitStatus GetStatus()
+        protected override void UpdateUnitStatus()
         {
             var serviceManager = new ServiceController(ServiceName);
+            UnitStatus status;
 
             try
             {
-                return serviceManager.Status == ServiceControllerStatus.Running
+                status = serviceManager.Status == ServiceControllerStatus.Running
                     ? UnitStatus.Running
                     : UnitStatus.Stopped;
             }
             catch
             {
-                return UnitStatus.NotFound;
+                status = UnitStatus.NotFound;
             }
+
+            Interlocked.Exchange(ref _lastUnitStatus, (int)status);
         }
 
         public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);

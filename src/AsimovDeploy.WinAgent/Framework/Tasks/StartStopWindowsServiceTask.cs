@@ -43,7 +43,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
 			}
 
-			var unitInfo = _unit.GetUnitInfo();
+			var unitInfo = _unit.GetUnitInfo(true);
 
 			if (unitInfo.Status != endStatus)
 			{

@@ -51,7 +51,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId);
 
-        public virtual DeployUnitInfo GetUnitInfo()
+        public virtual DeployUnitInfo GetUnitInfo(bool refreshUnitStatus)
         {
             var deployUnitInfo = new DeployUnitInfo
             {
@@ -60,6 +60,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
                 HasDeployParameters = HasDeployParameters,
 
             };
+
+            if (!refreshUnitStatus)
+            {
+                Version = new DeployedVersion() { VersionNumber = "0.0.0.0" };
+            }
 
             if (Version == null)
             {
@@ -83,7 +88,17 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             deployUnitInfo.Version = Version;
             deployUnitInfo.DeployStatus = DeployStatus;
 
+            if (refreshUnitStatus)
+            {
+                UpdateUnitStatus();
+            }
+
             return deployUnitInfo;
+        }
+
+        protected virtual void UpdateUnitStatus()
+        {
+
         }
 
         public IList<DeployedVersion> GetDeployedVersions() => VersionUtil.ReadVersionLog(DataDirectory);
@@ -124,7 +139,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
             VersionUtil.UpdateVersionLog(DataDirectory, Version);
 
-            var unitInfo = GetUnitInfo();
+            var unitInfo = GetUnitInfo(true);
             NotificationPublisher.PublishNotifications(new DeployCompletedEvent(Name, Version, unitInfo.Status));
         }
 

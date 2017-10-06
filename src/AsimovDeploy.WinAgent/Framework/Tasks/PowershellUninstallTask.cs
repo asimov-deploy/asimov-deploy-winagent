@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Events;
-using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
 namespace AsimovDeploy.WinAgent.Framework.Tasks
@@ -14,7 +13,8 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         private readonly DeployUnit _unit;
         private readonly Dictionary<string, object> _unitParameters;
         private readonly NodeFront _nodefront = new NodeFront();
-        public PowershellUninstallTask(InstallableConfig config, DeployUnit unit, Dictionary<string,object> unitParameters)
+
+        public PowershellUninstallTask(InstallableConfig config, DeployUnit unit, Dictionary<string, object> unitParameters)
         {
             _installableConfig = config;
             _unit = unit;
@@ -26,6 +26,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         protected override void Execute()
         {
             Log.Info($"Uninstalling {_unit.Name}...");
+
             if (string.IsNullOrEmpty(_installableConfig.TargetPath))
                 _installableConfig.TargetPath = Path.Combine(@"\Services", _unit.Name);
             if (!string.IsNullOrEmpty(_installableConfig.Uninstall))
@@ -39,7 +40,8 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
                 Log.Warn($"Uninstall of {_unit.Name} not supported. Please check InstallableConfig.");
                 return;
             }
-            _nodefront.Notify(new UnitStatusChangedEvent(_unit.Name, _unit.GetUnitInfo().Status));
+
+            _nodefront.Notify(new UnitStatusChangedEvent(_unit.Name, _unit.GetUnitInfo(true).Status));
             Log.Info($"Uninstall of {_unit.Name} done!");
         }
 
@@ -70,9 +72,9 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         {
             ProcessUtil.ExecutePowershellScript(
                 GetTargetPath(),
-                _installableConfig.Uninstall, 
-                _unitParameters, Log, 
-                new [] {_installableConfig.ScriptsDir});
+                _installableConfig.Uninstall,
+                _unitParameters, Log,
+                new[] { _installableConfig.ScriptsDir });
 
         }
 
