@@ -14,8 +14,12 @@
 * limitations under the License.
 ******************************************************************************/
 
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Web.Contracts;
 using Nancy;
@@ -97,15 +101,15 @@ namespace AsimovDeploy.WinAgent.Web.Modules
 
             if (getDeployUnitsRequestDto.UnitStatus != null && getDeployUnitsRequestDto.UnitStatus.Any())
             {
-                var filteredByStatus = getDeployUnitsRequestDto.UnitStatus.SelectMany(config.GetUnitsByStatus);
+                var filteredByStatus = getDeployUnitsRequestDto.UnitStatus.SelectMany(s => config.GetUnitsByStatus(s, !getDeployUnitsRequestDto.SkipStatusRefresh));
                 deployUnits = deployUnits.Intersect(filteredByStatus);
             }
 
-            var units = new List<DeployUnitInfoDTO>();
+            var list = new List<DeployUnitInfoDTO>();
 
             foreach (var deployUnit in deployUnits.ToList().Distinct())
             {
-                var unitInfo = deployUnit.GetUnitInfo();
+                var unitInfo = deployUnit.GetUnitInfo(!getDeployUnitsRequestDto.SkipStatusRefresh);
                 var unitInfoDto = new DeployUnitInfoDTO
                 {
                     name = unitInfo.Name,
@@ -127,10 +131,10 @@ namespace AsimovDeploy.WinAgent.Web.Modules
                 unitInfoDto.hasDeployParameters = unitInfo.HasDeployParameters;
                 unitInfoDto.actions = deployUnit.Actions.OrderBy(x => x.Sort).Select(x => x.Name).ToArray();
 
-                units.Add(unitInfoDto);
+                list.Add(unitInfoDto);
             }
 
-            return units;
+            return list;
         }
     }
 }

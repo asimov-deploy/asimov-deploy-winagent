@@ -16,6 +16,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Deployment.Steps;
@@ -34,6 +35,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
     public class WebSiteDeployUnit : DeployUnit, ICanBeStopStarted, IWebSiteDeployUnit, ICanUninistall
     {
         private string siteName;
+        private int _lastUnitStatus;
 
         public WebSiteDeployUnit()
         {
@@ -42,6 +44,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             Actions.Add(new StopDeployUnitAction {Sort = 11});
 
             Actions.Add(new UnInstallUnitAction {Sort = 20});
+            _lastUnitStatus = (int)UnitStatus.NA;
         }
 
         public bool CleanDeploy { get; set; }
@@ -101,22 +104,30 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public virtual IWebServer GetWebServer() => new IIS7WebServer(SiteName, SiteUrl);
 
-        public override DeployUnitInfo GetUnitInfo()
+        public override DeployUnitInfo GetUnitInfo(bool refreshUnitStatus)
         {
-            var siteInfo = base.GetUnitInfo();
+            var siteInfo = base.GetUnitInfo(refreshUnitStatus);
 
-            var siteData = GetWebServer().GetInfo();
-            if (siteData == null)
+            if ((UnitStatus)_lastUnitStatus == UnitStatus.NotFound)
             {
-                siteInfo.Status = UnitStatus.NotFound;
-                siteInfo.Version = new DeployedVersion {VersionNumber = "0.0.0.0"};
-                return siteInfo;
+                siteInfo.Version = new DeployedVersion { VersionNumber = "0.0.0.0" };
             }
 
             siteInfo.Url = SiteUrl.Replace("localhost", HostNameUtil.GetFullHostName());
-            siteInfo.Status = siteData.AppPoolStarted && siteData.SiteStarted ? UnitStatus.Running : UnitStatus.Stopped;
+            siteInfo.Status = (UnitStatus)_lastUnitStatus;
 
             return siteInfo;
+        }
+
+        protected override void UpdateUnitStatus()
+        {
+            var siteData = GetWebServer().GetInfo();
+
+            var status = siteData == null
+                ? UnitStatus.NotFound
+                : (siteData.AppPoolStarted && siteData.SiteStarted ? UnitStatus.Running : UnitStatus.Stopped);
+
+            Interlocked.Exchange(ref _lastUnitStatus, (int) status);
         }
     }
 }

@@ -35,9 +35,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return task;
         }
 
-        public override DeployUnitInfo GetUnitInfo()
+        public override DeployUnitInfo GetUnitInfo(bool refreshUnitStatus)
         {
-            var deployUnitInfo = base.GetUnitInfo();
+            var deployUnitInfo = base.GetUnitInfo(refreshUnitStatus);
 
             deployUnitInfo.Status = UnitStatus.NA;
             deployUnitInfo.Url = Url != null ? Url.Replace("localhost", HostNameUtil.GetFullHostName()) : null;

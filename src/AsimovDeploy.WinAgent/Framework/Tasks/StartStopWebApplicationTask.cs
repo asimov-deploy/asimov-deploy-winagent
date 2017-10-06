@@ -37,7 +37,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 			if (_stop) server.StopAppPool();
 			else server.StartAppPool();
 
-			var unitInfo = _unit.GetUnitInfo();
+			var unitInfo = _unit.GetUnitInfo(true);
 
 			if (unitInfo.Status != endStatus)
 			{

@@ -46,7 +46,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         DeployUnits GetUnitsByType(string unitType);
         DeployUnits GetUnitsByTag(string tag);
         DeployUnits GetUnitsByUnitName(string arg);
-        DeployUnits GetUnitsByStatus(string status);
+        DeployUnits GetUnitsByStatus(string status, bool refreshUnitStatus);
 
         string[] GetAgentGroups();
         string[] GetUnitGroups();
