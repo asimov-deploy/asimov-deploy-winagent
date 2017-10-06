@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Common;
@@ -57,8 +58,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             {
                 Name = Name,
                 Group = Group,
-                HasDeployParameters = HasDeployParameters,
-
+                HasDeployParameters = refreshUnitStatus && HasDeployParameters
             };
 
             if (!refreshUnitStatus)
@@ -98,7 +98,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         protected virtual void UpdateUnitStatus()
         {
-
+            
         }
 
         public IList<DeployedVersion> GetDeployedVersions() => VersionUtil.ReadVersionLog(DataDirectory);
