@@ -70,8 +70,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         private bool CanInstall()
         {
-            UpdateUnitStatus();
-
             return 
                 (UnitStatus)_lastUnitStatus == UnitStatus.NotFound && 
                 (Installable?.Install != null || Installable?.InstallType != null);

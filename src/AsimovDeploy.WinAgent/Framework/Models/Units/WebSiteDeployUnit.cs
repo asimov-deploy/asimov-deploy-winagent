@@ -99,7 +99,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         private bool CanInstall()
         {
-            return GetWebServer().GetInfo() == null && Installable?.Install != null;
+            return
+                (UnitStatus)_lastUnitStatus == UnitStatus.NotFound &&
+                Installable?.Install != null;
         }
 
         public virtual IWebServer GetWebServer() => new IIS7WebServer(SiteName, SiteUrl);

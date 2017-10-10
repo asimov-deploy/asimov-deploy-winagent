@@ -16,7 +16,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Common;
@@ -58,13 +57,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             {
                 Name = Name,
                 Group = Group,
-                HasDeployParameters = refreshUnitStatus && HasDeployParameters
+                HasDeployParameters = HasDeployParameters
             };
-
-            if (!refreshUnitStatus)
-            {
-                Version = new DeployedVersion() { VersionNumber = "0.0.0.0" };
-            }
 
             if (Version == null)
             {
@@ -140,6 +134,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             VersionUtil.UpdateVersionLog(DataDirectory, Version);
 
             var unitInfo = GetUnitInfo(true);
+
             NotificationPublisher.PublishNotifications(new DeployCompletedEvent(Name, Version, unitInfo.Status));
         }
 
@@ -160,6 +155,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public virtual ActionParameterList GetCredentials()
         {
             return Credentials;
+        }
+
+        public void Refresh()
+        {
+            GetUnitInfo(true);
         }
     }
 }

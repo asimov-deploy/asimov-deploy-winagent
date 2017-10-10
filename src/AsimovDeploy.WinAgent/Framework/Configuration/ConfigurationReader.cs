@@ -24,36 +24,37 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 {
     public class ConfigurationReader
     {
-         public IAsimovConfig Read(string configDir, string machineName)
-         {
-             using (var reader = new StreamReader(Path.Combine(configDir, "config.json")))
-             {
-                 using (var jsonReader = new JsonTextReader(reader))
-                 {
-                     var serializer = new JsonSerializer();
-                     serializer.Converters.Add(new AsimovConfigConverter(machineName, configDir));
-                     var config = serializer.Deserialize<AsimovConfig>(jsonReader);
+        public IAsimovConfig Read(string configDir, string machineName)
+        {
+            using (var reader = new StreamReader(Path.Combine(configDir, "config.json")))
+            {
+                using (var jsonReader = new JsonTextReader(reader))
+                {
+                    var serializer = new JsonSerializer();
+                    serializer.Converters.Add(new AsimovConfigConverter(machineName, configDir));
+                    var config = serializer.Deserialize<AsimovConfig>(jsonReader);
 
-                     var unitsDataBaseDir = Path.Combine(config.DataFolder, "Units");
+                    var unitsDataBaseDir = Path.Combine(config.DataFolder, "Units");
 
-                     CreateDirectoryIfNotExists(config.DataFolder);
-                     CreateDirectoryIfNotExists(config.TempFolder);
-                     CreateDirectoryIfNotExists(unitsDataBaseDir);
-                     
-                     foreach (var deployUnit in config.Units.Concat(config.Environments.SelectMany(a => a.Units)))
-                     {
-                         var unitDataDir = Path.Combine(unitsDataBaseDir, deployUnit.Name);
-                         deployUnit.DataDirectory = unitDataDir;
-                         
-                         AddScriptsDir(configDir,deployUnit);
-                        
-                         CreateDirectoryIfNotExists(deployUnit.DataDirectory);
-                     }
+                    CreateDirectoryIfNotExists(config.DataFolder);
+                    CreateDirectoryIfNotExists(config.TempFolder);
+                    CreateDirectoryIfNotExists(unitsDataBaseDir);
 
-                     return config;
-                 }
-             }
-         }
+                    foreach (var deployUnit in config.Units.Concat(config.Environments.SelectMany(a => a.Units)))
+                    {
+                        var unitDataDir = Path.Combine(unitsDataBaseDir, deployUnit.Name);
+                        deployUnit.DataDirectory = unitDataDir;
+
+                        AddScriptsDir(configDir, deployUnit);
+
+                        CreateDirectoryIfNotExists(deployUnit.DataDirectory);
+                        deployUnit.Refresh();
+                    }
+
+                    return config;
+                }
+            }
+        }
 
         private static void AddScriptsDir(string configDir, DeployUnit config)
         {
@@ -75,7 +76,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 
         private void CreateDirectoryIfNotExists(string directory)
         {
-			if (Directory.Exists(directory))
+            if (Directory.Exists(directory))
                 return;
 
             Directory.CreateDirectory(directory);
