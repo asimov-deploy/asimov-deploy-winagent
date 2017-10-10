@@ -15,8 +15,6 @@
 ******************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -37,7 +35,6 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
         private readonly string _hostControlUrl;
         private readonly IAsimovConfig _config;
         private readonly ILoadBalancerService _loadBalancerService;
-        private LoadBalancerStateDTO _previousLoadBalancerState;
 
         public HeartbeatService(IAsimovConfig config, ILoadBalancerService loadBalancerService)
         {
@@ -61,7 +58,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 
             try
             {
-                SendHeartbeats();
+                SendHeartbeat();
             }
             finally
             {
@@ -69,47 +66,19 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
             }
         }
 
-        private void SendHeartbeats()
+        private void SendHeartbeat()
         {
-            foreach (var dto in GetHeartbeatDtos())
+            HttpPostJsonUpdate(GetHeartbeatUri(_config.NodeFrontUrl), new HeartbeatDTO
             {
-                HttpPostJsonUpdate(dto.Key, dto.Value);
-            }
-        }
-
-        private IEnumerable<KeyValuePair<Uri, HeartbeatDTO>> GetHeartbeatDtos()
-        {
-            if (!_config.Environments.Any())
-            {
-                return new[]
-                {
-                    new KeyValuePair<Uri, HeartbeatDTO>(
-                        GetHeartbeatUri(_config.NodeFrontUrl),
-                        new HeartbeatDTO
-                        {
-                            name = Environment.MachineName,
-                            url = _hostControlUrl,
-                            apiKey = _config.ApiKey,
-                            version = VersionUtil.GetAgentVersion(),
-                            configVersion = _config.ConfigVersion,
-                            group = _config.AgentGroup,
-                            loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
-                        })
-                };
-            }
-
-            return
-                _config.Environments.Select(
-                    env => new KeyValuePair<Uri, HeartbeatDTO>(GetHeartbeatUri(_config.NodeFrontUrl), new HeartbeatDTO
-                    {
-                        name = Environment.MachineName,
-                        url = _hostControlUrl,
-                        apiKey = _config.ApiKey,
-                        version = VersionUtil.GetAgentVersion(),
-                        configVersion = _config.ConfigVersion,
-                        group = env.AgentGroup,
-                        loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
-                    }));
+                name = Environment.MachineName,
+                osPlatform = "Windows",
+                groups = _config.GetAgentGroups(),
+                url = _hostControlUrl,
+                apiKey = _config.ApiKey,
+                version = VersionUtil.GetAgentVersion(),
+                configVersion = _config.ConfigVersion,
+                loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
+            });
         }
 
         private static void HttpPostJsonUpdate<T>(Uri uri, T data)
