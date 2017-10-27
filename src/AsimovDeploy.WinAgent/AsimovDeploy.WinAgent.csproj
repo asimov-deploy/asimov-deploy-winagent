@@ -125,12 +125,14 @@
     <Compile Include="Framework\Deployment\Steps\InstallWebSite.cs" />
     <Compile Include="Framework\Models\Units\IInstallable.cs" />
     <Compile Include="Framework\Models\Units\IInstallableService.cs" />
+    <Compile Include="Framework\Tasks\DeployAllUnitsTask.cs" />
     <Compile Include="Framework\Tasks\PowershellUninstallTask.cs" />
     <Compile Include="Framework\Models\Units\InstallableConfig.cs" />
     <Compile Include="Framework\Tasks\CommandTask.cs" />
     <Compile Include="Framework\Tasks\LaunchCommandAsProcess.cs" />
     <Compile Include="Framework\Tasks\PowerShellCommand.cs" />
     <Compile Include="Framework\Tasks\ServiceControl\ProcessAwareServiceController.cs" />
+    <Compile Include="Web\Commands\DeployAllCommand.cs" />
     <Compile Include="Web\Contracts\GetDeployUnitsRequestDto.cs" />
     <Compile Include="Web\Contracts\HeartbeatDto.cs" />
     <Compile Include="Web\Contracts\LoadBalancerStateDto.cs" />

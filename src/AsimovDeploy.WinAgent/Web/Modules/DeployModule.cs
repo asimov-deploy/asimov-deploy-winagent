@@ -14,9 +14,10 @@
 * limitations under the License.
 ******************************************************************************/
 
-using System.Collections.Generic;
+using System;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models;
+using AsimovDeploy.WinAgent.Framework.Tasks;
 using AsimovDeploy.WinAgent.Web.Commands;
 using Nancy;
 using Nancy.ModelBinding;
@@ -26,7 +27,7 @@ namespace AsimovDeploy.WinAgent.Web.Modules
 {
     public class DeployModule : NancyModule
     {
-        private static ILog Log = LogManager.GetLogger(typeof (DeployModule));
+        private static ILog Log = LogManager.GetLogger(typeof(DeployModule));
 
         public DeployModule(ITaskExecutor taskExecutor, IAsimovConfig config)
         {
@@ -34,7 +35,7 @@ namespace AsimovDeploy.WinAgent.Web.Modules
             {
                 var command = this.Bind<DeployCommand>();
                 var deployUnit = config.GetUnitByName(command.unitName);
-	            var user = new AsimovUser() { UserId = command.userId, UserName = command.userName };
+                var user = new AsimovUser() { UserId = command.userId, UserName = command.userName };
 
                 var packageSource = config.GetPackageSourceFor(deployUnit);
                 var version = packageSource.GetVersion(command.versionId, deployUnit.PackageInfo);
@@ -42,7 +43,21 @@ namespace AsimovDeploy.WinAgent.Web.Modules
 
                 taskExecutor.AddTask(deployTask);
 
-				return Response.AsJson(new { OK = true });
+                return Response.AsJson(new { OK = true });
+            };
+
+            Post["/deploy/deploy-all-units"] = _ =>
+            {
+                var command = this.Bind<DeployAllCommand>();
+
+                var user = new AsimovUser() { UserId = command.userId, UserName = command.userName };
+                var preferredBranch = command.preferredBranch ?? "master";
+                var correlationId = command.correlationId ?? Guid.NewGuid().ToString("D");
+                var task = new DeployAllUnitsTask(preferredBranch, user, correlationId);
+
+                taskExecutor.AddTask(task);
+
+                return Response.AsJson(new { correlationId }, HttpStatusCode.Accepted);
             };
         }
     }
