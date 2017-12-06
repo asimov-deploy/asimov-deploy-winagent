@@ -23,6 +23,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
     [JsonConverter(typeof(AsimovListJsonConverter))]
 	[AsimovListType("FileSystem", typeof(FileSystemPackageSource))]
 	[AsimovListType("AsimovWeb", typeof(AsimovWebPackageSource))]
+	[AsimovListType("S3", typeof(AwsS3PackageSource))]
     public class PackageSourceList : List<PackageSource>
     {
 

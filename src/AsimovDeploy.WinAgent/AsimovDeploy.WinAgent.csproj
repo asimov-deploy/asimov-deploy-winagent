@@ -45,6 +45,12 @@
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AWSSDK.Core.3.3.19\lib\net45\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.S3, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AWSSDK.S3.3.3.15\lib\net45\AWSSDK.S3.dll</HintPath>
+    </Reference>
     <Reference Include="EasyHttp">
       <HintPath>..\..\packages\EasyHttp.1.6.58.0\lib\net40\EasyHttp.dll</HintPath>
     </Reference>
@@ -116,6 +122,7 @@
     <Compile Include="Framework\Deployment\Steps\InstallWindowsService.cs" />
     <Compile Include="Framework\LoadBalancers\LoadBalancerService.cs" />
     <Compile Include="Framework\Deployment\Steps\ExecuteUnitAction.cs" />
+    <Compile Include="Framework\Models\PackageSources\AwsS3PackageSource.cs" />
     <Compile Include="Framework\Models\UnitActions\CommandUnitAction.cs" />
     <Compile Include="Framework\Models\UnitActions\PowerShellUnitAction.cs" />
     <Compile Include="Framework\Models\UnitActions\RollbackUnitAction.cs" />
@@ -243,7 +250,9 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Analyzer Include="..\..\packages\AWSSDK.S3.3.3.15\analyzers\dotnet\cs\AWSSDK.S3.CodeAnalysis.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

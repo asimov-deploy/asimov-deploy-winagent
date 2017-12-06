@@ -28,6 +28,7 @@ PublishProfiles/
 .vs
 node_modules/
 .vs
+packages
 
 #Tooling
 _ReSharper*/
