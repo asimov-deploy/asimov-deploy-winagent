@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
@@ -15,7 +16,7 @@ namespace AsimovDeploy.WinAgent.Tests
     {
         public AsimovConfig ReadConfig(string configDir, string agentName)
         {
-            return (AsimovConfig) new ConfigurationReader().Read(configDir, agentName);
+            return (AsimovConfig) new ConfigurationReader().Read(Path.Combine(TestContext.CurrentContext.TestDirectory,configDir), agentName);
         }
 
         [Test]

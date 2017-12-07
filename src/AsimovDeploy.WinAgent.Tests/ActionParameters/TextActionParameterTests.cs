@@ -26,7 +26,7 @@ namespace AsimovDeploy.WinAgent.Tests.ActionParameters
     {
         private TextActionParameter _textParam;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Arrange()
         {
             _textParam = new TextActionParameter

@@ -26,7 +26,7 @@ namespace AsimovDeploy.WinAgent.Tests.ActionParameters
     {
         private PasswordActionParameter _passwordParam;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Arrange()
         {
             _passwordParam = new PasswordActionParameter
