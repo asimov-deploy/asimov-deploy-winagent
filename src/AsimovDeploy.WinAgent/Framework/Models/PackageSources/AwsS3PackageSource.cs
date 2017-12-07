@@ -54,7 +54,12 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
         public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder)
         {
             var @object = S3Client.GetObject(Bucket, versionId);
-            var localFileName = Path.Combine(tempFolder,versionId);
+            var objectFileName = Path.GetFileName(@object.Key);
+            if (objectFileName == null)
+            {
+                throw new InvalidOperationException($"Could not extract file name from object key {@object.Key}");
+            }
+            var localFileName = Path.Combine(tempFolder, objectFileName);
             @object.WriteResponseStreamToFile(localFileName);
 
             Extract(localFileName, tempFolder, packageInfo.InternalPath);
