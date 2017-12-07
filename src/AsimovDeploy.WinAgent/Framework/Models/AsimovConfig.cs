@@ -16,12 +16,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models.PackageSources;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
+using JsonFx.Json;
 using Nancy.Helpers;
 
 namespace AsimovDeploy.WinAgent.Framework.Models
@@ -179,11 +181,24 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             return LoadBalancerParameters.Count == 0 ? "" : string.Join("&", LoadBalancerParameters.Select(p => $"{HttpUtility.UrlEncode(p.Key.ToLower())}={HttpUtility.UrlEncode(p.Value.ToLower())}"));
         }
 
-        public PackageSource GetPackageSourceFor(DeployUnit deployUnit) => PackageSources.Single(x => x.Name == deployUnit.PackageInfo.Source);
+        public PackageSource GetPackageSourceFor(DeployUnit deployUnit)
+        {
+            var matchingPackageSources = PackageSources.Where(x => x.Name == deployUnit.PackageInfo.Source).ToList();
+            if (matchingPackageSources.Count == 0)
+            {
+                throw new ConfigurationErrorsException($"The package source {deployUnit.PackageInfo.Source}, used by the deploy unit {deployUnit.Name}, does not exist");
+            }
+            if (matchingPackageSources.Count > 1)
+            {
+                throw new ConfigurationErrorsException($"The package source {deployUnit.PackageInfo.Source}, used by the deploy unit {deployUnit.Name}, is declared more than once.");
+
+            }
+            return matchingPackageSources.Single();
+        }
 
         public DeployUnit GetUnitByName(string name) => Units.First(x => x.Name == name);
 
         private bool AgentGroupIsSuppliedButNoMatchingFound(string agentGroup)
-            => !string.IsNullOrWhiteSpace(agentGroup) && !Environments.Any(a => a.AgentGroup == agentGroup);
+            => !string.IsNullOrWhiteSpace(agentGroup) && Environments.All(a => a.AgentGroup != agentGroup);
     }
 }
