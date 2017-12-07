@@ -22,7 +22,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.PackageSource
             {
                 Name = "test",
                 Pattern = "Package(?<version>\\d)\\.zip",
-                Uri = new Uri($"file://{Directory.GetCurrentDirectory()}/PackageSource/Sources")
+                Uri = new Uri($"file://{TestContext.CurrentContext.TestDirectory}/PackageSource/Sources")
             };
         }
 

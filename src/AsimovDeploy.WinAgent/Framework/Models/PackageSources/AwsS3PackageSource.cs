@@ -25,7 +25,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
         public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo)
         {
-            var objects = S3Client.ListObjects(Bucket, Prefix);
+            var prefix = packageInfo.SourceRelativePath != null ? 
+                $"{Prefix}/{packageInfo.SourceRelativePath}" :
+                Prefix;
+            var objects = S3Client.ListObjects(Bucket, prefix);
             return objects.S3Objects.Select(x => ParseVersion(x.Key, x.LastModified)).Where(x => x != null).ToList();
         }
 
