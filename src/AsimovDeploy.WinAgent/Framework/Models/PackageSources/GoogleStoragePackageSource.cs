@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
+using Object = Google.Apis.Storage.v1.Data.Object;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 {
@@ -37,35 +37,23 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
         {
             var prefix = packageInfo.SourceRelativePath != null ? $"{Prefix}/{packageInfo.SourceRelativePath}" : Prefix;
             var objects = StorageClient.ListObjects(Bucket, prefix);
-            return objects.ReadPage(MaxPageSize).Select(x => ParseVersion(x.Name, x.Updated)).Where(x => x != null)
+            return objects.ReadPage(MaxPageSize).Select(ParseVersion).Where(x => x != null)
                 .ToList();
-        }
-
-        private AsimovVersion ParseVersion(string key, DateTime? lastModified)
-        {
-            var match = Regex.Match(key, Pattern, RegexOptions.IgnoreCase);
-            if (!match.Success)
-                return null;
-            var version = new AsimovVersion
-            {
-                Id = key,
-                Number = match.Groups["version"].Value,
-                Branch = match.Groups["branch"].Value,
-                Commit = match.Groups["commit"].Value,
-                Timestamp = lastModified ?? DateTime.MinValue
-            };
-            return version;
         }
 
         public override AsimovVersion GetVersion(string versionId, PackageInfo packageInfo)
         {
             var @object = StorageClient.GetObject(Bucket, versionId);
-            return ParseVersion(@object.Name, @object.Updated);
+            return ParseVersion(@object);
+        }
+
+        private AsimovVersion ParseVersion(Object @object)
+        {
+            return AsimovVersion.Parse(Pattern,@object.Name,@object.Updated ?? DateTime.MinValue);
         }
 
         public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder)
         {
-            var @object = StorageClient.GetObject(Bucket, versionId);
             var objectFileName = Path.GetFileName(versionId);
             if (objectFileName == null)
                 throw new InvalidOperationException($"Could not extract file name from object {versionId}");

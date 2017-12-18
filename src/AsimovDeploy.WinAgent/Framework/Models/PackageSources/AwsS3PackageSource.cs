@@ -20,7 +20,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
         public string Region { get; set; }
         public string Bucket { get; set; }
         public string Prefix { get; set; }
-        public string Pattern { get; set; } = @"v(?<version>\d+\.\d+\.\d+\.\d+)-\[(?<branch>[\w\-]*)\]-\[(?<commit>\w*)\]";
+        public string Pattern { get; set; } = AsimovVersion.DefaultPattern;
 
 
         public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo)
@@ -34,18 +34,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
         private AsimovVersion ParseVersion(string key, DateTime xLastModified)
         {
-            var match = Regex.Match(key, Pattern, RegexOptions.IgnoreCase);
-            if (!match.Success)
-                return null;
-            var version = new AsimovVersion
-            {
-                Id = key,
-                Number = match.Groups["version"].Value,
-                Branch = match.Groups["branch"].Value,
-                Commit = match.Groups["commit"].Value,
-                Timestamp = xLastModified
-            };
-            return version;
+            return AsimovVersion.Parse(Pattern,key,xLastModified);
         }
 
         public override AsimovVersion GetVersion(string versionId, PackageInfo packageInfo)
