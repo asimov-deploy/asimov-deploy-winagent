@@ -51,6 +51,7 @@
     <Compile Include="NodeFrontSimulator.cs" />
     <Compile Include="PackageSource\FileSystemPackageSourceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenarios\GoogleStorageScenario\GoogleStorageScenario.cs" />
     <Compile Include="Scenarios\S3Scenario\S3Scenario.cs" />
     <Compile Include="Scenarios\ServiceScenario\ServiceFromScriptScenario.cs" />
     <Compile Include="Scenarios\SourceRelativePathScenario\SourceRelativePathScenario.cs" />
@@ -70,6 +71,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\PasswordScenario\Packages\somefile2-v12.0.0.0-[bbb]-[123123].zip" />
+    <None Include="Scenarios\GoogleStorageScenario\ConfigFiles\config.json">
+      <SubType>Component</SubType>
+    </None>
     <None Include="Scenarios\S3Scenario\ConfigFiles\config.json">
       <SubType>Component</SubType>
     </None>

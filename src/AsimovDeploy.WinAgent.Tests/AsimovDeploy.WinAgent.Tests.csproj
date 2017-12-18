@@ -70,6 +70,7 @@
     <EmbeddedResource Include="ConfigExamples\config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="ConfigExamples\config.test1.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
