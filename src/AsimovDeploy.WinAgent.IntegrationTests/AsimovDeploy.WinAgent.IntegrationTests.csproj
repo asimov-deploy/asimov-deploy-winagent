@@ -77,6 +77,8 @@
     <None Include="Scenarios\S3Scenario\ConfigFiles\config.json">
       <SubType>Component</SubType>
     </None>
+    <None Include="Scenarios\S3Scenario\S3Bucket\test-packages\Unit1\somefile-v1.0.0.0-[bbb]-[123123].zip" />
+    <None Include="Scenarios\S3Scenario\S3Bucket\test-packages\Unit2\somefile-v2.0.0.0-[bbb]-[123123].zip" />
     <None Include="Scenarios\ServiceScenario\ConfigFiles\Scripts\install-service.ps1" />
     <None Include="Scenarios\ServiceScenario\ConfigFiles\Scripts\uninstall-service.ps1" />
     <None Include="Scenarios\SourceRelativePathScenario\ConfigFiles\config.json">

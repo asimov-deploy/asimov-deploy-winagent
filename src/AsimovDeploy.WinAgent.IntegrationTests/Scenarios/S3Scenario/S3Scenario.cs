@@ -8,7 +8,10 @@ using Shouldly;
 
 namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.S3Scenario
 {
-    [TestFixture]
+    [TestFixture, Ignore(@"This test needs the following dependencies setup to work:
+1) An S3 bucket with the files in the s3Bucket folder
+2) The aws cli configured so that the default profile has access to that bucket
+")]
     public class S3Scenario : WinAgentSystemTest
     {
         public override void Given()
