@@ -18,8 +18,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             {
                 if (_storageClient != null)
                     return _storageClient;
-                var credentials = !string.IsNullOrEmpty(CredentialsJson)
-                    ? GoogleCredential.FromJson(CredentialsJson)
+                var credentials = !string.IsNullOrEmpty(Credentials)
+                    ? GoogleCredential.FromJson(Credentials)
                     : null;
                 return _storageClient = StorageClient.Create(credentials);
             }
@@ -30,7 +30,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
         public string Prefix { get; set; }
         public string Pattern { get; set; } =
             @"v(?<version>\d+\.\d+\.\d+\.\d+)-\[(?<branch>[\w\-]*)\]-\[(?<commit>\w*)\]";
-        public string CredentialsJson { get; set; }
+        public string Credentials { get; set; }
 
 
         public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo)
