@@ -10,6 +10,7 @@ using NUnit.Framework;
 namespace AsimovDeploy.WinAgent.IntegrationTests
 {
     [TestFixture]
+    [SingleThreaded]
     public abstract class WinAgentSystemTest
     {
         protected string AgentDir;
@@ -24,20 +25,13 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         protected AgentHttpClient Agent;
         protected NodeFrontSimulator NodeFront;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
-            try
-            {
-                ShutDownRunnningAgent();
-                GivenFoldersForScenario();
-                Given();
-            }
-            catch (Exception)
-            {
-                CleanUp();
-                throw;
-            }
+            ShutDownRunnningAgent();
+            GivenFoldersForScenario();
+            Given();
+
         }
 
         private void ShutDownRunnningAgent()
@@ -61,7 +55,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void CleanUp()
         {
             try
@@ -81,7 +75,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
 
         public void GivenFoldersForScenario([CallerFilePath] string scenarioSourceFile = "")
         {
-            ScenarioDir = Path.Combine(new FileInfo(scenarioSourceFile).Directory.FullName);
+            ScenarioDir = Path.Combine(TestContext.CurrentContext.TestDirectory, new FileInfo(scenarioSourceFile).Directory.FullName);
 
             WorkingDir = Environment.CurrentDirectory;
             AgentDir = Path.Combine(WorkingDir, "Agent");
@@ -111,7 +105,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
 
         public void CopyAgentToCleanRunFolder()
         {
-            DirectoryUtil.CopyDirectory(@"..\..\..\AsimovDeploy.WinAgent\bin\Debug", AgentDir);
+            DirectoryUtil.CopyDirectory(Path.Combine(TestContext.CurrentContext.TestDirectory,@"..\..\..\AsimovDeploy.WinAgent\bin\Debug"), AgentDir);
         }
 
         public void GivenRunningAgent()

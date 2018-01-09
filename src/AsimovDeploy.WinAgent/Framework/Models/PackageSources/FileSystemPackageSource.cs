@@ -25,12 +25,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
     public class FileSystemPackageSource : PackageSource
     {
         public Uri Uri { get; set; }
-        public string Pattern { get; set; }
-
-        public FileSystemPackageSource()
-        {
-            Pattern = @"v(?<version>\d+\.\d+\.\d+\.\d+)-\[(?<branch>[\w\-]*)\]-\[(?<commit>\w*)\]";
-        }
+        public string Pattern { get; set; } = AsimovVersion.DefaultPattern;
 
         public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo)
         {
@@ -100,19 +95,12 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
         private AsimovVersion GetVersionInfoFromFile(FileInfo fileInfo)
         {
-            var match = Regex.Match(fileInfo.Name, Pattern, RegexOptions.IgnoreCase);
-            if (!match.Success)
-                return null;
-
-            var version = new AsimovVersion();
-            version.Id = fileInfo.FullName.Replace(Uri.LocalPath, "");
-            version.Id = version.Id.TrimStart(new[] { '\\' });
-
-            version.Number = match.Groups["version"].Value;
-            version.Branch = match.Groups["branch"].Value;
-            version.Commit = match.Groups["commit"].Value;
-            version.Timestamp = fileInfo.LastAccessTime;
-
+            var version = AsimovVersion.Parse(Pattern,fileInfo.Name,fileInfo.LastAccessTime);
+            if (version != null)
+            {
+                version.Id = fileInfo.FullName.Replace(Uri.LocalPath, "");
+                version.Id = version.Id.TrimStart(new[] { '\\' });
+            }
             return version;
         }
     }
