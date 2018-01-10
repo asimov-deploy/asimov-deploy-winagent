@@ -130,6 +130,7 @@ task CopyToDropFolderProd {
 }
 
 task DoRelease -depends Compile, `
+	Test, `
 	CreateOutputDirectories, `
 	CopyAsimovDeployWinAgentUpdater, `
 	CopyAsimovDeployWinAgent, `
