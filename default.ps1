@@ -72,12 +72,8 @@ task CreateDistributionPackage {
 }
 
 task Compile -depends Init {
-
-	$v4_net_version = (ls "$env:windir\Microsoft.NET\Framework\v4.0*").Name
-
 	try {
 		Write-Host "Compiling with '$configuration' configuration"
-		#exec { &"C:\Windows\Microsoft.NET\Framework\$v4_net_version\MSBuild.exe" "$sln_file" /p:OutDir="$buildartifacts_dir\" /p:Configuration=$configuration }
 		exec { dotnet restore }
 		exec { dotnet build "$sln_file" /p:OutDir="$buildartifacts_dir\" /p:Configuration=$configuration }
 
@@ -89,6 +85,9 @@ task Compile -depends Init {
 }
 
 task Test -depends Compile {
+	exec {
+		dotnet test .\src\AsimovDeploy.WinAgent.Tests
+	}
 
 }
 
