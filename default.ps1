@@ -78,7 +78,8 @@ task Compile -depends Init {
 	try {
 		Write-Host "Compiling with '$configuration' configuration"
 		#exec { &"C:\Windows\Microsoft.NET\Framework\$v4_net_version\MSBuild.exe" "$sln_file" /p:OutDir="$buildartifacts_dir\" /p:Configuration=$configuration }
-		exec { &"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "$sln_file" /p:OutDir="$buildartifacts_dir\" /p:Configuration=$configuration }
+		exec { dotnet restore }
+		exec { dotnet build "$sln_file" /p:OutDir="$buildartifacts_dir\" /p:Configuration=$configuration }
 
 	} catch {
 		Throw
