@@ -10,6 +10,7 @@
     <PackageReference Include="Shouldly" Version="1.1.1.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.8.0-*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.*" />
+    <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.7" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LoadbalancerConfig\config.json">
