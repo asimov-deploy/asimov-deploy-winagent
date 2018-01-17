@@ -47,29 +47,26 @@ namespace AsimovDeploy.WinAgentUpdater
 
             try
             {
-                /* TODO Sara Starta rätt version av updateInfoCollector
                 var regex = new Regex(@"(gs:|GS:)//(?<bucket>\S*)/");
                 var match = regex.Match(_watchFolder);
-                var updateInfo; //TODO Sara av typen updateinfocollector
+                UpdateInfo updateInfo;
                 if (match.Success)
                 {
                     updateInfo = new UpdateInfoCollectorGCP(_watchFolder, _port).Collect();
                     
                 }
                 else
-                { //TODO Sara refakturera till updateInfoCollectorDB
+                { 
                     updateInfo = new UpdateInfoCollector(_watchFolder, _port).Collect();
 
                 }
-                */
-                var updateInfo = new UpdateInfoCollectorGCP(_watchFolder, _port).Collect();
                 _log.InfoFormat(updateInfo.ToString());
 
                 using (var service = new ServiceController("AsimovDeploy.WinAgent"))
                 {
                     if (!updateInfo.NeedsAnyUpdate())
                         return;
-                    /* TODO Sara Temp dont do stuff Only check for uppdates. 
+                    
                     StopService(service);
                     
                     if (updateInfo.NewBuildFound())
@@ -86,10 +83,8 @@ namespace AsimovDeploy.WinAgentUpdater
                         UpdateWinAgentConfig(updateInfo.LastConfig);
                     }
 
-                    StartService(service);
-                    */
+                    StartService(service);                    
                 }
-
             }
             catch(Exception ex)
             {
@@ -108,18 +103,15 @@ namespace AsimovDeploy.WinAgentUpdater
             var configDir = Path.Combine(_installDir, "ConfigFiles");
 
             CleanFolder(configDir);
-            CopyNewBuildToInstallDir(configDir, lastConfig.FilePath);
+            CopyNewBuildToInstallDir(configDir, lastConfig.FileSource.GetFilePath());
         }
 
         private void UpdateWinAgentWithNewBuild(AsimovVersion lastBuild)
         {
             _log.InfoFormat("Installing new build {0}", lastBuild.Version);
             CleanFolder(_installDir);
-            //TODO Sara ladda ner filen från internett och byt ut lastBuild.Filepath till den nerladdade filen 
-            //TODO Sara
-           /* string tempFolder = "C:\temp\AsimovDeploy.WinAgent";
-            string filePath = Path.Combine(tempFolder, lastBuild.FileName);
-        */    CopyNewBuildToInstallDir(_installDir, lastBuild.FilePath);
+            
+            CopyNewBuildToInstallDir(_installDir, lastBuild.FileSource.GetFilePath());
         }
 
         private static void StopService(ServiceController serviceController)

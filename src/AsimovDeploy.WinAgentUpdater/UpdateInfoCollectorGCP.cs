@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 using log4net;
 using Google.Cloud.Storage.V1;
 
-namespace AsimovDeploy.WinAgentUpdater
+namespace AsimovDeploy.WinAgentUpdater 
 {
     public class UpdateInfoCollectorGCP
     {
@@ -27,14 +27,8 @@ namespace AsimovDeploy.WinAgentUpdater
         }
 
         public UpdateInfo Collect()
-        {
-            /* TODO Sara Förslag på lösning 
-            var regexgs = new Regex(@"(gs:)//(?<bucket>\S*)/",RegexOptions.IgnoreCase);
-            var matchgs = regexgs.Match(_watchFolder);
-            string bucketName = matchgs.Result("${bucket}");
-            if (matchgs.Success) return new UpdateInfo() med getLatestBuild(bucketName)
-             */
-            return new UpdateInfo()
+        {            
+            return new UpdateInfo() 
                 {
                     LastBuild = GetLatestVersion(),
                     LastConfig = GetLatestBuild(),
@@ -42,23 +36,14 @@ namespace AsimovDeploy.WinAgentUpdater
                 };
         }
 
-        private AsimovConfigUpdate GetLatestBuild() //TODO Sara //string bucketName)
-        {
-
-            //TODO Sara
+        private AsimovConfigUpdate GetLatestBuild() 
+        {                    
             var regexgs = new Regex(@"(gs:)//(?<bucket>\S*)/",RegexOptions.IgnoreCase);
             var matchgs = regexgs.Match(_watchFolder);
             string bucketName = matchgs.Result("${bucket}");
 
             var storage = StorageClient.Create();
-
-            /*
-            if (!Directory.Exists(_watchFolder))
-            {
-                _log.Error("Watchfolder does not exist: " + _watchFolder);
-                return null;
-           }*/
-
+            
             var regex = new Regex(@"(?<fileName>AsimovDeploy.WinAgent.ConfigFiles-Version-(\d+).zip)"); 
             var list = new List<AsimovConfigUpdate>();
 
@@ -70,30 +55,23 @@ namespace AsimovDeploy.WinAgentUpdater
 
                     list.Add(new AsimovConfigUpdate()
                     {
-                            Bucket = bucketName,
-                            FileNameGS = bucket.Name,
-                            FileName = match.Result("${fileName}"), 
-                            Version = int.Parse(match.Groups[1].Value)
-                        });
+                            Version = int.Parse(match.Groups[1].Value),
+                            FileSource = new GcpAsimovFileSource(bucket, storage)
+                    });
                 }
             }
 
             return list.OrderByDescending(x => x.Version).FirstOrDefault();
         }
 
-        private AsimovVersion GetLatestVersion() //TODO Sara lägga till samma kod som är i getLatestBuild
+        private AsimovVersion GetLatestVersion() 
         {
             var regexgs = new Regex(@"(gs:)//(?<bucket>\S*)/", RegexOptions.IgnoreCase);
             var matchgs = regexgs.Match(_watchFolder);
             string bucketName = matchgs.Result("${bucket}");
 
             var storage = StorageClient.Create();
-           /* if (!Directory.Exists(_watchFolder))
-            {
-                _log.Error("Watchfolder does not exist: " + _watchFolder);
-                return null;
-            }*/
-
+           
             var pattern = @"v(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)";
             var regex = new Regex(pattern);
             var list = new List<AsimovVersion>();
@@ -104,10 +82,8 @@ namespace AsimovDeploy.WinAgentUpdater
                 {
                     list.Add(new AsimovVersion()
                     {
-                        Bucket = bucketName,
-                        FileNameGS = bucket.Name,
-                        FileName = match.Result("${fileName}"),
-                        Version = new Version(int.Parse(match.Groups["major"].Value), int.Parse(match.Groups["minor"].Value), int.Parse(match.Groups["build"].Value))
+                        Version = new Version(int.Parse(match.Groups["major"].Value), int.Parse(match.Groups["minor"].Value), int.Parse(match.Groups["build"].Value)),
+                        FileSource = new GcpAsimovFileSource(bucket, storage)
                     });
                 }
             }

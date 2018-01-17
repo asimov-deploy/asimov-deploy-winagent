@@ -53,7 +53,7 @@ namespace AsimovDeploy.WinAgentUpdater
                 {
                     list.Add(new AsimovConfigUpdate()
                         {
-                            FilePath = file,
+                            FileSource = new FileSystemFileSource(file),
                             Version = int.Parse(match.Groups[1].Value)
                         });
                 }
@@ -81,7 +81,7 @@ namespace AsimovDeploy.WinAgentUpdater
                 {
                     list.Add(new AsimovVersion()
                     {
-                        FilePath = file,
+                        FileSource = new FileSystemFileSource(file),
                         Version = new Version(int.Parse(match.Groups["major"].Value), int.Parse(match.Groups["minor"].Value), int.Parse(match.Groups["build"].Value))
                     });
                 }
