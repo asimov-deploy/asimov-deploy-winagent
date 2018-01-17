@@ -47,7 +47,7 @@ namespace AsimovDeploy.WinAgentUpdater
 
             try
             {
-                UpdateInfo updateInfo = UpdateInfoCollect();
+                UpdateInfo updateInfo = CollectUpdateInfo();
                 
                 _log.InfoFormat(updateInfo.ToString());
 
@@ -85,7 +85,7 @@ namespace AsimovDeploy.WinAgentUpdater
             }
         }
 
-        private UpdateInfo UpdateInfoCollect()
+        private UpdateInfo CollectUpdateInfo()
         {
             var regex = new Regex(@"(gs:)//", RegexOptions.IgnoreCase);
             var match = regex.Match(_watchFolder);

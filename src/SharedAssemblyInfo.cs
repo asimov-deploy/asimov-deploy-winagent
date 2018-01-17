@@ -8,5 +8,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("© Ebay Inc. 2012. All rights reserved.")]
 
 [assembly: AssemblyVersion("1.0.0")]
-[assembly: AssemblyFileVersion("0.0.1")]
-[assembly: AssemblyInformationalVersion("0.0.1")]
+[assembly: AssemblyFileVersion("{version}")]
+[assembly: AssemblyInformationalVersion("{version}")]
