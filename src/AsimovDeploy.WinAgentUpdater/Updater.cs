@@ -47,19 +47,8 @@ namespace AsimovDeploy.WinAgentUpdater
 
             try
             {
-                var regex = new Regex(@"(gs:|GS:)//(?<bucket>\S*)/");
-                var match = regex.Match(_watchFolder);
-                UpdateInfo updateInfo;
-                if (match.Success)
-                {
-                    updateInfo = new UpdateInfoCollectorGCP(_watchFolder, _port).Collect();
-                    
-                }
-                else
-                { 
-                    updateInfo = new UpdateInfoCollector(_watchFolder, _port).Collect();
-
-                }
+                UpdateInfo updateInfo = UpdateInfoCollect();
+                
                 _log.InfoFormat(updateInfo.ToString());
 
                 using (var service = new ServiceController("AsimovDeploy.WinAgent"))
@@ -94,6 +83,22 @@ namespace AsimovDeploy.WinAgentUpdater
             {
                 _timer.Change(interval, interval);
             }
+        }
+
+        private UpdateInfo UpdateInfoCollect()
+        {
+            var regex = new Regex(@"(gs:)//", RegexOptions.IgnoreCase);
+            var match = regex.Match(_watchFolder);
+            UpdateInfo updateInfo;
+            if (match.Success)
+            {
+                updateInfo = new UpdateInfoCollectorGCP(_watchFolder, _port).Collect();
+            }
+            else
+            {
+                updateInfo = new UpdateInfoCollector(_watchFolder, _port).Collect();
+            }
+            return updateInfo;
         }
 
         private void UpdateWinAgentConfig(AsimovConfigUpdate lastConfig)
