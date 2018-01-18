@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="DotNetZip" Version="1.9.1.8" />
     <PackageReference Include="log4net" Version="2.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="4.5.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="Topshelf" Version="2.3.0.0" />
     <PackageReference Include="Topshelf.Log4Net" Version="2.3.0.0" />
     <PackageReference Include="Google.Cloud.Storage.V1" Version="2.0.0" />
