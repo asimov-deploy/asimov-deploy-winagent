@@ -31,7 +31,7 @@ namespace AsimovDeploy.WinAgentUpdater
                 {
                     LastBuild = GetLatestVersion(),
                     LastConfig = GetLatestBuild(),
-                    Current = GetCurrentBuild()
+                    Current = new CurrentBuild(_port).GetCurrentBuild()
                 };
         }
 
@@ -53,7 +53,7 @@ namespace AsimovDeploy.WinAgentUpdater
                 {
                     list.Add(new AsimovConfigUpdate()
                         {
-                            FilePath = file,
+                            FileSource = new FileSystemFileSource(file),
                             Version = int.Parse(match.Groups[1].Value)
                         });
                 }
@@ -81,53 +81,13 @@ namespace AsimovDeploy.WinAgentUpdater
                 {
                     list.Add(new AsimovVersion()
                     {
-                        FilePath = file,
+                        FileSource = new FileSystemFileSource(file),
                         Version = new Version(int.Parse(match.Groups["major"].Value), int.Parse(match.Groups["minor"].Value), int.Parse(match.Groups["build"].Value))
                     });
                 }
             }
 
             return list.OrderByDescending(x => x.Version).FirstOrDefault();
-        }
-
-        public static string GetFullHostName()
-        {
-            var ipProperties = IPGlobalProperties.GetIPGlobalProperties();
-            if (ipProperties.DomainName != string.Empty)
-                return string.Format("{0}.{1}", ipProperties.HostName, ipProperties.DomainName);
-            else
-                return ipProperties.HostName;
-        }
-
-        private AgentVersionInfo GetCurrentBuild()
-        {
-            string url = String.Format("http://{0}:{1}/version", GetFullHostName(), _port);
-            try
-            {
-                using (var response = WebRequest.Create(url).GetResponse())
-                {
-                    using (var reader = new StreamReader(response.GetResponseStream()))
-                    {
-                        using (var jsonReader = new JsonTextReader(reader))
-                        {
-                            var jObject = JObject.Load(jsonReader);
-                            var version = (string)jObject.Property("version").Value;
-                            var parts = version.Split('.');
-                            return new AgentVersionInfo()
-                                {
-                                    Version = new Version(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2])),
-                                    ConfigVersion = (int) jObject.Property("configVersion")
-                                };
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.ErrorFormat("Failed fetch version from: {0}", url);
-                _log.Error(ex);
-                return new AgentVersionInfo() { Version = new Version(0,0,0),  ConfigVersion = 0 };
-            }
-        }
+        }        
     }
 }

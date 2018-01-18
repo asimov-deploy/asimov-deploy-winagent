@@ -40,21 +40,22 @@ namespace AsimovDeploy.WinAgentUpdater
 
         private void TimerTick(object state)
         {
+
             _timer.Change(Timeout.Infinite, Timeout.Infinite);
 
             _log.Info("Looking for new version");
 
             try
             {
-                var updateInfo = new UpdateInfoCollector(_watchFolder, _port).Collect();
-
+                UpdateInfo updateInfo = CollectUpdateInfo();
+                
                 _log.InfoFormat(updateInfo.ToString());
 
                 using (var service = new ServiceController("AsimovDeploy.WinAgent"))
                 {
                     if (!updateInfo.NeedsAnyUpdate())
                         return;
-
+                    
                     StopService(service);
                     
                     if (updateInfo.NewBuildFound())
@@ -71,9 +72,8 @@ namespace AsimovDeploy.WinAgentUpdater
                         UpdateWinAgentConfig(updateInfo.LastConfig);
                     }
 
-                    StartService(service);
+                    StartService(service);                    
                 }
-
             }
             catch(Exception ex)
             {
@@ -85,6 +85,22 @@ namespace AsimovDeploy.WinAgentUpdater
             }
         }
 
+        private UpdateInfo CollectUpdateInfo()
+        {
+            var regex = new Regex(@"(gs:)//", RegexOptions.IgnoreCase);
+            var match = regex.Match(_watchFolder);
+            UpdateInfo updateInfo;
+            if (match.Success)
+            {
+                updateInfo = new UpdateInfoCollectorGCP(_watchFolder, _port).Collect();
+            }
+            else
+            {
+                updateInfo = new UpdateInfoCollector(_watchFolder, _port).Collect();
+            }
+            return updateInfo;
+        }
+
         private void UpdateWinAgentConfig(AsimovConfigUpdate lastConfig)
         {
             _log.Info("Updating config to version " + lastConfig.Version);
@@ -92,16 +108,15 @@ namespace AsimovDeploy.WinAgentUpdater
             var configDir = Path.Combine(_installDir, "ConfigFiles");
 
             CleanFolder(configDir);
-            CopyNewBuildToInstallDir(configDir, lastConfig.FilePath);
+            CopyNewBuildToInstallDir(configDir, lastConfig.FileSource.GetFilePath());
         }
 
         private void UpdateWinAgentWithNewBuild(AsimovVersion lastBuild)
         {
             _log.InfoFormat("Installing new build {0}", lastBuild.Version);
-            
             CleanFolder(_installDir);
-
-            CopyNewBuildToInstallDir(_installDir, lastBuild.FilePath);
+            
+            CopyNewBuildToInstallDir(_installDir, lastBuild.FileSource.GetFilePath());
         }
 
         private static void StopService(ServiceController serviceController)
