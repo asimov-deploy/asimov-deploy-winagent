@@ -1,8 +1,7 @@
 properties {
 	$base_dir  = resolve-path .
-	$lib_dir = "$base_dir\libs"
 	$build_dir = "$base_dir\build_artifacts"
-	$buildartifacts_dir = "$build_dir\"
+	$lib_dir = "$base_dir\libs"
 	$sln_file = "$base_dir\AsimovDeploy.sln"
 	$tools_dir = "$base_dir\tools"
 	$configuration = "Debug"
@@ -22,6 +21,7 @@ task default -depends Release
 
 task Clean {
 	Remove-Item -force -recurse $build_dir -ErrorAction SilentlyContinue
+	Remove-Item -force -Recurse "src\*\build_artifacts"
 }
 
 task Init -depends Clean {
@@ -50,17 +50,13 @@ function CreateZipFile([string] $name, [string] $folder) {
 }
 
 task CopyAsimovDeployWinAgent {
-	$exclude = @('AsimovDeploy.WinAgentUpdater*', "packages", "*Tests*", "ConfigExamples", "drop")
-	Copy-Item "$build_dir\*" "$build_dir\packages\AsimovDeploy.WinAgent" -Recurse -Force -Exclude $exclude
+	Copy-Item "$base_dir\src\AsimovDeploy.WinAgent\build_artifacts\*" "$build_dir\packages\AsimovDeploy.WinAgent\" -Recurse -Force
 
 	CreateZipFile("AsimovDeploy.WinAgent")
 }
 
 task CopyAsimovDeployWinAgentUpdater {
-
-	$include = @('AsimovDeploy.WinAgentUpdater*', "log4net*", "topshelf*", "Ionic.Zip*", "newtonsoft*")
-	Copy-Item "$build_dir\*" "$build_dir\packages\AsimovDeploy.WinAgentUpdater" -Recurse -Force -include $include
-
+	Copy-Item "$base_dir\src\AsimovDeploy.WinAgentUpdater\build_artifacts\*" "$build_dir\packages\AsimovDeploy.WinAgentUpdater\" -Recurse -Force
 	CreateZipFile("AsimovDeploy.WinAgentUpdater")
 }
 
@@ -90,9 +86,8 @@ task Compile -depends Init,UpdateAppConfig {
 
 	try {
 		Write-Host "Compiling with '$configuration' configuration"
-		#exec { &"C:\Windows\Microsoft.NET\Framework\$v4_net_version\MSBuild.exe" "$sln_file" /p:OutDir="$buildartifacts_dir\" /p:Configuration=$configuration }
 		exec { dotnet restore }
-		exec { dotnet build "$sln_file" /p:OutDir="$buildartifacts_dir\" /p:Configuration=$configuration }
+		exec { dotnet build "$sln_file" -o "build_artifacts" -c $configuration }
 
 	} catch {
 		Throw
