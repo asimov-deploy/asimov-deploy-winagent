@@ -11,6 +11,9 @@ properties {
 	$commit = "1234567"
 	$branch = "master"
 	$build = "10"
+	$asimov_watch_folder = "D:\Path\ToWinAgentPackages"
+	$asimov_install_dir = "D:\Path\ToWinAgentInstallDir"
+	$asimov_web_port = '21233'
 }
 
 include .\teamcity.ps1
@@ -70,8 +73,18 @@ task CreateDistributionPackage {
 
 	CreateZipFile("AsimovDeploy")
 }
-
-task Compile -depends Init {
+task UpdateAppConfig {
+	$appConfig = "$base_dir\src\AsimovDeploy.WinAgentUpdater\App.config"
+	$doc = (Get-Content $appConfig) -as [XML]
+	$obj = $doc.configuration.appsettings.add | where {$_.Key -eq 'Asimov.WatchFolder'}
+	$obj.value = $asimov_watch_folder
+	$obj = $doc.configuration.appsettings.add | where {$_.Key -eq 'Asimov.InstallDir'}
+	$obj.value = $asimov_install_dir
+	$obj = $doc.configuration.appsettings.add | where {$_.Key -eq 'Asimov.WebPort'}
+	$obj.value = $asimov_web_port
+	$doc.Save($appConfig)
+}
+task Compile -depends Init,UpdateAppConfig {
 
 	$v4_net_version = (ls "$env:windir\Microsoft.NET\Framework\v4.0*").Name
 
