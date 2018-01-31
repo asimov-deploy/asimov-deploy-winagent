@@ -16,22 +16,23 @@ namespace AsimovDeploy.WinAgentUpdater
     public class UpdateInfoCollectorGCP
     {
         private static ILog _log = LogManager.GetLogger(typeof(UpdateInfoCollectorGCP));
+        readonly Regex GoogleStorageUri = new Regex(@"(gs:)//(?<bucket>\S*)/(?<prefix>.*)", RegexOptions.IgnoreCase);
 
-        private readonly string _watchFolder;
+
         private readonly int _port;
-        private readonly string bucketName;
+        private readonly string _bucket;
+        private readonly string _prefix;
 
         public UpdateInfoCollectorGCP(string watchFolder, int port)
         {
             _port = port;
-            _watchFolder = watchFolder;
-            bucketName = ParsePath();
-        }
-        private string ParsePath()
-        {
-            var regexgs = new Regex(@"(gs:)//(?<bucket>\S*)/", RegexOptions.IgnoreCase);
-            var matchgs = regexgs.Match(_watchFolder);
-            return matchgs.Result("${bucket}");
+            var matchGoogleStorageUri = GoogleStorageUri.Match(watchFolder);
+            if (!matchGoogleStorageUri.Success)
+            {
+                throw new ArgumentException("Watch folder is not a valid google storage uri. Expected an uri of the for gs://bucket/prefix, was " + watchFolder,nameof(watchFolder));
+            }
+            _bucket = matchGoogleStorageUri.Result("${bucket}");
+            _prefix = matchGoogleStorageUri.Result("${prefix}");
         }
 
         public UpdateInfo Collect()
@@ -51,7 +52,7 @@ namespace AsimovDeploy.WinAgentUpdater
             var regex = new Regex(@"(?<fileName>AsimovDeploy.WinAgent.ConfigFiles-Version-(\d+).zip)");
             var list = new List<AsimovConfigUpdate>();
 
-            foreach (var bucket in storage.ListObjects(bucketName, "WinagentPackages"))
+            foreach (var bucket in storage.ListObjects(_bucket, _prefix))
             {
                 var match = regex.Match(bucket.Name);
                 if (match.Success)
@@ -75,7 +76,7 @@ namespace AsimovDeploy.WinAgentUpdater
             var pattern = @"v(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)";
             var regex = new Regex(pattern);
             var list = new List<AsimovVersion>();
-            foreach (var bucket in storage.ListObjects(bucketName, "WinagentPackages"))
+            foreach (var bucket in storage.ListObjects(_bucket, _prefix))
             {
                 var match = regex.Match(bucket.Name);
                 if (match.Success)
