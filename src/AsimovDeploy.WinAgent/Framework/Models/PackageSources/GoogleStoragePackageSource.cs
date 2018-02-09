@@ -37,7 +37,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
         {
             var prefix = packageInfo.SourceRelativePath != null ? $"{Prefix}/{packageInfo.SourceRelativePath}" : Prefix;
             var objects = StorageClient.ListObjects(Bucket, prefix);
-            return objects.ReadPage(MaxPageSize).Select(ParseVersion).Where(x => x != null)
+            return objects
+                .ReadPage(MaxPageSize)
+                .Select(ParseVersion)
+                .Where(x => x != null)
+                .OrderByDescending(x=>x.Timestamp)
                 .ToList();
         }
 
