@@ -6,8 +6,8 @@
         public AsimovConfigUpdate LastConfig { get; set; }
         public AgentVersionInfo Current { get; set; }
 
-        public bool HasLastBuild { get { return LastBuild != null; }}
-        public bool HasLastConfig { get { return LastConfig != null; } }
+        public bool HasLastBuild => LastBuild != null;
+        public bool HasLastConfig => LastConfig != null;
 
         public bool NeedsAnyUpdate()
         {

@@ -2,22 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using log4net;
 
 namespace AsimovDeploy.WinAgentUpdater
 {
-    public class UpdateInfoCollector
+    public class UpdateInfoCollector : IUpdateInfoCollector
     {
-        private static ILog _log = LogManager.GetLogger(typeof (UpdateInfoCollector));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (UpdateInfoCollector));
 
         private readonly string _watchFolder;
         private readonly int _port;
+
 
         public UpdateInfoCollector(string watchFolder, int port)
         {
@@ -39,7 +35,7 @@ namespace AsimovDeploy.WinAgentUpdater
         {
             if (!Directory.Exists(_watchFolder))
             {
-                _log.Error("Watchfolder does not exist: " + _watchFolder);
+                Log.Error("Watchfolder does not exist: " + _watchFolder);
                 return null;
             }
 
@@ -66,7 +62,7 @@ namespace AsimovDeploy.WinAgentUpdater
         {
             if (!Directory.Exists(_watchFolder))
             {
-                _log.Error("Watchfolder does not exist: " + _watchFolder);
+                Log.Error("Watchfolder does not exist: " + _watchFolder);
                 return null;
             }
 

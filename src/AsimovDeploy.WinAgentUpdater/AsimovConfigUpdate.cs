@@ -35,13 +35,13 @@ namespace AsimovDeploy.WinAgentUpdater
         }
     }
 
-    public class GcpAsimovFileSource : IAsimovFileSource
+    public class GoogleStorageFileSource : IAsimovFileSource
     {
         private readonly Google.Apis.Storage.v1.Data.Object Object;
         private readonly StorageClient Client;
 
 
-        public GcpAsimovFileSource(Google.Apis.Storage.v1.Data.Object o, StorageClient client)
+        public GoogleStorageFileSource(Google.Apis.Storage.v1.Data.Object o, StorageClient client)
         {
             Object = o;
             Client = client;

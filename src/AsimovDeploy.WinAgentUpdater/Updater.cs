@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
 using System.ServiceProcess;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Ionic.Zip;
-using Newtonsoft.Json;
 using log4net;
 
 namespace AsimovDeploy.WinAgentUpdater
@@ -19,15 +13,14 @@ namespace AsimovDeploy.WinAgentUpdater
         private Timer _timer;
 
         private static ILog _log = LogManager.GetLogger(typeof(Updater));
-        private string _watchFolder;
-        private int _port;
         private string _installDir;
         private const int interval = 4000;
+
+        private IUpdateInfoCollector _collector;
         
         public void Start()
         {
-            _watchFolder = ConfigurationManager.AppSettings["Asimov.WatchFolder"];
-            _port = Int32.Parse(ConfigurationManager.AppSettings["Asimov.WebPort"]);
+            _collector = UpdateInfoCollectorFactory.GetCollector();
             _installDir = ConfigurationManager.AppSettings["Asimov.InstallDir"];
 
             _timer = new Timer(TimerTick, null, 0, interval);
@@ -47,7 +40,7 @@ namespace AsimovDeploy.WinAgentUpdater
 
             try
             {
-                UpdateInfo updateInfo = CollectUpdateInfo();
+                UpdateInfo updateInfo = _collector.Collect();
                 
                 _log.InfoFormat(updateInfo.ToString());
 
@@ -83,22 +76,6 @@ namespace AsimovDeploy.WinAgentUpdater
             {
                 _timer.Change(interval, interval);
             }
-        }
-
-        private UpdateInfo CollectUpdateInfo()
-        {
-            var regex = new Regex(@"(gs:)//", RegexOptions.IgnoreCase);
-            var match = regex.Match(_watchFolder);
-            UpdateInfo updateInfo;
-            if (match.Success)
-            {
-                updateInfo = new UpdateInfoCollectorGCP(_watchFolder, _port).Collect();
-            }
-            else
-            {
-                updateInfo = new UpdateInfoCollector(_watchFolder, _port).Collect();
-            }
-            return updateInfo;
         }
 
         private void UpdateWinAgentConfig(AsimovConfigUpdate lastConfig)
@@ -167,9 +144,5 @@ namespace AsimovDeploy.WinAgentUpdater
 
             foreach (DirectoryInfo subDirectory in dir.GetDirectories()) subDirectory.Delete(true);
         }
-
-       
     }
-
-   
 }
