@@ -24,4 +24,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ServiceProcess" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="PackageSource\Sources\Source1\package1.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PackageSource\Sources\Source2\Package2.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

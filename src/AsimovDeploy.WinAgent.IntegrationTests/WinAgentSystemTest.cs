@@ -77,7 +77,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         {
             ScenarioDir = Path.Combine(TestContext.CurrentContext.TestDirectory, new FileInfo(scenarioSourceFile).Directory.FullName);
 
-            WorkingDir = Environment.CurrentDirectory;
+            WorkingDir = TestContext.CurrentContext.TestDirectory;
             AgentDir = Path.Combine(WorkingDir, "Agent");
 
             if (Directory.Exists(AgentDir))
@@ -105,7 +105,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
 
         public void CopyAgentToCleanRunFolder()
         {
-            DirectoryUtil.CopyDirectory(Path.Combine(TestContext.CurrentContext.TestDirectory,@"..\..\..\..\AsimovDeploy.WinAgent\bin\Debug"), AgentDir);
+            DirectoryUtil.CopyDirectory(Path.Combine(TestContext.CurrentContext.TestDirectory,@"..\..\..\..\AsimovDeploy.WinAgent\bin\Debug\net45"), AgentDir);
         }
 
         public void GivenRunningAgent()

@@ -12,13 +12,7 @@
     <PackageReference Include="AWSSDK.S3" Version="3.3.15" />
     <PackageReference Include="DotNetZip" Version="1.9.1.8" />
     <PackageReference Include="EasyHttp" Version="1.6.58.0" />
-    <PackageReference Include="Google.Api.Gax" Version="2.0.0" />
-    <PackageReference Include="Google.Api.Gax.Rest" Version="2.0.0" />
-    <PackageReference Include="Google.Apis" Version="1.27.1" />
-    <PackageReference Include="Google.Apis.Auth" Version="1.27.1" />
-    <PackageReference Include="Google.Apis.Core" Version="1.27.1" />
-    <PackageReference Include="Google.Apis.Storage.v1" Version="1.27.1.881" />
-    <PackageReference Include="Google.Cloud.Storage.V1" Version="2.0.0" />
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="2.1.0" />
     <PackageReference Include="IIS.Microsoft.Web.Administration" Version="8.5.9600.17042" />
     <PackageReference Include="JsonFx" Version="2.0.1209.2802" />
     <PackageReference Include="log4net" Version="2.0.0" />
