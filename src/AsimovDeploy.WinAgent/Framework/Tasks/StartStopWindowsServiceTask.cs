@@ -62,7 +62,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 		private static void StopService(ServiceController controller)
 		{
 			if (controller.Status == ServiceControllerStatus.Running)
-				ProcessAwareServiceController.StopServiceAndWaitForExit(controller.ServiceName);
+                controller.StopServiceAndWaitForExit();
 		}
 	}
 

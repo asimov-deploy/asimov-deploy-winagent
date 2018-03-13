@@ -15,11 +15,9 @@
 ******************************************************************************/
 
 using System;
-using System.IO;
+using System.Linq;
 using System.ServiceProcess;
-using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
-using AsimovDeploy.WinAgent.Framework.Configuration;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 using AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl;
@@ -54,15 +52,23 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
                 controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(1));
             }
-
         }
 
         private static void StopService(DeployContext context, ServiceController controller)
         {
-            context.Log.InfoFormat("Stopping service {0}", controller.ServiceName);
+            var killProcess = context.ParameterValues.Any(a => a.Key == "ForceKillServiceProcess");
 
-            if (controller.Status == ServiceControllerStatus.Running)
-                ProcessAwareServiceController.StopServiceAndWaitForExit(controller.ServiceName);
+            context.Log.InfoFormat("Stopping service {0} {1}", controller.ServiceName, killProcess ? "forcefully" : "");
+
+            if (killProcess)
+            {
+                controller.KillServiceProcess();
+            }
+            else
+            {
+                if (controller.Status == ServiceControllerStatus.Running)
+                    controller.StopServiceAndWaitForExit();
+            }
         }
 
         private void CopyNewFiles(DeployContext context)
@@ -76,7 +82,5 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             context.Log.InfoFormat("Cleaning folder {0}", context.PhysicalPath);
             DirectoryUtil.Clean(context.PhysicalPath);
         }
-
-
     }
 }
