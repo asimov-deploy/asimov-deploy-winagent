@@ -13,17 +13,17 @@ using Google.Cloud.Storage.V1;
 
 namespace AsimovDeploy.WinAgentUpdater 
 {
-    public class UpdateInfoCollectorGCP
+    public class GoogleStorageUpdateInfoCollector : IUpdateInfoCollector
     {
-        private static ILog _log = LogManager.GetLogger(typeof(UpdateInfoCollectorGCP));
-        readonly Regex GoogleStorageUri = new Regex(@"(gs:)//(?<bucket>\S*)/(?<prefix>.*)", RegexOptions.IgnoreCase);
-
+        static readonly Regex GoogleStorageUri = new Regex(@"(gs:)//(?<bucket>\S*)/(?<prefix>.*)", RegexOptions.IgnoreCase);
 
         private readonly int _port;
         private readonly string _bucket;
         private readonly string _prefix;
 
-        public UpdateInfoCollectorGCP(string watchFolder, int port)
+        private StorageClient _client;
+
+        public GoogleStorageUpdateInfoCollector(string watchFolder, int port)
         {
             _port = port;
             var matchGoogleStorageUri = GoogleStorageUri.Match(watchFolder);
@@ -33,6 +33,8 @@ namespace AsimovDeploy.WinAgentUpdater
             }
             _bucket = matchGoogleStorageUri.Result("${bucket}");
             _prefix = matchGoogleStorageUri.Result("${prefix}");
+
+            _client = StorageClient.Create();
         }
 
         public UpdateInfo Collect()
@@ -47,12 +49,10 @@ namespace AsimovDeploy.WinAgentUpdater
 
         private AsimovConfigUpdate GetLatestBuild()
         {
-            var storage = StorageClient.Create();
-
             var regex = new Regex(@"(?<fileName>AsimovDeploy.WinAgent.ConfigFiles-Version-(\d+).zip)");
             var list = new List<AsimovConfigUpdate>();
 
-            foreach (var bucket in storage.ListObjects(_bucket, _prefix))
+            foreach (var bucket in _client.ListObjects(_bucket, _prefix))
             {
                 var match = regex.Match(bucket.Name);
                 if (match.Success)
@@ -61,7 +61,7 @@ namespace AsimovDeploy.WinAgentUpdater
                     list.Add(new AsimovConfigUpdate()
                     {
                         Version = int.Parse(match.Groups[1].Value),
-                        FileSource = new GcpAsimovFileSource(bucket, storage)
+                        FileSource = new GoogleStorageFileSource(bucket, _client)
                     });
                 }
             }
@@ -71,20 +71,18 @@ namespace AsimovDeploy.WinAgentUpdater
 
         private AsimovVersion GetLatestVersion()
         {
-            var storage = StorageClient.Create();
-
             var pattern = @"v(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)";
             var regex = new Regex(pattern);
             var list = new List<AsimovVersion>();
-            foreach (var bucket in storage.ListObjects(_bucket, _prefix))
+            foreach (var bucket in _client.ListObjects(_bucket, _prefix))
             {
                 var match = regex.Match(bucket.Name);
                 if (match.Success)
                 {
-                    list.Add(new AsimovVersion()
+                    list.Add(new AsimovVersion
                     {
                         Version = new Version(int.Parse(match.Groups["major"].Value), int.Parse(match.Groups["minor"].Value), int.Parse(match.Groups["build"].Value)),
-                        FileSource = new GcpAsimovFileSource(bucket, storage)
+                        FileSource = new GoogleStorageFileSource(bucket, _client)
                     });
                 }
             }

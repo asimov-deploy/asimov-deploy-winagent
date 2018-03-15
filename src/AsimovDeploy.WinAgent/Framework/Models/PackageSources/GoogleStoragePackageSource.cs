@@ -25,7 +25,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             }
         }
 
-        public string Region { get; set; }
         public string Bucket { get; set; }
         public string Prefix { get; set; }
         public string Pattern { get; set; } =
