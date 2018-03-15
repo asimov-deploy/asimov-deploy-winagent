@@ -51,7 +51,10 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
             if (self != null)
                 serializer.Populate(self.CreateReader(), config);
             else
+            {
                 Log.ErrorFormat("Could not find agent specific config / environment for: {0}", _machineName);
+                return config;
+            }
 
             var environments = config.Environment.Split(',');
 
