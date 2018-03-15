@@ -72,6 +72,9 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                 catch (InvalidOperationException) { }
 
                 ExecuteTask(task);
+
+                var remainingTasks = _tasks.Count;
+                _log.Info(remainingTasks > 0 ? $"Queued tasks remaining: {remainingTasks}" : "All queued tasks completed");
             }
         }
 
