@@ -21,6 +21,10 @@ Asimov Deploy consists of two major components the [asimov deploy web ui](https:
 * Automatic update of deploy agent
 * Automatic update of deploy agent config
 
+## Build
+
+    & .\psake.ps1
+
 ## Bugs and Feedback
 For bugs, questions and discussions please use the [Github Issues](https://github.com/asimov-deploy/asimov-deploy-winagent/issues).
 
