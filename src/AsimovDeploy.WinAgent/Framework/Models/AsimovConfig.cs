@@ -55,7 +55,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public string LoadBalancerAgentUrl { get; set; }
         public string LoadBalancerServerId
         {
-            get { return _loadBalancerServerId ?? System.Environment.MachineName.ToLower(); }
+            get { return _loadBalancerServerId ?? System.Environment.MachineName.ToLowerInvariant(); }
             set { _loadBalancerServerId = value; }
         }
         public int LoadBalancerTimeout
@@ -74,8 +74,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         {
             if (AgentGroupIsSuppliedButNoMatchingFound(agentGroup))
                 return new DeployUnits();
-            return string.IsNullOrWhiteSpace(agentGroup) ? 
-                Units : 
+            return string.IsNullOrWhiteSpace(agentGroup) ?
+                Units :
                 new DeployUnits(Environments.First(a => a.AgentGroup == agentGroup).Units.Select(a => Units.First(b => b.Name == a.Name)));
         }
 
