@@ -1,0 +1,8 @@
+image:
+  - Visual Studio 2015
+  - Visual Studio 2017
+
+build_script:
+  - ps: & .\psake.ps1
+
+test: off
