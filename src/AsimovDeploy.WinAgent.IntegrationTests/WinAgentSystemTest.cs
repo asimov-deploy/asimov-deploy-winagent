@@ -152,7 +152,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                 str = str.Replace("%NODE_FRONT_URL%", NodeFrontUrl);
                 str = str.Replace("%PACKAGES_URI%", new Uri(PackagesDir).AbsoluteUri);
                 str = str.Replace("%AGENT_PORT%", AgentPort.ToString());
-                str = str.Replace("%MACHINE_NAME%", Environment.MachineName.ToLower());
+                str = str.Replace("%MACHINE_NAME%", Environment.MachineName.ToLowerInvariant());
                 File.WriteAllText(file, str);
             }
         }
