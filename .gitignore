@@ -3,6 +3,7 @@
 [Bb]in/
 debug/
 release/
+.idea/
 *.user
 /TestResults
 *.vspscc
