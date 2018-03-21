@@ -25,7 +25,7 @@ namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement.IIS6
                     foreach (ManagementBaseObject scriptMap in scriptMaps)
                     {
                         string value = (string)scriptMap["ScriptProcessor"];
-                        if (value.ToLower().Contains("framework"))
+                        if (value.ToLowerInvariant().Contains("framework"))
                         {
                             if (!value.Contains(version))
                             {
