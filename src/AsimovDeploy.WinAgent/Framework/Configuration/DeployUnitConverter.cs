@@ -16,7 +16,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
+using log4net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Environment = System.Environment;
@@ -25,6 +27,8 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 {
     public class DeployUnitConverter : JsonConverter
     {
+        static readonly ILog _logger = LogManager.GetLogger(typeof(DeployUnitConverter));
+
         public static IDictionary<string, Type> DeployUnitLookup;
 
         static DeployUnitConverter()
@@ -48,10 +52,25 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
             foreach (JObject jsonUnit in JArray.Load(reader))
             {
                 var type = jsonUnit.Property("Type");
-                var deployUnitType = DeployUnitLookup[type.Value.ToString()];
+
+                if (type == null)
+                {
+                    _logger.ErrorFormat("Missing property 'Type' for JSON deploy unit object. Continuing. The JSON value was: {0}.", jsonUnit);
+                    continue;
+                }
+
+                if (!DeployUnitLookup.TryGetValue(type.Value.ToString(), out var deployUnitType))
+                {
+                    var alternatives = string.Join(", ", Enum.GetNames(typeof(DeployUnitTypes)));
+                    _logger.ErrorFormat(
+                        "Property 'Type' has invalid value for JSON deploy unit object. Please make it one of the following {{ {0} }}. Continuing. The JSON value was: {1}",
+                        alternatives, jsonUnit);
+                    continue;
+                }
+
                 var deployUnit = (DeployUnit)serializer.Deserialize(jsonUnit.CreateReader(), deployUnitType);
 
-                if (deployUnit.IsValidForAgent(Environment.MachineName.ToLower()))
+                if (deployUnit.IsValidForAgent(Environment.MachineName.ToLowerInvariant()))
                     list.Add(deployUnit);
             }
 
