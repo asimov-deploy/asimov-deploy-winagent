@@ -48,7 +48,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                                      agentName = Environment.MachineName,
                                      timestamp = loggingEvent.TimeStamp,
                                      time = loggingEvent.TimeStamp.ToString("hh:mm:ss"),
-                                     level = loggingEvent.Level.ToString().ToLower(),
+                                     level = loggingEvent.Level.ToString().ToLowerInvariant(),
                                      message = loggingEvent.RenderedMessage,
                                      exception = loggingEvent.ExceptionObject != null ? loggingEvent.GetExceptionString() : null
                                  }).ToArray();
