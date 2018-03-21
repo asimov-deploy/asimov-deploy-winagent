@@ -16,7 +16,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 
 		private readonly IAsimovConfig _config;
 		private Uri _agentUri;
-		
+
 		public bool UseLoadBalanser { get; set; }
 
 		public LoadBalancerService(IAsimovConfig config)
@@ -75,7 +75,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 
 		    foreach (var parameter in _config.LoadBalancerParameters)
 		    {
-		        data.Add(parameter.Key.ToLower(), parameter.Value);
+		        data.Add(parameter.Key.ToLowerInvariant(), parameter.Value);
 		    }
 
 			var result = http.Post(uri.ToString(), data, HttpContentTypes.ApplicationJson);
