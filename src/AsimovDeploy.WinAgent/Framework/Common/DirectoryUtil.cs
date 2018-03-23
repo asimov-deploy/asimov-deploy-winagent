@@ -22,6 +22,9 @@ namespace AsimovDeploy.WinAgent.Framework.Common
     {
         public static void Clean(string directory)
         {
+            if (!Exists(directory))
+                return;
+
             var dir = new DirectoryInfo(directory);
             foreach (FileInfo file in dir.GetFiles())
                 file.Delete();
