@@ -10,7 +10,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 {
     public class GoogleStoragePackageSource : PackageSource
     {
-        private const int MaxPageSize = 10000;
+        private const int GoogleStoragePageSize = 10000;
         private const int MaxReturnedResults = 100;
         private StorageClient _storageClient;
         private StorageClient StorageClient
@@ -38,7 +38,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             var prefix = packageInfo.SourceRelativePath != null ? $"{Prefix}/{packageInfo.SourceRelativePath}" : Prefix;
             var objects = StorageClient.ListObjects(Bucket, prefix);
             var readPage = objects
-                .ReadPage(MaxPageSize);
+                .ReadPage(GoogleStoragePageSize);
             return readPage
                 .Select(ParseVersion)
                 .Where(x => x != null)
