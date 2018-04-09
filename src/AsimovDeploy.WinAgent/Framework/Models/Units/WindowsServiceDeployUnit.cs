@@ -43,6 +43,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public override void SetupDeployActions()
         {
+            Actions.Clear();
             Actions.Add(new StartDeployUnitAction { Sort = 10 });
             Actions.Add(new StopDeployUnitAction { Sort = 11 });
             if (CanBeKilled)

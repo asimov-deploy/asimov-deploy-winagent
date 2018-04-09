@@ -28,12 +28,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
     [AsimovListType("PowerShell", typeof(PowerShellUnitAction))]
     public class UnitActionList : List<UnitAction>
     {
-        public UnitAction this[string name]
-        {
-            get
-            {
-                return this.SingleOrDefault(x => x.Name == name);
-            }
-        }
+        public UnitAction this[string name] => this.SingleOrDefault(x => x.Name == name);
     }
 }
