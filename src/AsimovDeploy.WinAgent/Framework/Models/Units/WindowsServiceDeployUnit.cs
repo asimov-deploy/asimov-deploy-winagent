@@ -37,7 +37,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         }
 
         public string Url { get; set; }
-
         public InstallableConfig Installable { get; set; }
         public bool CanBeKilled { get; set; }
 
@@ -71,19 +70,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return task;
         }
 
-        private bool CanInstall()
-        {
-            return
-                (UnitStatus)_lastUnitStatus == UnitStatus.NotFound &&
-                (Installable?.Install != null || Installable?.InstallType != null);
-        }
+        private bool CanInstall() => (UnitStatus)_lastUnitStatus == UnitStatus.NotFound &&
+                                     (Installable?.Install != null || Installable?.InstallType != null);
 
-        public override ActionParameterList GetDeployParameters()
-        {
-            if (CanInstall())
-                return Installable.GetInstallAndCredentialParameters();
-            return DeployParameters;
-        }
+        public override ActionParameterList GetDeployParameters() => CanInstall() ? Installable.GetInstallAndCredentialParameters() : DeployParameters;
 
 
         public override DeployUnitInfo GetUnitInfo(bool refreshUnitStatus)
