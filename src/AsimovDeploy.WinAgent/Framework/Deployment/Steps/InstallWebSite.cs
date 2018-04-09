@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Common;
-using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Models.Units;
 
 namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
@@ -11,12 +9,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
     {
         private readonly IWebSiteDeployUnit _unit;
 
-        public InstallWebSite(IWebSiteDeployUnit unit)
-        {
-            if(unit == null)
-                throw new ArgumentNullException(nameof(unit));
-            _unit = unit;
-        }
+        public InstallWebSite(IWebSiteDeployUnit unit) => _unit = unit ?? throw new ArgumentNullException(nameof(unit));
 
         public void Execute(DeployContext context)
         {
@@ -40,7 +33,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
                 _unit.Installable.TargetPath,
                 _unit.Installable.Install,
                 parameters,
-                context.Log, 
+                context.Log,
                 new[] { _unit.Installable.ScriptsDir });
         }
 

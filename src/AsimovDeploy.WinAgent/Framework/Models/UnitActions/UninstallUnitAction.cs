@@ -22,10 +22,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 {
     public class UnInstallUnitAction : UnitAction
     {
-        public UnInstallUnitAction()
-        {
-            Name = "Uninstall";
-        }
+        public UnInstallUnitAction() => Name = "Uninstall";
 
         public override AsimovTask GetTask(DeployUnit unit, AsimovUser user, string correlationId)
         {

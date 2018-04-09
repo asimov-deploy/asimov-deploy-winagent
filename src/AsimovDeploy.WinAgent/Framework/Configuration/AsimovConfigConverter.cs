@@ -66,28 +66,30 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                     continue;
 
                 Log.DebugFormat("Loading config file {0}", envConfigFile);
-				PopulateFromFile(envConfigFile, serializer, config);
+                PopulateFromFile(envConfigFile, serializer, config);
 
-				var env = new DeployEnvironment();
-				PopulateFromFile(envConfigFile, serializer, env);
-				config.Environments.Add(env);
-			}
+                var env = new DeployEnvironment();
+                PopulateFromFile(envConfigFile, serializer, env);
+                config.Environments.Add(env);
+
+                config.Units?.ForEach(t => t.SetupDeployActions());
+            }
 
             return config;
         }
 
-	    private void PopulateFromFile(string filename, JsonSerializer serializer, object target)
-	    {
-			using (var envReader = new StreamReader(filename))
-			{
-				using (var envJsonReader = new JsonTextReader(envReader))
-				{
-					serializer.Populate(envJsonReader, target);
-				}
-			}
-		}
+        private void PopulateFromFile(string filename, JsonSerializer serializer, object target)
+        {
+            using (var envReader = new StreamReader(filename))
+            {
+                using (var envJsonReader = new JsonTextReader(envReader))
+                {
+                    serializer.Populate(envJsonReader, target);
+                }
+            }
+        }
 
-		private JToken GetSelf(JObject json)
+        private JToken GetSelf(JObject json)
         {
             var agents = json["Agents"];
             if (agents == null)

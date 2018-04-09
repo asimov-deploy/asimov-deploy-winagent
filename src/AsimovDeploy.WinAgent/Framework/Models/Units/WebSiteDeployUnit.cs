@@ -36,20 +36,20 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
     {
         private string siteName;
         private int _lastUnitStatus;
-
-        public WebSiteDeployUnit()
-        {
-            CleanDeploy = true; // default to true
-            Actions.Add(new StartDeployUnitAction {Sort = 10});
-            Actions.Add(new StopDeployUnitAction {Sort = 11});
-
-            Actions.Add(new UnInstallUnitAction {Sort = 20});
-            _lastUnitStatus = (int)UnitStatus.NA;
-        }
-
+        
         public bool CleanDeploy { get; set; }
 
         public AsimovTask GetStopTask() => new StartStopWebApplicationTask(this, true);
+
+        public override void SetupDeployActions()
+        {
+            CleanDeploy = true; // default to true
+            Actions.Add(new StartDeployUnitAction { Sort = 10 });
+            Actions.Add(new StopDeployUnitAction { Sort = 11 });
+
+            Actions.Add(new UnInstallUnitAction { Sort = 20 });
+            _lastUnitStatus = (int)UnitStatus.NA;
+        }
 
         public AsimovTask GetStartTask() => new StartStopWebApplicationTask(this, false);
 
@@ -72,7 +72,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             get { return siteName ?? Name; }
             set { siteName = value; }
         }
+
         public string SiteUrl { get; set; }
+
         public InstallableConfig Installable { get; set; }
 
         public override string UnitType => DeployUnitTypes.WebSite;

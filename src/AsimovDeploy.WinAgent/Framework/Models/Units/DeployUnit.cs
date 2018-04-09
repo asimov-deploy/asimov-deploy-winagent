@@ -50,6 +50,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         };
 
         public abstract AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId);
+        public abstract void SetupDeployActions();
 
         public virtual DeployUnitInfo GetUnitInfo(bool refreshUnitStatus)
         {

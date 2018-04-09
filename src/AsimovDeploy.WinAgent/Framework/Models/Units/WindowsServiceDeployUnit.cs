@@ -26,31 +26,33 @@ using AsimovDeploy.WinAgent.Framework.Tasks;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.Units
 {
-    public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted, ICanUninistall, IInstallableService
+    public class WindowsServiceDeployUnit : DeployUnit, ICanBeStopStarted, ICanUninistall, IInstallableService, ICanBeKilled
     {
         private string _serviceName;
         private int _lastUnitStatus;
         public string ServiceName
         {
-            get { return _serviceName ?? Name; }
-            set { _serviceName = value; }
+            get => _serviceName ?? Name;
+            set => _serviceName = value;
         }
 
         public string Url { get; set; }
 
         public InstallableConfig Installable { get; set; }
+        public bool CanBeKilled { get; set; }
 
-        public WindowsServiceDeployUnit()
+        public override void SetupDeployActions()
         {
             Actions.Add(new StartDeployUnitAction { Sort = 10 });
             Actions.Add(new StopDeployUnitAction { Sort = 11 });
+            if (CanBeKilled)
+                Actions.Add(new KillDeployUnitAction { Sort = 12 });
 
             //TODO: We only want to add this if an uninstall action has been configured
             Actions.Add(new UnInstallUnitAction() { Sort = 20 });
 
             _lastUnitStatus = (int)UnitStatus.NA;
         }
-
         public override string UnitType => DeployUnitTypes.WindowsService;
 
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
@@ -70,8 +72,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         private bool CanInstall()
         {
-            return 
-                (UnitStatus)_lastUnitStatus == UnitStatus.NotFound && 
+            return
+                (UnitStatus)_lastUnitStatus == UnitStatus.NotFound &&
                 (Installable?.Install != null || Installable?.InstallType != null);
         }
 
@@ -118,15 +120,17 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public AsimovTask GetStopTask() => new StartStopWindowsServiceTask(this, stop: true);
         public AsimovTask GetStartTask() => new StartStopWindowsServiceTask(this, stop: false);
+        public AsimovTask GetKillTask() => new KillWindowsServiceTask(this);
+
         public AsimovTask GetUninstallTask()
         {
-                return new PowershellUninstallTask(
-                    Installable,
-                    this,
-                    new Dictionary<string, object>() { { "ServiceName", ServiceName } })
-                {
-                    TargetPath = WindowsServiceUtil.GetWindowsServicePath(ServiceName)
-                };
+            return new PowershellUninstallTask(
+                Installable,
+                this,
+                new Dictionary<string, object>() { { "ServiceName", ServiceName } })
+            {
+                TargetPath = WindowsServiceUtil.GetWindowsServicePath(ServiceName)
+            };
         }
     }
 }

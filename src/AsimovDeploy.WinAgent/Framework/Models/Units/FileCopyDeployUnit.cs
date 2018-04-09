@@ -34,5 +34,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             task.AddDeployStep<FileCopyDeployStep>();
             return task;
         }
+
+        public override void SetupDeployActions() { }
     }
 }
