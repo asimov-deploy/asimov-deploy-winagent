@@ -56,12 +56,12 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public string LoadBalancerServerId
         {
             get { return _loadBalancerServerId ?? System.Environment.MachineName.ToLowerInvariant(); }
-            set { _loadBalancerServerId = value; }
+            set => _loadBalancerServerId = value;
         }
         public int LoadBalancerTimeout
         {
             get { return _loadBalancerTimeout > 0 ? _loadBalancerTimeout : 30; }
-            set { _loadBalancerTimeout = value; }
+            set => _loadBalancerTimeout = value;
         }
 
         public string NodeFrontUrl { get; set; }
@@ -125,35 +125,29 @@ namespace AsimovDeploy.WinAgent.Framework.Models
                 .OrderBy(x => x).ToArray();
         }
 
-        public string[] GetUnitGroups()
-        {
-            return Units
-                .Where(x => x.Group != null)
-                .Select(x => x.Group)
-                .Distinct()
-                .OrderBy(x => x)
-                .ToArray();
-        }
+        public string[] GetUnitGroups() =>
+            Units
+            .Where(x => x.Group != null)
+            .Select(x => x.Group)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToArray();
 
-        public string[] GetUnitTypes()
-        {
-            return Units
-                .Where(x => x.UnitType != null)
-                .Select(x => x.UnitType)
-                .Distinct()
-                .OrderBy(x => x)
-                .ToArray();
-        }
+        public string[] GetUnitTypes() =>
+            Units
+            .Where(x => x.UnitType != null)
+            .Select(x => x.UnitType)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToArray();
 
-        public string[] GetUnitTags()
-        {
-            return Units
-                .Where(x => x.Tags != null)
-                .SelectMany(x => x.Tags)
-                .Distinct()
-                .OrderBy(x => x)
-                .ToArray();
-        }
+        public string[] GetUnitTags() =>
+            Units
+            .Where(x => x.Tags != null)
+            .SelectMany(x => x.Tags)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToArray();
 
         public string[] GetUnitStatuses()
         {

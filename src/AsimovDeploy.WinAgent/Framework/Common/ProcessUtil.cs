@@ -26,7 +26,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public class ProcessUtil
     {
-        public static void ExecutePowershellScript(string workingDirectory, string command, IEnumerable<KeyValuePair<string,object>> parameters, ILog log, IEnumerable<string> addToPath = null)
+        public static void ExecutePowershellScript(string workingDirectory, string command, IEnumerable<KeyValuePair<string, object>> parameters, ILog log, IEnumerable<string> addToPath = null)
         {
             using (var p = new Process())
             {
@@ -52,11 +52,11 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 
                 if (addToPath != null)
                 {
-                    foreach (var path in addToPath.Where(pa=>!string.IsNullOrEmpty(pa)))
+                    foreach (var path in addToPath.Where(pa => !string.IsNullOrEmpty(pa)))
                     {
                         log.Info($"Add {path} to $end:Path");
                         p.StandardInput.WriteLine($"$env:Path += \";{path}\"");
-                    }   
+                    }
                 }
                 p.StandardInput.WriteLine(command);
                 p.StandardInput.Close();

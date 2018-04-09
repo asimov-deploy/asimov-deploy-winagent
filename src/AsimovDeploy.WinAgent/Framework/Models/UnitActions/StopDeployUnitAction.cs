@@ -21,21 +21,18 @@ using log4net;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
 {
-	public class StopDeployUnitAction : UnitAction
-	{
-		private static ILog _log = LogManager.GetLogger(typeof (StopDeployUnitAction));
+    public class StopDeployUnitAction : UnitAction
+    {
+        private static ILog _log = LogManager.GetLogger(typeof(StopDeployUnitAction));
 
-		public StopDeployUnitAction()
-		{
-			Name = "Stop";
-		}
+        public StopDeployUnitAction() => Name = "Stop";
 
         public override AsimovTask GetTask(DeployUnit unit, AsimovUser user, string correlationId)
-		{
-			if (!(unit is ICanBeStopStarted))
-				throw new ArgumentException("Action is only supported for deploy units that implement ICanBeStopStarted");
+        {
+            if (!(unit is ICanBeStopStarted))
+                throw new ArgumentException("Action is only supported for deploy units that implement ICanBeStopStarted");
 
-			return ((ICanBeStopStarted)unit).GetStopTask();
-		}
-	}
+            return ((ICanBeStopStarted)unit).GetStopTask();
+        }
+    }
 }
