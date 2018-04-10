@@ -10,7 +10,6 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 {
     public class GoogleStoragePackageSource : PackageSource
     {
-        private const int GoogleStoragePageSize = 10000;
         private const int MaxReturnedResults = 100;
         private StorageClient _storageClient;
         private StorageClient StorageClient
@@ -35,11 +34,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
         public override IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo)
         {
-            var prefix = packageInfo.SourceRelativePath != null ? $"{Prefix}/{packageInfo.SourceRelativePath}" : Prefix;
+            var prefix = packageInfo.SourceRelativePath != null ? $"{Prefix.TrimEnd('/')}/{packageInfo.SourceRelativePath}" : Prefix;
             var objects = StorageClient.ListObjects(Bucket, prefix);
-            var readPage = objects
-                .ReadPage(GoogleStoragePageSize);
-            return readPage
+            return objects
                 .Select(ParseVersion)
                 .Where(x => x != null)
                 .OrderByDescending(x=>x.Timestamp)
@@ -55,7 +52,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
         private AsimovVersion ParseVersion(Object @object)
         {
-            return AsimovVersion.Parse(Pattern,@object.Name,@object.Updated ?? DateTime.MinValue);
+            return AsimovVersion.Parse(Pattern,@object.Name, @object.TimeCreated ?? DateTime.MinValue);
         }
 
         public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder)
