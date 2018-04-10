@@ -26,5 +26,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         {
             return Install != null || InstallType != null;
         }
+
+        public bool IsUninstallable()
+        {
+            return !string.IsNullOrEmpty(Uninstall) || InstallType != null;
+        }
     }
 }
