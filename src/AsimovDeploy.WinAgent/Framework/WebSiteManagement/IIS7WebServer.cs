@@ -95,7 +95,7 @@ namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement
                 return new WebSiteData()
                            {
                                SiteStarted = state == ObjectState.Started,
-                               AppPoolStarted = serverManager.ApplicationPools[webApp.ApplicationPoolName].State == ObjectState.Started,
+                               AppPoolStarted = serverManager.ApplicationPools[webApp.ApplicationPoolName]?.State == ObjectState.Started,
                                PhysicalPath = vdir.PhysicalPath,
                                AppPoolName = webApp.ApplicationPoolName
                            };
