@@ -23,8 +23,8 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public abstract class AsimovTask
     {
-	    public string UserId { get; set; }
-		public string UserName { get; set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
 
         protected ILog Log;
 
@@ -39,10 +39,10 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         {
             return "";
         }
-        
-        protected virtual string GetTaskName() 
+
+        protected virtual string GetTaskName()
         {
-        	return GetType().Name;
+            return GetType().Name;
         }
 
         public event Action<Exception> Completed;
@@ -51,7 +51,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         {
             try
             {
-            	Log.InfoFormat("Executing {0} - {1}", GetTaskName(), InfoString());
+                Log.Info($"Executing {GetTaskName()} - {InfoString()}");
                 Execute();
                 RaiseExecuted(null);
             }
@@ -62,23 +62,10 @@ namespace AsimovDeploy.WinAgent.Framework.Common
             }
         }
 
-        public void RaiseExecuted(Exception exception)
-        {
-            if (Completed != null)
-                Completed(exception);
-        }
+        public void RaiseExecuted(Exception exception) => Completed?.Invoke(exception);
 
         private IAsimovConfig _config;
-        protected virtual IAsimovConfig Config
-        {
-            get
-            {
-                if (_config == null)
-                    _config = ObjectFactory.GetInstance<IAsimovConfig>();
-
-                return _config;
-            }
-        }
+        protected virtual IAsimovConfig Config => _config ?? (_config = ObjectFactory.GetInstance<IAsimovConfig>());
 
         protected virtual void AddTask(AsimovTask task)
         {

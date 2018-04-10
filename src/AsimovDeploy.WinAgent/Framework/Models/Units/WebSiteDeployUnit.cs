@@ -36,13 +36,14 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
     {
         private string siteName;
         private int _lastUnitStatus;
-        
+
         public bool CleanDeploy { get; set; }
 
         public AsimovTask GetStopTask() => new StartStopWebApplicationTask(this, true);
 
         public override void SetupDeployActions()
         {
+            Actions.Clear();
             CleanDeploy = true; // default to true
             Actions.Add(new StartDeployUnitAction { Sort = 10 });
             Actions.Add(new StopDeployUnitAction { Sort = 11 });
@@ -69,8 +70,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public string SiteName
         {
-            get { return siteName ?? Name; }
-            set { siteName = value; }
+            get => siteName ?? Name;
+            set => siteName = value;
         }
 
         public string SiteUrl { get; set; }
@@ -131,7 +132,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
                 ? UnitStatus.NotFound
                 : (siteData.AppPoolStarted && siteData.SiteStarted ? UnitStatus.Running : UnitStatus.Stopped);
 
-            Interlocked.Exchange(ref _lastUnitStatus, (int) status);
+            Interlocked.Exchange(ref _lastUnitStatus, (int)status);
         }
     }
 }
