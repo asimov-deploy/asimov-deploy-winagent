@@ -49,8 +49,9 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
                 Actions.Add(new StartDeployUnitAction { Sort = 10 });
             if (!Actions.OfType<StopDeployUnitAction>().Any())
                 Actions.Add(new StopDeployUnitAction { Sort = 11 });
-            if (!Actions.OfType<UnInstallUnitAction>().Any())
-                Actions.Add(new UnInstallUnitAction { Sort = 20 });
+            if (Installable?.IsUninstallable() == true && !Actions.OfType<UnInstallUnitAction>().Any())
+                Actions.Add(new UnInstallUnitAction() { Sort = 20 });
+
             _lastUnitStatus = (int)UnitStatus.NA;
         }
 

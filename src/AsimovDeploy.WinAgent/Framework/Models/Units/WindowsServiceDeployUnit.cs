@@ -49,11 +49,13 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             if (CanBeKilled && !Actions.OfType<KillDeployUnitAction>().Any())
                 Actions.Add(new KillDeployUnitAction { Sort = 12 });
 
-            //TODO: We only want to add this if an uninstall action has been configured
-            Actions.Add(new UnInstallUnitAction() { Sort = 20 });
+            if (Installable?.IsUninstallable() == true && !Actions.OfType<UnInstallUnitAction>().Any())
+                Actions.Add(new UnInstallUnitAction() { Sort = 20 });
 
             _lastUnitStatus = (int)UnitStatus.NA;
         }
+
+
         public override string UnitType => DeployUnitTypes.WindowsService;
 
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
@@ -74,8 +76,8 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         private bool CanInstall() => (UnitStatus)_lastUnitStatus == UnitStatus.NotFound &&
                                      (Installable?.Install != null || Installable?.InstallType != null);
 
-        public override ActionParameterList GetDeployParameters() => CanInstall() ? Installable.GetInstallAndCredentialParameters() : DeployParameters;
 
+        public override ActionParameterList GetDeployParameters() => CanInstall() ? Installable.GetInstallAndCredentialParameters() : DeployParameters;
 
         public override DeployUnitInfo GetUnitInfo(bool refreshUnitStatus)
         {
