@@ -42,10 +42,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public override void SetupDeployActions()
         {
-            Actions.Clear();
-            Actions.Add(new StartDeployUnitAction { Sort = 10 });
-            Actions.Add(new StopDeployUnitAction { Sort = 11 });
-            if (CanBeKilled)
+            if (!Actions.OfType<StartDeployUnitAction>().Any())
+                Actions.Add(new StartDeployUnitAction { Sort = 10 });
+            if (!Actions.OfType<StopDeployUnitAction>().Any())
+                Actions.Add(new StopDeployUnitAction { Sort = 11 });
+            if (CanBeKilled && !Actions.OfType<KillDeployUnitAction>().Any())
                 Actions.Add(new KillDeployUnitAction { Sort = 12 });
 
             //TODO: We only want to add this if an uninstall action has been configured
