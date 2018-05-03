@@ -85,15 +85,21 @@ namespace AsimovDeploy.WinAgentUpdater
             var configDir = Path.Combine(_installDir, "ConfigFiles");
 
             CleanFolder(configDir);
-            CopyNewBuildToInstallDir(configDir, lastConfig.FileSource.GetFilePath());
+            using (var packageStream = lastConfig.FileSource.GetStream())
+            {
+                CopyNewBuildToInstallDir(configDir, packageStream);
+            }
         }
 
         private void UpdateWinAgentWithNewBuild(AsimovVersion lastBuild)
         {
             _log.InfoFormat("Installing new build {0}", lastBuild.Version);
             CleanFolder(_installDir);
-            
-            CopyNewBuildToInstallDir(_installDir, lastBuild.FileSource.GetFilePath());
+
+            using (var packageStream = lastBuild.FileSource.GetStream())
+            {
+                CopyNewBuildToInstallDir(_installDir, packageStream);
+            }
         }
 
         private static void StopService(ServiceController serviceController)
@@ -120,11 +126,11 @@ namespace AsimovDeploy.WinAgentUpdater
             _log.Info("Service  started");
         }
 
-        private void CopyNewBuildToInstallDir(string installDir, string filePath)
+        private void CopyNewBuildToInstallDir(string installDir, Stream package)
         {
-            using (var zipFile = ZipFile.Read(filePath))
+            using (var zipFile = ZipFile.Read(package))
             {
-               zipFile.ExtractAll(installDir);
+                zipFile.ExtractAll(installDir);
             }
         }
 
