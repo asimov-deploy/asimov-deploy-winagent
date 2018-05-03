@@ -17,7 +17,7 @@ namespace AsimovDeploy.WinAgentUpdater
 
     public interface IAsimovFileSource
     {
-        string GetFilePath();
+        Stream GetStream();
     }
 
     public class FileSystemFileSource : IAsimovFileSource
@@ -29,9 +29,9 @@ namespace AsimovDeploy.WinAgentUpdater
             _path = path;
         }
 
-        public string GetFilePath()
+        public Stream GetStream()
         {
-            return _path;
+            return File.OpenRead(_path);
         }
     }
 
@@ -40,22 +40,18 @@ namespace AsimovDeploy.WinAgentUpdater
         private readonly Google.Apis.Storage.v1.Data.Object Object;
         private readonly StorageClient Client;
 
-
         public GoogleStorageFileSource(Google.Apis.Storage.v1.Data.Object o, StorageClient client)
         {
             Object = o;
             Client = client;
         }
 
-        public string GetFilePath()
-        {            
-            var tempFile = Path.GetTempFileName();
-
-            using (var fileStrem = File.OpenWrite(tempFile))
-            {
-                Client.DownloadObject(Object, fileStrem);
-            }
-            return tempFile;
+        public Stream GetStream()
+        {
+            var outputStream = new MemoryStream();
+            Client.DownloadObject(Object, outputStream);
+            outputStream.Position = 0;
+            return outputStream;
         }
     }
 }
