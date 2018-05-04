@@ -32,7 +32,7 @@ namespace AsimovDeploy.WinAgent.Service
             try
             {
                 ComponentRegistration.RegisterComponents();
-                ComponentRegistration.ReadAndRegisterConfiguration();
+
                 AddNodeFrontAppender();
                 Log.Info("WinAgent starting...");
                 ComponentRegistration.StartStartableComponents();

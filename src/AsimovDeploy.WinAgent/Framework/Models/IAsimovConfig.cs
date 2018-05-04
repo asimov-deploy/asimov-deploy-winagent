@@ -34,11 +34,15 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         string ApiKey { get; set; }
         int ConfigVersion { get; }
 
+        string LoadBalancerType { get; set; }
 		string LoadBalancerAgentUrl { get; set; }
 		string LoadBalancerServerId { get; set; }
 		int LoadBalancerTimeout { get; set; }
 
-		List<DeployEnvironment> Environments { get; set; }
+        int ServerMonitorLoadBalancerDelaySeconds { get; set; }
+
+
+        List<DeployEnvironment> Environments { get; set; }
 		DeployUnits Units { get; set; }
 		DeployUnit GetUnitByName(string name);
 		DeployUnits GetUnitsByAgentGroup(string agentGroup = null);

@@ -49,6 +49,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public int WebPort { get; set; }
         public string ApiKey { get; set; }
         public int ConfigVersion { get; set; }
+        public string LoadBalancerType { get; set; }
 
         public string TempFolder => Path.Combine(DataFolder, "Temp");
 
@@ -63,6 +64,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
             get { return _loadBalancerTimeout > 0 ? _loadBalancerTimeout : 30; }
             set => _loadBalancerTimeout = value;
         }
+        public int ServerMonitorLoadBalancerDelaySeconds { get; set; }
 
         public string NodeFrontUrl { get; set; }
         public string WebNotificationUrl { get; set; }
