@@ -49,7 +49,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             if (CanBeKilled && !Actions.OfType<KillDeployUnitAction>().Any())
                 Actions.Add(new KillDeployUnitAction { Sort = 12 });
 
-            if (Installable?.IsUninstallable() == true && !Actions.OfType<UnInstallUnitAction>().Any())
+            if (Installable?.IsUninstallable == true && !Actions.OfType<UnInstallUnitAction>().Any())
                 Actions.Add(new UnInstallUnitAction() { Sort = 20 });
 
             _lastUnitStatus = (int)UnitStatus.NA;
@@ -61,7 +61,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
         public override AsimovTask GetDeployTask(AsimovVersion version, ParameterValues parameterValues, AsimovUser user, string correlationId)
         {
             var task = new DeployTask(this, version, parameterValues, user, correlationId);
-            if (CanInstall())
+            if (CanInstall)
                 task.AddDeployStep(new InstallWindowsService(this));
             else
                 task.AddDeployStep<UpdateWindowsService>();
@@ -73,11 +73,11 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
             return task;
         }
 
-        private bool CanInstall() => (UnitStatus)_lastUnitStatus == UnitStatus.NotFound &&
+        private bool CanInstall => (UnitStatus)_lastUnitStatus == UnitStatus.NotFound &&
                                      (Installable?.Install != null || Installable?.InstallType != null);
 
 
-        public override ActionParameterList GetDeployParameters() => CanInstall() ? Installable.GetInstallAndCredentialParameters() : DeployParameters;
+        public override ActionParameterList GetDeployParameters() => CanInstall ? Installable.GetInstallAndCredentialParameters() : DeployParameters;
 
         public override DeployUnitInfo GetUnitInfo(bool refreshUnitStatus)
         {

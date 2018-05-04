@@ -18,6 +18,7 @@ using System;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Configuration;
+using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models;
 using StructureMap;
 using StructureMap.Configuration.DSL;
@@ -34,34 +35,35 @@ namespace AsimovDeploy.WinAgent.Service
          public static void RegisterComponents()
          {
              Log.Debug("Registering components...");
+             var config = new ConfigurationReader().Read("ConfigFiles", Environment.MachineName);
 
-             ObjectFactory.Initialize(registry =>
+
+            ObjectFactory.Initialize(registry =>
              {
-                // ReSharper disable ConvertToLambdaExpression
-                registry.Scan(assembly =>
-                {
-                    assembly.TheCallingAssembly();
-                    assembly.WithDefaultConventions();
-                    assembly.ConnectImplementationsToTypesClosing(typeof (IListenTo<>));
-                });
+                 // ReSharper disable ConvertToLambdaExpression
+                 registry.Scan(assembly =>
+                 {
+                     assembly.TheCallingAssembly();
+                     assembly.WithDefaultConventions();
+                     assembly.ConnectImplementationsToTypesClosing(typeof(IListenTo<>));
+                 });
 
-                registry.Scan(assembly =>
-                {
-                    assembly.TheCallingAssembly();
-                    assembly.With(new SingletonConvention<IStartable>());
-                });
+                 registry.Scan(assembly =>
+                 {
+                     assembly.TheCallingAssembly();
+                     assembly.With(new SingletonConvention<IStartable>());
+                 });
 
-                registry.For<ITaskExecutor>().UseSpecial(x => x.ConstructedBy(y => (TaskExecutor)y.GetInstance<IStartable>((typeof(TaskExecutor).Name))));
-                registry.For<INodeFrontPublisher>().UseSpecial(x => x.ConstructedBy(y => (NodeFrontPublisherPublisher)y.GetInstance<IStartable>((typeof(NodeFrontPublisherPublisher).Name))));
+                 registry.For<IAsimovConfig>().Use(config);
+                 registry.For<ITaskExecutor>().UseSpecial(x => x.ConstructedBy(y => (TaskExecutor)y.GetInstance<IStartable>((typeof(TaskExecutor).Name))));
+                 registry.For<INodeFrontPublisher>().UseSpecial(x => x.ConstructedBy(y => (NodeFrontPublisherPublisher)y.GetInstance<IStartable>((typeof(NodeFrontPublisherPublisher).Name))));
 
+                 if (config.LoadBalancerType == "ServerMonitor")
+                 {
+                     registry.For<ILoadBalancerService>().Use(new ServerMonitorLoadBalancer(config));
+                 }
              });
          }
-
-        public static void ReadAndRegisterConfiguration()
-        {
-            var config = new ConfigurationReader().Read("ConfigFiles", Environment.MachineName);
-            ObjectFactory.Configure(x => x.For<IAsimovConfig>().Use(config));
-        }
 
         public static void StartStartableComponents()
         {
