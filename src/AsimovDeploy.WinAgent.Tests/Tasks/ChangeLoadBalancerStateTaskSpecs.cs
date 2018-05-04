@@ -101,7 +101,7 @@ namespace AsimovDeploy.WinAgent.Tests.Tasks
 		public int NumberOfSecondsThatActionTakesToComplete = 11;
 		private int secondsPassed = 0;
 
-		public bool UseLoadBalanser { get; set; }
+		public bool UseLoadBalancer { get; set; }
 		public LoadBalancerStateDTO GetCurrentState()
 		{
 			if (secondsPassed == NumberOfSecondsThatActionTakesToComplete)
