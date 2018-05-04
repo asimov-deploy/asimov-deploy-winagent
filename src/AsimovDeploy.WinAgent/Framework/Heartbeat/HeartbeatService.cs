@@ -77,7 +77,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
                 apiKey = _config.ApiKey,
                 version = VersionUtil.GetAgentVersion(),
                 configVersion = _config.ConfigVersion,
-                loadBalancerState = _loadBalancerService.UseLoadBalanser ? _loadBalancerService.GetCurrentState() : null
+                loadBalancerState = _loadBalancerService.UseLoadBalancer ? _loadBalancerService.GetCurrentState() : null
             });
         }
 

@@ -16,9 +16,11 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
         {
             _url = config.LoadBalancerAgentUrl;
             _loadBalancerDelaySeconds = config.ServerMonitorLoadBalancerDelaySeconds;
+
+            UseLoadBalancer = !string.IsNullOrEmpty(config.LoadBalancerAgentUrl);
         }
 
-        public bool UseLoadBalanser { get; set; } = true;
+        public bool UseLoadBalancer { get; set; }
         public LoadBalancerStateDTO GetCurrentState()
         {
             var health = LoadBalancerGet("health");

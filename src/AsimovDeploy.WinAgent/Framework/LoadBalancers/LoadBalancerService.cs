@@ -17,7 +17,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 		private readonly IAsimovConfig _config;
 		private Uri _agentUri;
 
-		public bool UseLoadBalanser { get; set; }
+		public bool UseLoadBalancer { get; set; }
 
 		public LoadBalancerService(IAsimovConfig config)
 		{
@@ -26,7 +26,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
 			if (config.LoadBalancerAgentUrl != null)
 			{
 				_agentUri = new Uri(config.LoadBalancerAgentUrl);
-				UseLoadBalanser = true;
+				UseLoadBalancer = true;
 			}
 		}
 
