@@ -56,12 +56,12 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public string LoadBalancerAgentUrl { get; set; }
         public string LoadBalancerServerId
         {
-            get { return _loadBalancerServerId ?? System.Environment.MachineName.ToLowerInvariant(); }
+            get => _loadBalancerServerId ?? System.Environment.MachineName.ToLowerInvariant();
             set => _loadBalancerServerId = value;
         }
         public int LoadBalancerTimeout
         {
-            get { return _loadBalancerTimeout > 0 ? _loadBalancerTimeout : 30; }
+            get => _loadBalancerTimeout > 0 ? _loadBalancerTimeout : 30;
             set => _loadBalancerTimeout = value;
         }
         public int ServerMonitorLoadBalancerDelaySeconds { get; set; }

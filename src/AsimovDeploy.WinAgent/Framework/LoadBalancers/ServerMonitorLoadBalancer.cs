@@ -23,6 +23,7 @@ namespace AsimovDeploy.WinAgent.Framework.LoadBalancers
         public bool UseLoadBalancer { get; set; }
         public LoadBalancerStateDTO GetCurrentState()
         {
+
             var health = LoadBalancerGet("health");
 
             return new LoadBalancerStateDTO

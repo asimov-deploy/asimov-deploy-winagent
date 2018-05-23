@@ -2,7 +2,12 @@
 {
 	public class LoadBalancerStateDTO
 	{
-		public bool enabled;
+	    public override string ToString()
+	    {
+	        return $"enabled: {enabled}, Connection count: {connectionCount}";
+	    }
+
+	    public bool enabled;
 		public int connectionCount;
 		public string serverId;
 	}
