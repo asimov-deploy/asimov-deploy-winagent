@@ -36,19 +36,20 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
     public class VerifyCommandTask : AsimovTask
     {
         private readonly WebSiteDeployUnit deployUnit;
-	    private readonly string zipPath;
-	    private readonly string command;
+        private readonly string zipPath;
+        private readonly string command;
         private readonly string correlationId;
-        private dynamic report;
-        private readonly NodeFront _nodefront = new NodeFront();
+        protected Report report;
+        public INotifier Nodefront { get; set; } = new NodeFront();
 
-	    public VerifyCommandTask(WebSiteDeployUnit webSiteDeployUnit, string zipPath, string command, string correlationId)
+        public VerifyCommandTask(WebSiteDeployUnit webSiteDeployUnit, string zipPath, string command, string correlationId)
         {
             deployUnit = webSiteDeployUnit;
             this.zipPath = zipPath;
             this.command = command;
-	        this.correlationId = correlationId;
+            this.correlationId = correlationId;
         }
+
 
         protected override void Execute()
         {
@@ -56,7 +57,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
             using (var p = new Process())
             {
-                _nodefront.Notify(new VerifyProgressEvent(deployUnit.Name) { started = true });
+                Nodefront.Notify(new VerifyProgressEvent(deployUnit.Name) { started = true });
 
                 // Redirect the output stream of the child process.
                 p.StartInfo.UseShellExecute = false;
@@ -73,37 +74,37 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
                 p.Start();
 
-                ListenToStream(p.StandardOutput, ParseVerifyCommandOutput,  () => Log.Debug("Verify command output ended"));
+                ListenToStream(p.StandardOutput, ParseVerifyCommandOutput, () => Log.Debug("Verify command output ended"));
                 ListenToStream(p.StandardError, line => Log.Error(line), () => Log.Debug("Verify command error output ended"));
 
                 p.WaitForExit((int)TimeSpan.FromMinutes(10).TotalMilliseconds);
-				
+
                 if (!p.HasExited)
                     p.Kill();
 
-                _nodefront.Notify(new VerifyProgressEvent(deployUnit.Name) { completed = true, report = report });
+                Nodefront.Notify(new VerifyProgressEvent(deployUnit.Name) { completed = true, report = report });
             }
         }
 
         private void CleanTempFolderAndExtractVerifyPackage()
         {
-			DirectoryUtil.Clean(Config.TempFolder);
+            DirectoryUtil.Clean(Config.TempFolder);
 
-			var webAppInfo = deployUnit.GetWebServer().GetInfo();
+            var webAppInfo = deployUnit.GetWebServer().GetInfo();
 
-			var zipPath = Path.Combine(webAppInfo.PhysicalPath, this.zipPath);
+            var zipPath = Path.Combine(webAppInfo.PhysicalPath, this.zipPath);
 
-			using (var zipFile = ZipFile.Read(zipPath))
-			{
-				zipFile.ExtractAll(Config.TempFolder);
-			}
+            using (var zipFile = ZipFile.Read(zipPath))
+            {
+                zipFile.ExtractAll(Config.TempFolder);
+            }
         }
 
         private string[] GetCommandParts()
         {
             var siteUrl = deployUnit.SiteUrl.Replace("localhost", HostNameUtil.GetFullHostName());
             var verifyCommand = command.Replace("%SITE_URL%", siteUrl);
-            var commandParts = verifyCommand.Split(new[] {' '});
+            var commandParts = verifyCommand.Split(new[] { ' ' });
             return commandParts;
         }
 
@@ -129,53 +130,56 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         }
 
 
-        private void ParseVerifyCommandOutput(string line)
+        public void ParseVerifyCommandOutput(string line)
         {
-			Log.Debug(line);
+            Log.Debug(line);
 
-			if (line.StartsWith("##asimov-deploy"))
-			{
-				HandleAssimovMessage(line);
-			}
+            if (line.StartsWith("##asimov-deploy"))
+            {
+                HandleAsimovMessage(line);
+            }
         }
 
-		private void HandleAssimovMessage(string line)
-	    {
-		    var keys = ConsoleOutputParseUtil.ParseKeyValueString(line);
+        public class Report
+        {
+            public string title { get; set; }
+            public string url { get; set; }
+        }
 
-			if (keys.ContainsKey("image"))
-			{
-                _nodefront.Notify(new VerifyProgressEvent(deployUnit.Name)
-				{
-					image = new
-					{
-						title = keys["title"],
-						url = GetUrlForFileInTempReportsFolder(keys["image"])
-					}
-				});
-			}
+        private void HandleAsimovMessage(string line)
+        {
+            var keys = ConsoleOutputParseUtil.ParseKeyValueString(line);
 
-			if (keys.ContainsKey("test"))
-			{
-                _nodefront.Notify(new VerifyProgressEvent(deployUnit.Name)
-				{
-					test = new { pass = keys["pass"] == "true", message = keys["test"] }
-				});
-			}
+            if (keys.ContainsKey("image"))
+            {
+                Nodefront.Notify(new VerifyProgressEvent(deployUnit.Name)
+                {
+                    image = new Report { title = keys["title"], url = GetUrlForFileInTempReportsFolder(keys["image"]) }
+                });
+            }
 
-			if (keys.ContainsKey("report"))
-			{
-				report = new
-				{
-					title = keys["title"],
-					url = GetUrlForFileInTempReportsFolder(keys["report"])
-				};
-			}
-	    }
+            if (keys.ContainsKey("test"))
+            {
+                Nodefront.Notify(new VerifyProgressEvent(deployUnit.Name)
+                {
+                    test = new { pass = keys["pass"] == "true", message = keys["test"] }
+                });
+            }
 
-	    private string GetUrlForFileInTempReportsFolder(string file)
-	    {
-		    return new Uri(Config.WebControlUrl, "temp-reports/" + file).ToString();
-	    }
+            if (keys.ContainsKey("report"))
+            {
+                report = new Report { title = keys["title"], url = GetUrlForFileInTempReportsFolder(keys["report"]) };
+            }
+        }
+
+        private string GetUrlForFileInTempReportsFolder(string file)
+        {
+            var uri = new Uri(file, UriKind.RelativeOrAbsolute);
+            if (uri.IsAbsoluteUri)
+            {
+                return file;
+            }
+            return new Uri(Config.WebControlUrl, "temp-reports/" + file).ToString();
+        }
     }
 }
