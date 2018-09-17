@@ -64,7 +64,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 
         public void RaiseExecuted(Exception exception) => Completed?.Invoke(exception);
 
-        private IAsimovConfig _config;
+        protected IAsimovConfig _config;
         protected virtual IAsimovConfig Config => _config ?? (_config = ObjectFactory.GetInstance<IAsimovConfig>());
 
         protected virtual void AddTask(AsimovTask task)

@@ -1,5 +1,4 @@
 ﻿using AsimovDeploy.WinAgent.Framework.Common;
-using AsimovDeploy.WinAgent.Framework.Events;
 using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Framework.Tasks;
@@ -86,16 +85,8 @@ namespace AsimovDeploy.WinAgent.Tests.Tasks
 			get { return _config; }
 		}
 	}
-	public class FakeNotifier : INotifier
-	{
-		public bool WasNotified = false;
-		public void Notify(AsimovEvent data)
-		{
-			WasNotified = true;
-		}
-	}
 
-	public class FakeLoadBalancerService : ILoadBalancerService
+    public class FakeLoadBalancerService : ILoadBalancerService
 	{
 		public bool StartState;
 		public int NumberOfSecondsThatActionTakesToComplete = 11;
