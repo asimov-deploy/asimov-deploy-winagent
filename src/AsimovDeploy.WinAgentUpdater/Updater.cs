@@ -84,7 +84,7 @@ namespace AsimovDeploy.WinAgentUpdater
 
             var configDir = Path.Combine(_installDir, "ConfigFiles");
 
-            CleanFolder(configDir);
+            CleanFolderAndSubDirectories(configDir);
             using (var packageStream = lastConfig.FileSource.GetStream())
             {
                 CopyNewBuildToInstallDir(configDir, packageStream);
@@ -94,7 +94,7 @@ namespace AsimovDeploy.WinAgentUpdater
         private void UpdateWinAgentWithNewBuild(AsimovVersion lastBuild)
         {
             _log.InfoFormat("Installing new build {0}", lastBuild.Version);
-            CleanFolder(_installDir);
+            CleanFilesInFolder(_installDir);
 
             using (var packageStream = lastBuild.FileSource.GetStream())
             {
@@ -134,7 +134,15 @@ namespace AsimovDeploy.WinAgentUpdater
             }
         }
 
-        private void CleanFolder(string destinationFolder)
+        private void CleanFolderAndSubDirectories(string destinationFolder)
+        {
+            CleanFilesInFolder(destinationFolder);
+
+            var dir = new DirectoryInfo(destinationFolder);
+            foreach (DirectoryInfo subDirectory in dir.GetDirectories()) subDirectory.Delete(true);
+        }
+
+        private static void CleanFilesInFolder(string destinationFolder)
         {
             if (destinationFolder.Contains("Asimov") == false)
             {
@@ -147,8 +155,6 @@ namespace AsimovDeploy.WinAgentUpdater
                 if (!file.Extension.Contains("log"))
                     file.Delete();
             }
-
-            foreach (DirectoryInfo subDirectory in dir.GetDirectories()) subDirectory.Delete(true);
         }
     }
 }
