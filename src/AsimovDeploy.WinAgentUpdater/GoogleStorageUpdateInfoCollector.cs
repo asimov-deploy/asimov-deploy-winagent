@@ -52,7 +52,7 @@ namespace AsimovDeploy.WinAgentUpdater
             var regex = new Regex(@"(?<fileName>AsimovDeploy.WinAgent.ConfigFiles-Version-(\d+).zip)");
             var list = new List<AsimovConfigUpdate>();
 
-            foreach (var bucket in _client.ListObjects(_bucket, _prefix))
+            foreach (var bucket in _client.ListObjects(_bucket, _prefix + "/AsimovDeploy.WinAgent.ConfigFiles-Version"))
             {
                 var match = regex.Match(bucket.Name);
                 if (match.Success)
@@ -74,7 +74,7 @@ namespace AsimovDeploy.WinAgentUpdater
             var pattern = @"v(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)";
             var regex = new Regex(pattern);
             var list = new List<AsimovVersion>();
-            foreach (var bucket in _client.ListObjects(_bucket, _prefix))
+            foreach (var bucket in _client.ListObjects(_bucket, _prefix + "/AsimovDeploy.WinAgent-v"))
             {
                 var match = regex.Match(bucket.Name);
                 if (match.Success)
