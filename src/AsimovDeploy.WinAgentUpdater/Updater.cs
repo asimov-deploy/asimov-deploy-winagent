@@ -14,7 +14,7 @@ namespace AsimovDeploy.WinAgentUpdater
 
         private static ILog _log = LogManager.GetLogger(typeof(Updater));
         private string _installDir;
-        private const int interval = 4000;
+        private static readonly int interval = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
         private IUpdateInfoCollector _collector;
         
