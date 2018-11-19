@@ -14,16 +14,16 @@
 * limitations under the License.
 ******************************************************************************/
 
-using System;
-using System.Net;
-using System.Text;
-using System.Threading;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.LoadBalancers;
 using AsimovDeploy.WinAgent.Framework.Models;
 using AsimovDeploy.WinAgent.Web.Contracts;
 using log4net;
 using Newtonsoft.Json;
+using System;
+using System.Net;
+using System.Text;
+using System.Threading;
 
 namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 {
@@ -48,9 +48,14 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
 
         public void Start() => _timer = new Timer(TimerTick, null, 0, _intervalMs);
 
-        public void Stop() => _timer.Dispose();
+        public void Stop()
+        {
+            SendShutdown();
+            _timer.Dispose();
+        }
 
         private Uri GetHeartbeatUri(string nodeFrontUrl) => new Uri(new Uri(nodeFrontUrl), "/agent/heartbeat");
+        private Uri GetHShutdowntUri(string nodeFrontUrl) => new Uri(new Uri(nodeFrontUrl), "/agent/shutdown");
 
         private void TimerTick(object state)
         {
@@ -80,6 +85,12 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
                 loadBalancerState = _loadBalancerService.UseLoadBalancer ? _loadBalancerService.GetCurrentState() : null
             });
         }
+
+        private void SendShutdown()
+            => HttpPostJsonUpdate(GetHShutdowntUri(_config.NodeFrontUrl), new ShutdownDTO
+            {
+                name = Environment.MachineName
+            });
 
         private static void HttpPostJsonUpdate<T>(Uri uri, T data)
         {
