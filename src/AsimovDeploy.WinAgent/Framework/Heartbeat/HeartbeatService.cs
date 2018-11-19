@@ -55,7 +55,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
         }
 
         private Uri GetHeartbeatUri(string nodeFrontUrl) => new Uri(new Uri(nodeFrontUrl), "/agent/heartbeat");
-        private Uri GetHShutdowntUri(string nodeFrontUrl) => new Uri(new Uri(nodeFrontUrl), "/agent/shutdown");
+        private Uri GetShutdowntUri(string nodeFrontUrl) => new Uri(new Uri(nodeFrontUrl), "/agent/shutdown");
 
         private void TimerTick(object state)
         {
@@ -87,7 +87,7 @@ namespace AsimovDeploy.WinAgent.Framework.Heartbeat
         }
 
         private void SendShutdown()
-            => HttpPostJsonUpdate(GetHShutdowntUri(_config.NodeFrontUrl), new ShutdownDTO
+            => HttpPostJsonUpdate(GetShutdowntUri(_config.NodeFrontUrl), new ShutdownDTO
             {
                 name = Environment.MachineName
             });
