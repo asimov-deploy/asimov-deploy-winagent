@@ -29,5 +29,18 @@ namespace AsimovDeploy.WinAgent.Framework.Models.UnitActions
     public class UnitActionList : List<UnitAction>
     {
         public UnitAction this[string name] => this.SingleOrDefault(x => x.Name == name);
+
+
+        /// <summary>
+        /// Adds an UnitAction if there are no actions of the same type in the collection. Does nothing otherwise.
+        /// </summary>
+        /// <returns>True if the action was added</returns>
+        public bool AddIfFirstOfType<T>(T action) where T : UnitAction
+        {
+            if (this.OfType<T>().Any())
+                return false;
+            Add(action);
+            return true;
+        }
     }
 }
