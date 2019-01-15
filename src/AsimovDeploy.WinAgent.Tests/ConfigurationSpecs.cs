@@ -251,6 +251,19 @@ namespace AsimovDeploy.WinAgent.Tests
         }
 
         [Test]
+        public void unit_without_package_source_should_have_null_package_source()
+        {
+            var config = ReadConfig("ConfigExamples", "no-packagesource-agent");
+
+            config.Units.Count.ShouldBe(2);
+
+            var testService = (WindowsServiceDeployUnit)config.Units[1];
+            var packageSource = config.GetPackageSourceFor(testService);
+            packageSource.ShouldBeTypeOf<NullPackageSource>();
+
+        }
+
+        [Test]
         public void can_get_agent_groups()
         {
             var config = ReadConfig("ConfigExamples", "testagent3");

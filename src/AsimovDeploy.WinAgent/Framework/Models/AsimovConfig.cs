@@ -179,6 +179,10 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
         public PackageSource GetPackageSourceFor(DeployUnit deployUnit)
         {
+            if (deployUnit.PackageInfo?.Source == null)
+            {
+                return new NullPackageSource();
+            }
             var matchingPackageSources = PackageSources.Where(x => x.Name == deployUnit.PackageInfo.Source).ToList();
             if (matchingPackageSources.Count == 0)
             {

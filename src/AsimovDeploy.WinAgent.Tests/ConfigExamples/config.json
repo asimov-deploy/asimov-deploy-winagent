@@ -40,6 +40,7 @@
 		"testagent1": { "Environment" : "test1", "LoadBalancerParameters": { "Partition": "testgroup1" } },
 		"testagent2": { "Environment" : "test2" },
 		"testagent3": { "Environment" : "test1, deploy-parameters" },
-		"deploy-parameters": { "Environment" : "deploy-parameters" }
+		"no-packagesource-agent": { "Environment" : "no-packagesource" },
+    "deploy-parameters": { "Environment" : "deploy-parameters" }
 	}	
 }
