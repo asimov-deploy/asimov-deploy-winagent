@@ -48,6 +48,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                         AddScriptsDir(configDir, deployUnit);
 
                         CreateDirectoryIfNotExists(deployUnit.DataDirectory);
+                        deployUnit.SetupDeployActions();
                         deployUnit.Refresh();
                     }
 

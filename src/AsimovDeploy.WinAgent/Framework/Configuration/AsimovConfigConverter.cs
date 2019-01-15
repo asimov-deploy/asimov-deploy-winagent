@@ -71,8 +71,6 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                 var env = new DeployEnvironment();
                 PopulateFromFile(envConfigFile, serializer, env);
                 config.Environments.Add(env);
-
-                config.Units?.ForEach(t => t.SetupDeployActions());
             }
 
             return config;

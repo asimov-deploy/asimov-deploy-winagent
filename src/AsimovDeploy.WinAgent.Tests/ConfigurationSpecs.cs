@@ -224,12 +224,12 @@ namespace AsimovDeploy.WinAgent.Tests
         {
             var config = ReadConfig("ConfigExamples", "asd");
 
-            config.Units[0].Actions.Count.ShouldBe(6);
+            config.Units[0].Actions.OrderBy(x=>x.Sort).Select(x=>x.Name).ShouldBe(new []{"Rollback", "verify1", "verify2", "Start", "Stop"});
 
-            config.Units[0].Actions[4].ShouldBeTypeOf<VerifyUrlsUnitAction>();
-            config.Units[0].Actions[5].ShouldBeTypeOf<VerifyCommandUnitAction>();
+            config.Units[0].Actions[1].ShouldBeTypeOf<VerifyUrlsUnitAction>();
+            config.Units[0].Actions[2].ShouldBeTypeOf<VerifyCommandUnitAction>();
 
-            var commandAction = (VerifyCommandUnitAction) config.Units[0].Actions[5];
+            var commandAction = (VerifyCommandUnitAction) config.Units[0].Actions[2];
             commandAction.ZipPath.ShouldBe("SiteVerify.zip");
             commandAction.Command.ShouldBe("phantomjs.exe");
         }
