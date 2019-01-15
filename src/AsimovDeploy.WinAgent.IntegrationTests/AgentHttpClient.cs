@@ -1,9 +1,12 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NUnit.Framework;
+using StructureMap.Pipeline;
 
 namespace AsimovDeploy.WinAgent.IntegrationTests
 {
@@ -20,7 +23,8 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         {
             var httpClient = new HttpClient();
             
-            var result = httpClient.GetAsync($"http://localhost:{_port}{url}");
+            var result = httpClient.GetAsync(GetFullAgentUrl(url));
+            EnsureSuccess(url,result,"GET",null);
             var strTask = result.Result.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(strTask.Result);
         }
@@ -29,6 +33,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         {
             var httpClient = new HttpClient();
             var result = httpClient.GetAsync(GetFullAgentUrl(url));
+            EnsureSuccess(url,result,"GET",null);
             var strTask = result.Result.Content.ReadAsStringAsync();
             return JObject.Parse(strTask.Result);
         }
@@ -41,9 +46,18 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
 	        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(apiKey);
             var jsonString = JsonConvert.SerializeObject(data);
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            var fullUrl = GetFullAgentUrl(url);
-            var post = httpClient.PostAsync(fullUrl, content);
+            var post = httpClient.PostAsync(GetFullAgentUrl(url), content);
             Task.WaitAll(post);
+            EnsureSuccess(url, post, "POST", jsonString);
+        }
+
+        private static void EnsureSuccess(string url, Task<HttpResponseMessage> response, string method, string data)
+        {
+            if (!response.Result.IsSuccessStatusCode)
+            {
+                Assert.Fail(
+                    $"{(int) response.Result.StatusCode} {response.Result.StatusCode}: {method} {url} {data}{Environment.NewLine}Response:{response.Result.Content.ReadAsStringAsync().Result}");
+            }
         }
     }
 }

@@ -96,11 +96,11 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
             Directory.CreateDirectory(TempDir);
             Directory.CreateDirectory(PackagesDir);
 
-            Debug.WriteLine("WorkingDir = " + WorkingDir);
-            Debug.WriteLine("AgentDir = " + AgentDir);
-            Debug.WriteLine("DataDir = " + DataDir);
-            Debug.WriteLine("TempDir = " + TempDir);
-            Debug.WriteLine("PackagesDir = " + PackagesDir);
+            Console.WriteLine("WorkingDir = " + WorkingDir);
+            Console.WriteLine("AgentDir = " + AgentDir);
+            Console.WriteLine("DataDir = " + DataDir);
+            Console.WriteLine("TempDir = " + TempDir);
+            Console.WriteLine("PackagesDir = " + PackagesDir);
         }
 
         public void CopyAgentToCleanRunFolder()
@@ -125,7 +125,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
             AgentProcess.StartInfo.RedirectStandardOutput = true;
             AgentProcess.Start();
 
-            RedirectAgentOutputToDebug(AgentProcess.StandardOutput);
+            RedirectAgentOutputToConsole(AgentProcess.StandardOutput);
 
             Thread.Sleep(5000);
 
@@ -157,7 +157,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
             }
         }
 
-        private void RedirectAgentOutputToDebug(StreamReader input)
+        private void RedirectAgentOutputToConsole(StreamReader input)
         {
             new Thread(a =>
             {
@@ -168,13 +168,12 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                     str.Append(buffer[0]);
                     if (buffer[0] == '\n')
                     {
-                        Debug.Write("[AgentOutput]: " + str);
-                        Debug.Flush();
+                        Console.Write("[AgentOutput]: " + str);
                         str.Clear();
                     }
                 };
 
-                Debug.WriteLine("[AgentOutput]: output ended");
+                Console.WriteLine("[AgentOutput]: output ended");
             }).Start();
         }
     }
