@@ -42,15 +42,14 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
 
         public override void SetupDeployActions()
         {
-            if (!Actions.OfType<StartDeployUnitAction>().Any())
-                Actions.Add(new StartDeployUnitAction { Sort = 10 });
-            if (!Actions.OfType<StopDeployUnitAction>().Any())
-                Actions.Add(new StopDeployUnitAction { Sort = 11 });
-            if (CanBeKilled && !Actions.OfType<KillDeployUnitAction>().Any())
-                Actions.Add(new KillDeployUnitAction { Sort = 12 });
+            Actions.AddIfFirstOfType(new StartDeployUnitAction { Sort = 10 });
+            Actions.AddIfFirstOfType(new StopDeployUnitAction { Sort = 11 });
+            
+            if (CanBeKilled)
+                Actions.AddIfFirstOfType(new KillDeployUnitAction { Sort = 12 });
 
-            if (Installable?.IsUninstallable == true && !Actions.OfType<UnInstallUnitAction>().Any())
-                Actions.Add(new UnInstallUnitAction() { Sort = 20 });
+            if (Installable?.IsUninstallable == true)
+                Actions.AddIfFirstOfType(new UnInstallUnitAction() { Sort = 20 });
 
             _lastUnitStatus = (int)UnitStatus.NA;
         }

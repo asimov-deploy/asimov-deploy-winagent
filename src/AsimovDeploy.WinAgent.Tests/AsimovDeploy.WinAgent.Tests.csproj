@@ -26,6 +26,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="ConfigExamples\config.no-packagesource.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ConfigExamples\config.deploy-parameters.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

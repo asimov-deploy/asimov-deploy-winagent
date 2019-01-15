@@ -224,12 +224,12 @@ namespace AsimovDeploy.WinAgent.Tests
         {
             var config = ReadConfig("ConfigExamples", "asd");
 
-            config.Units[0].Actions.Count.ShouldBe(6);
+            config.Units[0].Actions.OrderBy(x=>x.Sort).Select(x=>x.Name).ShouldBe(new []{"Rollback", "verify1", "verify2", "Start", "Stop"});
 
-            config.Units[0].Actions[4].ShouldBeTypeOf<VerifyUrlsUnitAction>();
-            config.Units[0].Actions[5].ShouldBeTypeOf<VerifyCommandUnitAction>();
+            config.Units[0].Actions[1].ShouldBeTypeOf<VerifyUrlsUnitAction>();
+            config.Units[0].Actions[2].ShouldBeTypeOf<VerifyCommandUnitAction>();
 
-            var commandAction = (VerifyCommandUnitAction) config.Units[0].Actions[5];
+            var commandAction = (VerifyCommandUnitAction) config.Units[0].Actions[2];
             commandAction.ZipPath.ShouldBe("SiteVerify.zip");
             commandAction.Command.ShouldBe("phantomjs.exe");
         }
@@ -248,6 +248,19 @@ namespace AsimovDeploy.WinAgent.Tests
 
             testService.Tags.ShouldContain("tag3");
             testService.Tags.ShouldContain("tag4");
+        }
+
+        [Test]
+        public void unit_without_package_source_should_have_null_package_source()
+        {
+            var config = ReadConfig("ConfigExamples", "no-packagesource-agent");
+
+            config.Units.Count.ShouldBe(2);
+
+            var testService = (WindowsServiceDeployUnit)config.Units[1];
+            var packageSource = config.GetPackageSourceFor(testService);
+            packageSource.ShouldBeTypeOf<NullPackageSource>();
+
         }
 
         [Test]
