@@ -1,0 +1,18 @@
+﻿{
+  "NodeFrontUrl": "http://overriden:3335",
+  "AgentGroup": "Test Group With no package sources",
+
+  "Units": [
+    {
+      "Name": "TestService",
+      "Group": "Test", 
+      "Type": "WindowsService",
+
+      "ServiceName": "Test",
+
+
+
+      "Tags": [ "tag1", "tag3", "tag4" ]
+    }
+  ]
+}
