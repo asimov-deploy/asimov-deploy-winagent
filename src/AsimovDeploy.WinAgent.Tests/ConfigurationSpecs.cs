@@ -116,14 +116,14 @@ namespace AsimovDeploy.WinAgent.Tests
             var unit = config.GetUnitByName("UnitWithParameters");
 
             unit.HasDeployParameters.ShouldBe(true);
-            unit.DeployParameters[0].ShouldBeTypeOf<TextActionParameter>();
+            unit.DeployParameters[0].ShouldBeOfType<TextActionParameter>();
             ((TextActionParameter) unit.DeployParameters[0]).Default.ShouldBe("Deploy-Everything");
 
-            unit.DeployParameters[1].ShouldBeTypeOf<PasswordActionParameter>();
+            unit.DeployParameters[1].ShouldBeOfType<PasswordActionParameter>();
             ((PasswordActionParameter)unit.DeployParameters[1]).Password.ShouldBe("Password!");
             ((PasswordActionParameter)unit.DeployParameters[1]).Default.ShouldBe(null);
 
-            unit.DeployParameters[2].ShouldBeTypeOf<PasswordActionParameter>();
+            unit.DeployParameters[2].ShouldBeOfType<PasswordActionParameter>();
             ((PasswordActionParameter)unit.DeployParameters[2]).Password.ShouldBe(null);
             ((PasswordActionParameter)unit.DeployParameters[2]).Default.ShouldBe("DefaultPassword");
         }
@@ -226,8 +226,8 @@ namespace AsimovDeploy.WinAgent.Tests
 
             config.Units[0].Actions.OrderBy(x=>x.Sort).Select(x=>x.Name).ShouldBe(new []{"Rollback", "verify1", "verify2", "Start", "Stop"});
 
-            config.Units[0].Actions[1].ShouldBeTypeOf<VerifyUrlsUnitAction>();
-            config.Units[0].Actions[2].ShouldBeTypeOf<VerifyCommandUnitAction>();
+            config.Units[0].Actions[1].ShouldBeOfType<VerifyUrlsUnitAction>();
+            config.Units[0].Actions[2].ShouldBeOfType<VerifyCommandUnitAction>();
 
             var commandAction = (VerifyCommandUnitAction) config.Units[0].Actions[2];
             commandAction.ZipPath.ShouldBe("SiteVerify.zip");
@@ -259,7 +259,7 @@ namespace AsimovDeploy.WinAgent.Tests
 
             var testService = (WindowsServiceDeployUnit)config.Units[1];
             var packageSource = config.GetPackageSourceFor(testService);
-            packageSource.ShouldBeTypeOf<NullPackageSource>();
+            packageSource.ShouldBeOfType<NullPackageSource>();
 
         }
 

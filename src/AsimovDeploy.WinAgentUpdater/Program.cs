@@ -15,12 +15,10 @@ namespace AsimovDeploy.WinAgentUpdater
 
             var host = HostFactory.New(x =>
             {
-                x.BeforeStartingServices(s => _log.InfoFormat("Starting {0}...", ServiceName));
-                x.AfterStoppingServices(s => _log.InfoFormat("Stopping {0}...", ServiceName));
+                x.SetServiceName(ServiceName);
 
                 x.Service<Updater>(s =>
                 {
-                    s.SetServiceName(ServiceName);
                     s.ConstructUsing(name => new Updater());
 
                     s.WhenStarted(tc => tc.Start());

@@ -1,30 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFramework>net452</TargetFramework>
     <ApplicationIcon />
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <StartupObject>AsimovDeploy.WinAgent.Program</StartupObject>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.3.19" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.31.5" />
     <PackageReference Include="AWSSDK.S3" Version="3.3.15" />
-    <PackageReference Include="DotNetZip" Version="1.9.1.8" />
-    <PackageReference Include="EasyHttp" Version="1.6.58.0" />
-    <PackageReference Include="Google.Cloud.Storage.V1" Version="2.1.0" />
+    <PackageReference Include="DotNetZip" Version="1.13.0" />
+    <PackageReference Include="EasyHttp" Version="1.7.0" />
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="2.2.1" />
     <PackageReference Include="IIS.Microsoft.Web.Administration" Version="8.5.9600.17042" />
     <PackageReference Include="JsonFx" Version="2.0.1209.2802" />
-    <PackageReference Include="log4net" Version="2.0.0" />
+    <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Nancy" Version="0.11.0" />
     <PackageReference Include="Nancy.Bootstrappers.StructureMap" Version="0.11.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="0.11.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="structuremap" Version="2.6.3" />
-    <PackageReference Include="System.Interactive.Async" Version="3.1.1" />
-    <PackageReference Include="System.Net.Http" Version="4.3.1" />
-    <PackageReference Include="Topshelf" Version="2.3.0.0" />
-    <PackageReference Include="Topshelf.Log4Net" Version="2.3.0.0" />
+    <PackageReference Include="System.Interactive.Async" Version="3.2.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="Topshelf" Version="4.2.0" />
+    <PackageReference Include="Topshelf.Log4Net" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
