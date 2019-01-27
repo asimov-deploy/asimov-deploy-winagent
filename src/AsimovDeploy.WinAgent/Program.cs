@@ -17,16 +17,11 @@ namespace AsimovDeploy.WinAgent
             
             var host = HostFactory.New(x =>
             {
-                x.BeforeStartingServices(s => _log.DebugFormat("Starting {0}...", ServiceName));
-                x.AfterStoppingServices(s => _log.DebugFormat("Stopping {0}...", ServiceName));
-                
+                x.SetServiceName(ServiceName);
+
                 x.Service<IAsimovDeployService>(s =>
                 {
-                    s.SetServiceName(ServiceName);
-                    s.ConstructUsing(name =>
-                    {
-                        return new AsimovDeployService();
-                    });
+                    s.ConstructUsing(name => new AsimovDeployService());
 
                     s.WhenStarted(tc => tc.Start());
                     s.WhenStopped(tc => tc.Stop());
