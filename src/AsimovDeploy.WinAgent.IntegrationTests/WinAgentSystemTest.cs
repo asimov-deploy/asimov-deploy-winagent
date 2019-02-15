@@ -105,7 +105,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
 
         public void CopyAgentToCleanRunFolder()
         {
-            DirectoryUtil.CopyDirectory(Path.Combine(TestContext.CurrentContext.TestDirectory,@"..\..\..\..\AsimovDeploy.WinAgent\bin\Debug\net45"), AgentDir);
+            DirectoryUtil.CopyDirectory(Path.Combine(TestContext.CurrentContext.TestDirectory,@"..\..\..\..\AsimovDeploy.WinAgent\bin\Debug\net452"), AgentDir);
         }
 
         public void GivenRunningAgent()

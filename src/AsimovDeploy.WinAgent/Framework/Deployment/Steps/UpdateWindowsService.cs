@@ -27,6 +27,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
     public class UpdateWindowsService : IDeployStep
     {
         private IAsimovConfig _config;
+        private static readonly TimeSpan DefaultStopTimeout = TimeSpan.FromMinutes(2);
 
         public UpdateWindowsService(IAsimovConfig config)
         {
@@ -67,7 +68,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
             else
             {
                 if (controller.Status == ServiceControllerStatus.Running)
-                    controller.StopServiceAndWaitForExit();
+                    controller.StopServiceAndWaitForExit(DefaultStopTimeout);
             }
         }
 
