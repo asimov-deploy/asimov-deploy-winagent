@@ -23,9 +23,10 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public class TaskExecutor : ITaskExecutor, IStartable
     {
+        public const int MaxConcurrentTasks = 1000;
         private static ILog _log = LogManager.GetLogger(typeof (TaskExecutor));
 
-        private BlockingCollection<AsimovTask> _tasks = new BlockingCollection<AsimovTask>(100);
+        private BlockingCollection<AsimovTask> _tasks = new BlockingCollection<AsimovTask>(MaxConcurrentTasks);
 
         private Task _workerTask;
 
