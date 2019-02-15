@@ -16,6 +16,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         private readonly WindowsServiceDeployUnit _unit;
         private readonly bool _stop;
         private readonly NodeFront _nodefront = new NodeFront();
+        private static readonly TimeSpan DefaultStartStopTimeout = TimeSpan.FromMinutes(2);
 
         public StartStopWindowsServiceTask(WindowsServiceDeployUnit unit, bool stop)
         {
@@ -51,13 +52,13 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
         private void StartService(ServiceController controller)
         {
             controller.Start();
-            controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(2));
+            controller.WaitForStatus(ServiceControllerStatus.Running, DefaultStartStopTimeout);
         }
 
         private static void StopService(ServiceController controller)
         {
             if (controller.Status == ServiceControllerStatus.Running)
-                controller.StopServiceAndWaitForExit();
+                controller.StopServiceAndWaitForExit(DefaultStartStopTimeout);
         }
     }
 

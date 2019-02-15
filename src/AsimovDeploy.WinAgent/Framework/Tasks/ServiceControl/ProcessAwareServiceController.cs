@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Threading;
+using TimeoutException = System.TimeoutException;
 
 namespace AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl
 {
@@ -41,7 +42,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl
             Process.GetProcessById(ssp.dwProcessId).Kill();
         }
 
-        public static void StopServiceAndWaitForExit(this ServiceController service)
+        public static void StopServiceAndWaitForExit(this ServiceController service, TimeSpan? timeout = null)
         {
             SERVICE_STATUS_PROCESS ssp = new SERVICE_STATUS_PROCESS();
             int ignored;
@@ -92,6 +93,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl
                 processWaitForExitThread.Start(threadData);
 
                 // Now we ask the service to exit.
+                var duration = Stopwatch.StartNew();
                 service.Stop();
 
                 // Instead of waiting until the *service* is in the "stopped" state, here we
@@ -99,8 +101,16 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl
                 // thread waiting for the process to go away, and then we wait for the thread
                 // to go away.
                 lock (threadData.Sync)
+                {
                     while (!threadData.HasExited)
-                        Monitor.Wait(threadData.Sync);
+                    {
+                        var remainingWait = (timeout - duration.Elapsed);
+                        if (remainingWait != null && remainingWait.Value.TotalMilliseconds <= 0)
+                            throw new TimeoutException($"Service {service.ServiceName} did not stop within the allowed time limit {timeout}");
+
+                        Monitor.Wait(threadData.Sync, remainingWait != null ? (int)remainingWait.Value.TotalMilliseconds : -1);
+                    }
+                }
             }
         }
 
