@@ -26,7 +26,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 
         public abstract IList<AsimovVersion> GetAvailableVersions(PackageInfo packageInfo);
         public abstract AsimovVersion GetVersion(string versionId, PackageInfo packageInfo);
-        public abstract string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder);
+        public abstract string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder, string downloadFolder);
 
         protected void Extract(string localFile, string tempFolder, string internalZipPath)
         {

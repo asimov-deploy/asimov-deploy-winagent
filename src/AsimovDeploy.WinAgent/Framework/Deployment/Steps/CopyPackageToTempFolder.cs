@@ -14,6 +14,7 @@
 * limitations under the License.
 ******************************************************************************/
 
+using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models;
 
 namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
@@ -29,9 +30,11 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
         public void Execute(DeployContext context)
         {
-            var packageSource = _asimovConfig.GetPackageSourceFor(context.DeployUnit);
+            DirectoryUtil.CleanOldFiles(_asimovConfig.DownloadFolder);
 
-            context.TempFolderWithNewVersionFiles = packageSource.CopyAndExtractToTempFolder(context.NewVersion.Id, context.DeployUnit.PackageInfo, _asimovConfig.TempFolder);
+            var packageSource = _asimovConfig.GetPackageSourceFor(context.DeployUnit);
+            
+            context.TempFolderWithNewVersionFiles = packageSource.CopyAndExtractToTempFolder(context.NewVersion.Id, context.DeployUnit.PackageInfo, _asimovConfig.TempFolder, _asimovConfig.DownloadFolder);
         }
     }
 

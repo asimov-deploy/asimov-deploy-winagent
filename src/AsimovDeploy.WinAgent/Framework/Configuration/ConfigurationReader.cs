@@ -38,6 +38,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 
                     CreateDirectoryIfNotExists(config.DataFolder);
                     CreateDirectoryIfNotExists(config.TempFolder);
+                    CreateDirectoryIfNotExists(config.DownloadFolder);
                     CreateDirectoryIfNotExists(unitsDataBaseDir);
 
                     foreach (var deployUnit in config.Units.Concat(config.Environments.SelectMany(a => a.Units)))
