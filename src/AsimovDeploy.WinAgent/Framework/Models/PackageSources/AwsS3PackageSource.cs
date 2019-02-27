@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
-using Amazon.S3.Model;
+using AsimovDeploy.WinAgent.Framework.Common;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 {
@@ -43,7 +39,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             return ParseVersion(@object.Key, @object.LastModified);
         }
 
-        public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder)
+        public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder, string downloadFolder)
         {
             var @object = S3Client.GetObject(Bucket, versionId);
             var objectFileName = Path.GetFileName(@object.Key);
@@ -51,12 +47,12 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             {
                 throw new InvalidOperationException($"Could not extract file name from object key {@object.Key}");
             }
-            var localFileName = Path.Combine(tempFolder, objectFileName);
-            @object.WriteResponseStreamToFile(localFileName);
+            var localFileName = Path.Combine(downloadFolder, objectFileName);
+
+            if (!DirectoryUtil.Exists(localFileName))
+                @object.WriteResponseStreamToFile(localFileName);
 
             Extract(localFileName, tempFolder, packageInfo.InternalPath);
-
-            File.Delete(localFileName);
 
             return Path.Combine(tempFolder, packageInfo.InternalPath);
         }

@@ -14,6 +14,7 @@
 * limitations under the License.
 ******************************************************************************/
 
+using System;
 using System.IO;
 
 namespace AsimovDeploy.WinAgent.Framework.Common
@@ -30,6 +31,21 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                 file.Delete();
 
             foreach (DirectoryInfo subDirectory in dir.GetDirectories()) subDirectory.Delete(true);
+        }
+
+        public static void CleanOldFiles(string directory)
+        {
+            if (!Exists(directory))
+                return;
+
+            var dir = new DirectoryInfo(directory);
+
+            var yesterday = DateTime.Now.AddDays(-1);
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                if (file.CreationTime < yesterday)
+                    file.Delete();
+            }
         }
 
         public static void CopyDirectory(string sourcePath, string destPath)

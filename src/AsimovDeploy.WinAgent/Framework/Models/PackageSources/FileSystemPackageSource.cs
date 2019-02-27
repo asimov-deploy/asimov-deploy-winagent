@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using AsimovDeploy.WinAgent.Framework.Common;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 {
@@ -48,16 +48,15 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             return GetVersionInfoFromFile(fileInfo);
         }
 
-        public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder)
+        public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder, string downloadFolder)
         {
             var fileInfo = GetFilePathForVersion(versionId);
-            var localZipFileName = Path.Combine(tempFolder, fileInfo.Name);
+            var localZipFileName = Path.Combine(downloadFolder, fileInfo.Name);
 
-            File.Copy(fileInfo.FullName, localZipFileName, true);
+            if (!DirectoryUtil.Exists(localZipFileName))
+                File.Copy(fileInfo.FullName, localZipFileName, true);
 
             Extract(localZipFileName, tempFolder, packageInfo.InternalPath);
-
-            File.Delete(localZipFileName);
 
             return Path.Combine(tempFolder, packageInfo.InternalPath);
         }

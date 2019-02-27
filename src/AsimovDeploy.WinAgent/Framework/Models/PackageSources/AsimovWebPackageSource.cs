@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using AsimovDeploy.WinAgent.Framework.Common;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 {
@@ -47,16 +48,15 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
 			return GetAsimovVersionByName(versionId);
 		}
 
-		public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder)
+		public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder, string downloadFolder)
 		{
 			string fileName = versionId + ".zip";
-			string localZipFileName = Path.Combine(tempFolder, fileName);
+			string localZipFileName = Path.Combine(downloadFolder, fileName);
 
-			webClient.DownloadFile(Uri + "/" + versionId + ".zip", localZipFileName);
+            if(!DirectoryUtil.Exists(localZipFileName))
+			    webClient.DownloadFile(Uri + "/" + versionId + ".zip", localZipFileName);
 
 			Extract(localZipFileName, tempFolder, packageInfo.InternalPath);
-
-			File.Delete(localZipFileName);
 
 			return Path.Combine(tempFolder, packageInfo.InternalPath);
 		}

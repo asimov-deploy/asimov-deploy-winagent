@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AsimovDeploy.WinAgent.Framework.Common;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 using Object = Google.Apis.Storage.v1.Data.Object;
@@ -55,21 +56,23 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             return AsimovVersion.Parse(Pattern,@object.Name, @object.TimeCreated ?? DateTime.MinValue);
         }
 
-        public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder)
+        public override string CopyAndExtractToTempFolder(string versionId, PackageInfo packageInfo, string tempFolder, string downloadFolder)
         {
             var objectFileName = Path.GetFileName(versionId);
             if (objectFileName == null)
                 throw new InvalidOperationException($"Could not extract file name from object {versionId}");
-            var localFileName = Path.Combine(tempFolder, objectFileName);
-            using (var fileStream = File.OpenWrite(localFileName))
+            var localFileName = Path.Combine(downloadFolder, objectFileName);
+
+            if (!DirectoryUtil.Exists(localFileName)) //Only download if we don't already have the file cached
             {
-                StorageClient.DownloadObject(Bucket, versionId, fileStream);
+                using (var fileStream = File.OpenWrite(localFileName))
+                {
+                    StorageClient.DownloadObject(Bucket, versionId, fileStream);
+                }
             }
 
             Extract(localFileName, tempFolder, packageInfo.InternalPath);
-
-            File.Delete(localFileName);
-
+            
             return Path.Combine(tempFolder, packageInfo.InternalPath);
         }
     }

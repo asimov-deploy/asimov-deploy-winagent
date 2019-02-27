@@ -52,6 +52,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
         public string LoadBalancerType { get; set; }
 
         public string TempFolder => Path.Combine(DataFolder, "Temp");
+        public string DownloadFolder => Path.Combine(DataFolder, "Download");
 
         public string LoadBalancerAgentUrl { get; set; }
         public string LoadBalancerServerId

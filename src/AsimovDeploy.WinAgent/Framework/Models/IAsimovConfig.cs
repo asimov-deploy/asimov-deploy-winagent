@@ -28,6 +28,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
 		int HeartbeatIntervalSeconds { get; }
         string TempFolder { get; }
+        string DownloadFolder { get; }
         string NodeFrontUrl { get;}
         string WebNotificationUrl { get; set; }
         int WebPort { get; }
