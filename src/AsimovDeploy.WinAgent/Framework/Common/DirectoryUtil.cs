@@ -70,7 +70,7 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 
         public static bool Exists(string path)
         {
-            return Directory.Exists(path);
+            return Directory.Exists(path) || File.Exists(path);
         }
     }
 }
