@@ -5,6 +5,7 @@ using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Common;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
+using log4net;
 using Object = Google.Apis.Storage.v1.Data.Object;
 
 namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
@@ -13,6 +14,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
     {
         private const int MaxReturnedResults = 100;
         private StorageClient _storageClient;
+        private static ILog _log = LogManager.GetLogger(typeof(GoogleStoragePackageSource));
         private StorageClient StorageClient
         {
             get
@@ -61,16 +63,22 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             var objectFileName = Path.GetFileName(versionId);
             if (objectFileName == null)
                 throw new InvalidOperationException($"Could not extract file name from object {versionId}");
-            var localFileName = Path.Combine(downloadFolder, objectFileName);
 
-            if (!DirectoryUtil.Exists(localFileName)) //Only download if we don't already have the file cached
+            var localFileName = Path.Combine(downloadFolder, objectFileName);
+            var metadata = StorageClient.GetObject(Bucket, versionId);
+
+            if (DirectoryUtil.Exists(localFileName) && metadata.Md5Hash == DirectoryUtil.Md5(localFileName)) 
+            {
+                _log.Info("Using cached file: " + localFileName);
+            }
+            else
             {
                 using (var fileStream = File.OpenWrite(localFileName))
                 {
                     StorageClient.DownloadObject(Bucket, versionId, fileStream);
                 }
             }
-
+            
             Extract(localFileName, tempFolder, packageInfo.InternalPath);
             
             return Path.Combine(tempFolder, packageInfo.InternalPath);

@@ -16,6 +16,7 @@
 
 using System;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace AsimovDeploy.WinAgent.Framework.Common
 {
@@ -33,17 +34,17 @@ namespace AsimovDeploy.WinAgent.Framework.Common
             foreach (DirectoryInfo subDirectory in dir.GetDirectories()) subDirectory.Delete(true);
         }
 
-        public static void CleanOldFiles(string directory)
+        public static void CleanOldFiles(string directory, int nrOfDaysToKeep)
         {
             if (!Exists(directory))
                 return;
 
             var dir = new DirectoryInfo(directory);
 
-            var yesterday = DateTime.Now.AddDays(-1);
+            var dayToKeep = DateTime.Now.AddDays(-nrOfDaysToKeep);
             foreach (FileInfo file in dir.GetFiles())
             {
-                if (file.CreationTime < yesterday)
+                if (file.CreationTime < dayToKeep)
                     file.Delete();
             }
         }
@@ -71,6 +72,15 @@ namespace AsimovDeploy.WinAgent.Framework.Common
         public static bool Exists(string path)
         {
             return Directory.Exists(path) || File.Exists(path);
+        }
+
+        public static string Md5(string localFileName)
+        {
+            var md5 = new MD5CryptoServiceProvider();
+            var fileStream = File.OpenRead(localFileName);
+            var md5String = Convert.ToBase64String(md5.ComputeHash(fileStream));
+            fileStream.Close();
+            return md5String;
         }
     }
 }

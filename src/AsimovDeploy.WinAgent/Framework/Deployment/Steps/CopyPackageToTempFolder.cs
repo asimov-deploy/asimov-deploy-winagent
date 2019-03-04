@@ -30,7 +30,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
         public void Execute(DeployContext context)
         {
-            DirectoryUtil.CleanOldFiles(_asimovConfig.DownloadFolder);
+            DirectoryUtil.CleanOldFiles(_asimovConfig.DownloadFolder, 1);
 
             var packageSource = _asimovConfig.GetPackageSourceFor(context.DeployUnit);
             
