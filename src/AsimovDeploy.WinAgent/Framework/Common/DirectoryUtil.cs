@@ -34,17 +34,17 @@ namespace AsimovDeploy.WinAgent.Framework.Common
             foreach (DirectoryInfo subDirectory in dir.GetDirectories()) subDirectory.Delete(true);
         }
 
-        public static void CleanOldFiles(string directory, int nrOfDaysToKeep)
+        public static void CleanOldFiles(string directory, TimeSpan maxAge)
         {
             if (!Exists(directory))
                 return;
 
             var dir = new DirectoryInfo(directory);
 
-            var dayToKeep = DateTime.Now.AddDays(-nrOfDaysToKeep);
+            var timeOfMaxAge = DateTime.Now - maxAge;
             foreach (FileInfo file in dir.GetFiles())
             {
-                if (file.CreationTime < dayToKeep)
+                if (file.CreationTime < timeOfMaxAge)
                     file.Delete();
             }
         }
@@ -76,11 +76,12 @@ namespace AsimovDeploy.WinAgent.Framework.Common
 
         public static string Md5(string localFileName)
         {
-            var md5 = new MD5CryptoServiceProvider();
-            var fileStream = File.OpenRead(localFileName);
-            var md5String = Convert.ToBase64String(md5.ComputeHash(fileStream));
-            fileStream.Close();
-            return md5String;
+            using (var fileStream = File.OpenRead(localFileName))
+            {
+                var md5 = new MD5CryptoServiceProvider();
+                var md5String = Convert.ToBase64String(md5.ComputeHash(fileStream));
+                return md5String;
+            }
         }
     }
 }
