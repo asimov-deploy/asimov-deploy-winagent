@@ -14,6 +14,7 @@
 * limitations under the License.
 ******************************************************************************/
 
+using System;
 using AsimovDeploy.WinAgent.Framework.Common;
 using AsimovDeploy.WinAgent.Framework.Models;
 
@@ -30,7 +31,8 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
         public void Execute(DeployContext context)
         {
-            DirectoryUtil.CleanOldFiles(_asimovConfig.DownloadFolder);
+            var maxAge = TimeSpan.FromDays(1);
+            DirectoryUtil.CleanOldFiles(_asimovConfig.DownloadFolder, maxAge);
 
             var packageSource = _asimovConfig.GetPackageSourceFor(context.DeployUnit);
             
