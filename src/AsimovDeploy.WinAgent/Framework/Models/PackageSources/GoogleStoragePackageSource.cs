@@ -64,7 +64,7 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             if (objectFileName == null)
                 throw new InvalidOperationException($"Could not extract file name from object {versionId}");
 
-            var localFileName = Path.Combine(downloadFolder, objectFileName);
+            var localFileName = Path.Combine(downloadFolder, packageInfo.Source + "_" + objectFileName);
             var metadata = StorageClient.GetObject(Bucket, versionId);
 
             if (DirectoryUtil.Exists(localFileName) && metadata.Md5Hash == DirectoryUtil.Md5(localFileName)) 
@@ -73,15 +73,25 @@ namespace AsimovDeploy.WinAgent.Framework.Models.PackageSources
             }
             else
             {
-                using (var fileStream = File.OpenWrite(localFileName))
-                {
-                    StorageClient.DownloadObject(Bucket, versionId, fileStream);
-                }
+                DownloadPackage(versionId, localFileName);
             }
             
             Extract(localFileName, tempFolder, packageInfo.InternalPath);
             
             return Path.Combine(tempFolder, packageInfo.InternalPath);
+        }
+
+        private void DownloadPackage(string versionId, string localFileName)
+        {
+            if (File.Exists(localFileName))
+            {
+                File.Delete(localFileName);
+            }
+
+            using (var fileStream = File.OpenWrite(localFileName))
+            {
+                StorageClient.DownloadObject(Bucket, versionId, fileStream);
+            }
         }
     }
 }
