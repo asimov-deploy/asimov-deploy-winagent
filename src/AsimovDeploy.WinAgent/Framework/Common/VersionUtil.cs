@@ -22,12 +22,14 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using AsimovDeploy.WinAgent.Framework.Models;
+using log4net;
 using Newtonsoft.Json;
 
 namespace AsimovDeploy.WinAgent.Framework.Common
 {
     public static class VersionUtil
     {
+        private static ILog Log = LogManager.GetLogger(typeof(VersionUtil));
         public const int MAX_LOG_ENTRIES = 250;
         public static string VERSION_LOG_FILENAME = "version-log.json";
 
@@ -79,7 +81,15 @@ namespace AsimovDeploy.WinAgent.Framework.Common
                 using (var reader = new StreamReader(versionFile, Encoding.UTF8))
                 {
                     var serializer = new JsonSerializer();
-                    return (List<DeployedVersion>)serializer.Deserialize(reader, typeof(List<DeployedVersion>));
+                    try
+                    {
+                        return (List<DeployedVersion>) serializer.Deserialize(reader, typeof(List<DeployedVersion>)) ?? new List<DeployedVersion>();
+                    }
+                    catch (JsonException ex)
+                    {
+                        Log.Warn("Failed to deserialize version log "+ versionFile + ", returning empty list",ex);
+                        return new List<DeployedVersion>();
+                    }
                 }
             }
 
