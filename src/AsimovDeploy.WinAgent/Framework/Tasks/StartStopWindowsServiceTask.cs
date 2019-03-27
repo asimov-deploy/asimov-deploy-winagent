@@ -51,8 +51,12 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
         private void StartService(ServiceController controller)
         {
-            controller.Start();
-            controller.WaitForStatus(ServiceControllerStatus.Running, DefaultStartStopTimeout);
+            if (controller.Status != ServiceControllerStatus.Running)
+            {
+                controller.Start();
+                controller.WaitForStatus(ServiceControllerStatus.Running, DefaultStartStopTimeout);
+            }
+ 
         }
 
         private static void StopService(ServiceController controller)
