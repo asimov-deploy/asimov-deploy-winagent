@@ -28,15 +28,20 @@ namespace AsimovDeploy.WinAgent.Framework.Models
 
         public ParameterValues(IDictionary<string, dynamic> parameters)
         {
-            _parameters = parameters;
+            _parameters = parameters ?? new Dictionary<string, dynamic>();
         }
 
         public dynamic GetValue(string parameterName)
         {
-            if (_parameters == null)
-                return null;
-
             return _parameters[parameterName];
+        }
+
+        public bool HasValue(string parameterName, dynamic expected)
+        {
+            if (!_parameters.TryGetValue(parameterName, out dynamic actual))
+                return false;
+            return actual == expected;
+
         }
 
         public IDictionary<string, dynamic> GetInternalDictionary()

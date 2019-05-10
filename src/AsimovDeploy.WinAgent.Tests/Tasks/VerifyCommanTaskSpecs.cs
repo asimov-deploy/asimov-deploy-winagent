@@ -13,7 +13,7 @@ using Shouldly;
 namespace AsimovDeploy.WinAgent.Tests.Tasks
 {
     [TestFixture]
-    public class VerifyCommanTaskSpecs
+    public class VerifyCommandTaskSpecs
     {
         private FakeNotifier _fakeNotifier;
         private TestVerifyCommandTask _verifyTask;

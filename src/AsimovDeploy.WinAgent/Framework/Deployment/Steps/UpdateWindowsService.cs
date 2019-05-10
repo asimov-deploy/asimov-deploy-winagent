@@ -51,7 +51,8 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
                 context.Log.InfoFormat("Starting service {0}", deployUnit.ServiceName);
                 controller.Start();
 
-                controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(1));
+                if(!context.ParameterValues.HasValue("SkipWaitForServiceStart",true))
+                    controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(1));
             }
         }
 

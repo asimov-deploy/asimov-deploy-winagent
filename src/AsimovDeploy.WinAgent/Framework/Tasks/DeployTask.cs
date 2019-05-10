@@ -15,6 +15,7 @@
 ******************************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -30,7 +31,7 @@ using log4net.Repository.Hierarchy;
 
 namespace AsimovDeploy.WinAgent.Framework.Tasks
 {
-    public class DeployTask : AsimovTask
+    public class DeployTask : AsimovTask, IEnumerable<Func<IDeployStep>>
     {
         private readonly DeployUnit _deployUnit;
         private readonly AsimovVersion _version;
@@ -51,6 +52,7 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
             AddDeployStep<CleanTempFolder>();
             AddDeployStep<CopyPackageToTempFolder>();
         }
+
 
         public void AddDeployStep<T>() where T : IDeployStep
         {
@@ -174,6 +176,19 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks
 
             logger.AddAppender(fileAppender);
             return logger;
+        }
+
+        public IEnumerator<Func<IDeployStep>> GetEnumerator()
+        {
+            foreach (var step in _steps)
+            {
+                yield return step;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

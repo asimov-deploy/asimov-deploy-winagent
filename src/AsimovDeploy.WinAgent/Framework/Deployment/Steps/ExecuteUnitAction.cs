@@ -5,18 +5,18 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 {
     public class ExecuteUnitAction : IDeployStep
     {
-        private readonly UnitAction action;
-        private readonly AsimovUser user;
+        public UnitAction Action { get; }
+        public AsimovUser User { get; }
 
         public ExecuteUnitAction(UnitAction action, AsimovUser user)
         {
-            this.action = action;
-            this.user = user;
+            Action = action;
+            User = user;
         }
 
         public void Execute(DeployContext context)
         {
-            action.GetTask(context.DeployUnit, user, context.CorrelationId).ExecuteTask();
+            Action.GetTask(context.DeployUnit, User, context.CorrelationId).ExecuteTask();
         }
     }
 }
