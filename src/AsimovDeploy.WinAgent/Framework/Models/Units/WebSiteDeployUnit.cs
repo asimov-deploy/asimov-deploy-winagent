@@ -91,8 +91,14 @@ namespace AsimovDeploy.WinAgent.Framework.Models.Units
                 task.AddDeployStep(new InstallWebSite(this));
             else
                 task.AddDeployStep<UpdateWebSite>();
-            foreach (var action in Actions.OfType<VerifyCommandUnitAction>())
-                task.AddDeployStep(new ExecuteUnitAction(action, user));
+
+            //TODO: This should ideally be moved up so that is is applied to all deploy units
+            if (!parameterValues.HasValue("SkipVerify",true))
+            {
+                foreach (var action in Actions.OfType<VerifyCommandUnitAction>())
+                    task.AddDeployStep(new ExecuteUnitAction(action, user));
+            }
+            
             return task;
         }
 

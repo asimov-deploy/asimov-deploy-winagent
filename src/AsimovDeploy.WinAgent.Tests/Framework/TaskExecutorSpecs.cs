@@ -25,7 +25,7 @@ namespace AsimovDeploy.WinAgent.Tests.Framework
         }
 
         [Test]
-        public async Task blocks_when_max_concurrent_tasks_is_reached()
+        public void blocks_when_max_concurrent_tasks_is_reached()
         {
             TaskExecutor e = new TaskExecutor();
             
