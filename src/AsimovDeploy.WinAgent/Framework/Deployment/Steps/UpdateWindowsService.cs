@@ -15,6 +15,7 @@
 ******************************************************************************/
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.ServiceProcess;
 using AsimovDeploy.WinAgent.Framework.Common;
@@ -28,6 +29,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
     {
         private IAsimovConfig _config;
         private static readonly TimeSpan DefaultStopTimeout = TimeSpan.FromMinutes(2);
+        private const int ERROR_SERVICE_ALREADY_RUNNING = 1056;    // see https://docs.microsoft.com/en-us/windows/desktop/debug/system-error-codes--1000-1299-
 
         public UpdateWindowsService(IAsimovConfig config)
         {
@@ -49,9 +51,24 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
                 CopyNewFiles(context);
 
                 context.Log.InfoFormat("Starting service {0}", deployUnit.ServiceName);
-                controller.Start();
+                try
+                {
+                    controller.Start();
+                }
+                catch (InvalidOperationException invalidOpEx)
+                {
+                    var win32Exception = invalidOpEx.InnerException as Win32Exception;
+                    if (win32Exception != null && win32Exception.NativeErrorCode == ERROR_SERVICE_ALREADY_RUNNING)
+                    {
+                        context.Log.InfoFormat("Service {0} was already running. Continuing.", deployUnit.ServiceName);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
 
-                if(!context.ParameterValues.HasValue("SkipWaitForServiceStart",true))
+                if (!context.ParameterValues.HasValue("SkipWaitForServiceStart",true))
                     controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(1));
             }
         }
