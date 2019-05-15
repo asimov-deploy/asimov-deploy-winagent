@@ -34,15 +34,28 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl
         public static void KillServiceProcess(this ServiceController sc)
         {
             var ssp = new SERVICE_STATUS_PROCESS();
-
+            
             if (!QueryServiceStatusEx(sc.ServiceHandle.DangerousGetHandle(), SC_STATUS_PROCESS_INFO, ref ssp, Marshal.SizeOf(ssp), out _))
                 throw new Exception("Couldn't obtain service process information.");
 
-            if (ssp.dwProcessId == 0) return;
-            Process.GetProcessById(ssp.dwProcessId).Kill();
+            sc.Stop();
+
+            if (ssp.dwProcessId != 0)
+            {
+                try
+                {
+                    Process.GetProcessById(ssp.dwProcessId).Kill();
+                }
+                catch (ArgumentException)
+                {
+                    // The process was killed by sc.Stop()
+                }
+            }
+
+            sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(15d));
         }
 
-        public static void StopServiceAndWaitForExit(this ServiceController service, TimeSpan? timeout = null)
+        public static void StopServiceAndWaitForExit(this ServiceController service, TimeSpan timeout)
         {
             SERVICE_STATUS_PROCESS ssp = new SERVICE_STATUS_PROCESS();
             int ignored;
@@ -105,10 +118,10 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl
                     while (!threadData.HasExited)
                     {
                         var remainingWait = (timeout - duration.Elapsed);
-                        if (remainingWait != null && remainingWait.Value.TotalMilliseconds <= 0)
+                        if (remainingWait != null && remainingWait.TotalMilliseconds <= 0)
                             throw new TimeoutException($"Service {service.ServiceName} did not stop within the allowed time limit {timeout}");
 
-                        Monitor.Wait(threadData.Sync, remainingWait != null ? (int)remainingWait.Value.TotalMilliseconds : -1);
+                        Monitor.Wait(threadData.Sync, remainingWait != null ? (int)remainingWait.TotalMilliseconds : -1);
                     }
                 }
             }
