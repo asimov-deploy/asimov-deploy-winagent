@@ -87,7 +87,7 @@ task Compile -depends Init,UpdateAppConfig {
 	try {
 		Write-Host "Compiling with '$configuration' configuration"
 		exec { dotnet restore }
-		exec { dotnet build "$sln_file" -o "build_artifacts" -c $configuration }
+		exec { dotnet build "$sln_file" -p:OutputPath=build_artifacts -c $configuration }
 
 	} catch {
 		Throw
