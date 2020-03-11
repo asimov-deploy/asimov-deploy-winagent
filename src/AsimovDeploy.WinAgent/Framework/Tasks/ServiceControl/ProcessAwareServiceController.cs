@@ -40,6 +40,18 @@ namespace AsimovDeploy.WinAgent.Framework.Tasks.ServiceControl
 
             sc.Stop();
 
+            try
+            {
+                // Attempt to stop service using servicecontroller
+                sc.StopServiceAndWaitForExit(TimeSpan.FromSeconds(15d));
+                return;
+            }
+            catch (TimeoutException)
+            {
+                // Service did not stop within specified timespan. 
+                // Kill the service's process instead.
+            }
+
             if (ssp.dwProcessId != 0)
             {
                 try
