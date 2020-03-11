@@ -75,7 +75,7 @@ namespace AsimovDeploy.WinAgent.Framework.Deployment.Steps
 
         private static void StopService(DeployContext context, ServiceController controller)
         {
-            var killProcess = context.ParameterValues.Any(a => a.Key == "ForceKillServiceProcess");
+            var killProcess = context.ParameterValues.Any(a => a.Key == "ForceKillServiceProcess" && (a.Value == null || a.Value.ToString().ToLower() == "true"));
 
             context.Log.InfoFormat("Stopping service {0} {1}", controller.ServiceName, killProcess ? "forcefully" : "");
 
