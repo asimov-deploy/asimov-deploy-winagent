@@ -1,0 +1,32 @@
+{
+	"WebPort":						%AGENT_PORT%,
+	"DataFolder":					"%DATA_FOLDER%",
+	"HeartbeatIntervalSeconds":		10,
+	"NodeFrontUrl":					"%NODE_FRONT_URL%",
+	"Environment":					"dev",
+	"ConfigVersion":				1,
+
+	"PackageSources":  {
+		"Test":	{ "Type": "FileSystem", "Uri": "%PACKAGES_URI%" }
+	},
+
+	"Units": [
+		{
+			"Name": "VerifyTest",
+			"Type": "PowerShell",
+
+			"PackageInfo": { "Source": "Test" },
+
+            "Url": "http://localhost:2121",
+
+            "DeployParameters": {
+                "Tasks": { "Type": "Text", "Default": "Deploy-Everything" }
+            },
+
+			"Actions": {
+				"verify1": { "Type": "VerifyCommand", "ZipPath": "verify.zip", "Command": "script.ps1" },
+				"verify2": { "Type": "VerifyCommand", "ZipPath": "verify.folder", "Command": "script.ps1" }
+			}
+		}
+	]
+}
