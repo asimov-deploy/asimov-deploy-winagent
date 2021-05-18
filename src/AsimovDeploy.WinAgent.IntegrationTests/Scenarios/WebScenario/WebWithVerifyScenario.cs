@@ -15,7 +15,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
     [TestFixture]
     public class WebWithVerifyScenario : WinAgentSystemTest
     {
-        private const string ServiceName = "Asimov.Web.Example.With.Verify.Folder";
+        private const string ServiceName = "Asimov.Web.Example.With.Verify";
 
         public override void Given()
         {
@@ -50,15 +50,22 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
         }
 
         [Test]
-        public void can_run_verify_after_deploy()
+        public void runs_verify_folder_after_deploy()
         {
             InstallService();
 
-            Agent.Post("/action", NodeFront.ApiKey, new UnitActionCommand() {actionName = "Verify", correlationId = Guid.NewGuid().ToString(), unitName = ServiceName});
-
-            WaitForAgentOutput("verify-success");
-
+            WaitForAgentOutput("verify-output-folder");
         }
+        
+        [Test]
+        public void runs_verify_zip_after_deploy()
+        {
+            InstallService();
+
+            WaitForAgentOutput("verify-output-zip");
+        }
+
+        
 
         private void WaitForAgentOutput(string output)
         {

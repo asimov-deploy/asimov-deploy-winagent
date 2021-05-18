@@ -53,7 +53,6 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
         public void can_get_deploy_units()
         {
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
-            units.Count.ShouldBe(2);
             units[1].name.ShouldBe(ServiceName);
             units[1].status.ShouldBe("NotFound");
             units[1].type.ShouldBe(DeployUnitTypes.WebSite);
@@ -65,7 +64,6 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
             InstallService();
 
             var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
-            units.Count.ShouldBe(2);
             units[1].name.ShouldBe(ServiceName);
             units[1].status.ShouldBe("Running");
             units[1].type.ShouldBe(DeployUnitTypes.WebSite);
@@ -100,7 +98,6 @@ namespace AsimovDeploy.WinAgent.IntegrationTests.Scenarios.WebScenario
             {
                 duration = DateTime.Now - start;
                 var units = Agent.Get<List<DeployUnitInfoDTO>>("/units/list");
-                units.Count.ShouldBe(2);
                 status = units[1].status;
                 if (status == expectedStatus)
                 {
