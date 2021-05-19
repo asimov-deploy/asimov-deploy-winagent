@@ -24,6 +24,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         protected Process AgentProcess;
         protected AgentHttpClient Agent;
         protected NodeFrontSimulator NodeFront;
+        protected StringBuilder AgentOutput;
 
         [OneTimeSetUp]
         public void Setup()
@@ -112,6 +113,8 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
         {
             CopyAgentToCleanRunFolder();
             CopyConfigToAgentDir();
+            
+            AgentOutput = new StringBuilder();
 
             NodeFront = new NodeFrontSimulator();
             NodeFront.Start();
@@ -169,6 +172,7 @@ namespace AsimovDeploy.WinAgent.IntegrationTests
                     if (buffer[0] == '\n')
                     {
                         Console.Write("[AgentOutput]: " + str);
+                        AgentOutput.Append(str);
                         str.Clear();
                     }
                 };

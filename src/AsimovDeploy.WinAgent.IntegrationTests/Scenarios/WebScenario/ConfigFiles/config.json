@@ -66,6 +66,33 @@ Remove-WebAppPool -Name \"${SiteName}AppPool\"
         "Install": "install-site.ps1 $SiteName $SiteUrl",
         "Uninstall": "uninstall-site.ps1 $SiteName"
       }
+    },
+    {
+      "Name": "Asimov.Web.Example.With.Verify",
+      "Type": "WebSite",
+      "SiteName": "Asimov.Web.Example.With.Verify",
+      "SiteUrl": "http://localhost:9124",
+
+      "PackageInfo": { "Source": "Test" },
+
+      "Installable": {
+        "TargetPath": "%DATA_FOLDER%\\WebTarget",
+
+        "Install": "install-site.ps1 $SiteName $SiteUrl",
+        "Uninstall": "uninstall-site.ps1 $SiteName"
+      },
+      "Actions": {
+        "Verify1": {
+          "Type": "VerifyCommand",
+          "ZipPath": "verify.folder",
+          "Command": "script.bat"
+        },
+        "Verify2": {
+          "Type": "VerifyCommand",
+          "ZipPath": "verify.zip",
+          "Command": "script.bat"
+        }
+      }
     }
 
 
