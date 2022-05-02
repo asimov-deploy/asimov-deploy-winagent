@@ -45,10 +45,11 @@ namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement
             {
                 var site = serverManager.Sites.Single(x => x.Name == _siteName);
 
-                var webApp = site.Applications.Single(x => x.Path == _appPath);
-                var appPool = serverManager.ApplicationPools[webApp.ApplicationPoolName];
-
-                appPool.Start();
+                foreach (var application in site.Applications)
+                {
+                    var appPool = serverManager.ApplicationPools[application.ApplicationPoolName];
+                    appPool.Start();
+                }
             }
         }
 
@@ -58,16 +59,18 @@ namespace AsimovDeploy.WinAgent.Framework.WebSiteManagement
             {
                 var site = serverManager.Sites.Single(x => x.Name == _siteName);
 
-                var rootApp = site.Applications.Single(x => x.Path == _appPath);
-                var appPool = serverManager.ApplicationPools[rootApp.ApplicationPoolName];
-
-                if (appPool.State == ObjectState.Started)
-                    appPool.Stop();
-
-                do
+                foreach (var application in site.Applications)
                 {
-                    Thread.Sleep(500);
-                } while (appPool.State == ObjectState.Stopping);
+                    var appPool = serverManager.ApplicationPools[application.ApplicationPoolName];
+
+                    if (appPool.State == ObjectState.Started)
+                        appPool.Stop();
+
+                    do
+                    {
+                        Thread.Sleep(500);
+                    } while (appPool.State == ObjectState.Stopping);
+                }
             }
         }
 
