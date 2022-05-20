@@ -5,7 +5,7 @@
     <AssemblyName>AsimovDeploy.WinAgent.IntegrationTests</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.11.0" />
