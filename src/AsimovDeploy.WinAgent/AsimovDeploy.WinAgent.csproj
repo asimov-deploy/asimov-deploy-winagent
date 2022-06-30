@@ -16,7 +16,7 @@
     <PackageReference Include="IIS.Microsoft.Web.Administration" Version="8.5.9600.17042" />
     <PackageReference Include="JsonFx" Version="2.0.1209.2802" />
     <PackageReference Include="log4net" Version="2.0.8" />
-    <PackageReference Include="Nancy" Version="0.11.0" />
+    <PackageReference Include="Nancy" Version="1.4.4" />
     <PackageReference Include="Nancy.Bootstrappers.StructureMap" Version="0.11.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="0.11.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
