@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AsimovDeploy.WinAgent.Framework.Configuration;
@@ -14,9 +15,17 @@ namespace AsimovDeploy.WinAgent.Tests
     [TestFixture]
     public class ConfigurationSpecs
     {
+        private TestEnvironmentVariableProvider _environmentVariableProvider;
+
+        [SetUp]
+        public void Setup()
+        {
+            _environmentVariableProvider = new TestEnvironmentVariableProvider();
+        }
+
         public AsimovConfig ReadConfig(string configDir, string agentName)
         {
-            return (AsimovConfig) new ConfigurationReader().Read(Path.Combine(TestContext.CurrentContext.TestDirectory,configDir), agentName);
+            return (AsimovConfig) new ConfigurationReader(_environmentVariableProvider).Read(Path.Combine(TestContext.CurrentContext.TestDirectory,configDir), agentName);
         }
 
         [Test]
@@ -275,6 +284,16 @@ namespace AsimovDeploy.WinAgent.Tests
         }
 
         [Test]
+        public void can_handle_environment_substitutions()
+        {
+            var overridenUrl = "http://overriden-by-env:3333";
+            _environmentVariableProvider.SetVariable("ASIMOV_DEPLOY_NODE_FRONT_URL", overridenUrl);
+            var config = ReadConfig("ConfigExamples", "testagent4");
+            
+            config.NodeFrontUrl.ShouldBe(overridenUrl);
+        }
+
+        [Test]
         public void can_get_unit_groups()
         {
             var config = ReadConfig("ConfigExamples", "testagent3");
@@ -327,6 +346,21 @@ namespace AsimovDeploy.WinAgent.Tests
             {
                 statuses.ShouldContain(deployStatus.ToString());
             }
+        }
+    }
+
+    public class TestEnvironmentVariableProvider : IEnvironmentVariableProvider
+    {
+        private readonly Dictionary<string, string> _variables = new Dictionary<string, string>();
+
+        public void SetVariable(string name, string value)
+        {
+            _variables[name] = value;
+        }
+
+        public string GetEnvironmentVariable(string name)
+        {
+            return _variables.TryGetValue(name, out var value) ? value : null;
         }
     }
 }

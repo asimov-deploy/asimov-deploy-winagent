@@ -24,6 +24,13 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
 {
     public class ConfigurationReader
     {
+        private readonly IEnvironmentVariableProvider _environmentVariableProvider;
+
+        public ConfigurationReader(IEnvironmentVariableProvider environmentVariableProvider = null)
+        {
+            _environmentVariableProvider = environmentVariableProvider ?? new DefaultEnvironmentVariableProvider();
+        }
+
         public IAsimovConfig Read(string configDir, string machineName)
         {
             using (var reader = new StreamReader(Path.Combine(configDir, "config.json")))
@@ -32,6 +39,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                 {
                     var serializer = new JsonSerializer();
                     serializer.Converters.Add(new AsimovConfigConverter(machineName, configDir));
+                    serializer.Converters.Add(new EnvironmentVariableConverter(_environmentVariableProvider));
                     var config = serializer.Deserialize<AsimovConfig>(jsonReader);
 
                     var unitsDataBaseDir = Path.Combine(config.DataFolder, "Units");
@@ -52,7 +60,7 @@ namespace AsimovDeploy.WinAgent.Framework.Configuration
                         deployUnit.SetupDeployActions();
                         deployUnit.Refresh();
                     }
-
+                    
                     return config;
                 }
             }
