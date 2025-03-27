@@ -1,0 +1,28 @@
+﻿{
+  "NodeFrontUrl": "${ASIMOV_DEPLOY_NODE_FRONT_URL}",
+  "AgentGroup": "Test Group",
+
+  "PackageSources": {
+    "Extra": {
+      "Type": "FileSystem",
+      "Uri": "file://extra"
+    }
+  },
+
+  "Units": [
+    {
+      "Name": "TestService",
+      "Group": "Test", 
+      "Type": "WindowsService",
+
+      "ServiceName": "Test",
+
+      "PackageInfo": {
+        "Source": "Extra",
+        "InternalPath": "Muu"
+      },
+
+      "Tags": [ "tag1", "tag3", "tag4" ]
+    }
+  ]
+}
