@@ -19,7 +19,7 @@
     <PackageReference Include="Nancy" Version="0.11.0" />
     <PackageReference Include="Nancy.Bootstrappers.StructureMap" Version="0.11.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="0.11.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="structuremap" Version="2.6.3" />
     <PackageReference Include="System.Interactive.Async" Version="3.2.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
