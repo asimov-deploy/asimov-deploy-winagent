@@ -15,7 +15,7 @@
     <PackageReference Include="Google.Cloud.Storage.V1" Version="2.2.1" />
     <PackageReference Include="IIS.Microsoft.Web.Administration" Version="8.5.9600.17042" />
     <PackageReference Include="JsonFx" Version="2.0.1209.2802" />
-    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="log4net" Version="2.0.10" />
     <PackageReference Include="Nancy" Version="0.11.0" />
     <PackageReference Include="Nancy.Bootstrappers.StructureMap" Version="0.11.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="0.11.0" />
